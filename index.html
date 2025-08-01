@@ -502,46 +502,136 @@
           }
         }
         </style>
-        <style>
-@media (max-width: 768px) {
-  .contact-form-body .form-check,
-  .contact-form-body .form-check-inline {
-    display: flex !important;
-    align-items: center !important;
-    margin-bottom: 16px !important;
-    margin-right: 0 !important;
-    width: 100%;
-    cursor: pointer;
-    position: relative;
-    padding-left: 0 !important;
-    min-height: 36px;
-  }
-  .form-check-input[type="radio"] {
-    margin-right: 10px;
-    margin-left: 0 !important;
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    min-height: 28px;
-    display: inline-block;
-    vertical-align: middle;
-  }
-  .form-check-label {
-    font-size: 1.12em;
-    flex: 1;
-    cursor: pointer;
-    user-select: none;
-    margin-bottom: 0;
-    display: flex;
-    align-items: center;
-    height: 28px;
-  }
-  /* Target the label for 'Current Member' radio */
-  label[for="status-current"] {
-    margin-left: 16px;
-  }
-}
-</style>
+                <style>
+        /* Admin Check Styles */
+        .admin-check-container {
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .admin-check-icon {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .admin-check-title {
+            color: #333;
+            font-weight: 700;
+            font-size: 2rem;
+        }
+        
+        .admin-check-description {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .admin-options {
+            margin-top: 30px;
+        }
+        
+        .admin-options .btn {
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            min-width: 180px;
+        }
+        
+        .admin-options .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            border: none;
+        }
+        
+        /* Notification Styles */
+        .custom-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .custom-notification.show {
+            transform: translateX(0);
+        }
+        
+        .custom-notification.warning {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+        }
+        
+        .custom-notification.success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        
+        @media (max-width: 768px) {
+          .contact-form-body .form-check,
+          .contact-form-body .form-check-inline {
+            display: flex !important;
+            align-items: center !important;
+            margin-bottom: 16px !important;
+            margin-right: 0 !important;
+            width: 100%;
+            cursor: pointer;
+            position: relative;
+            padding-left: 0 !important;
+            min-height: 36px;
+          }
+          .form-check-input[type="radio"] {
+            margin-right: 10px;
+            margin-left: 0 !important;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            min-height: 28px;
+            display: inline-block;
+            vertical-align: middle;
+          }
+          .form-check-label {
+            font-size: 1.12em;
+            flex: 1;
+            cursor: pointer;
+            user-select: none;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            height: 28px;
+          }
+          /* Target the label for 'Current Member' radio */
+          label[for="status-current"] {
+            margin-left: 16px;
+          }
+          
+          .admin-options .btn {
+            min-width: 150px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+          }
+        }
+        </style>
         <!--
 
 TemplateMo 583 BUCuC
@@ -2065,39 +2155,22 @@ https://templatemo.com/tm-583-festava-live
                                 <div class="tab-pane fade" id="nav-LoginForm"
                                     role="tabpanel"
                                     aria-labelledby="nav-LoginForm-tab">
-                                    <form id="login-form"
-                                        class="custom-form contact-form mb-5 mb-lg-0"
-                                        action="#" method="post" role="form">
-                                        <div class="contact-form-body">
-                                            <div class="row">
-                                                <div
-                                                    class="col-lg-12 col-12 mb-3">
-                                                    <input type="email"
-                                                        name="login-email"
-                                                        id="login-email"
-                                                        class="form-control"
-                                                        placeholder="Email Address"
-                                                        required>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div
-                                                    class="col-lg-12 col-12 mb-3">
-                                                    <input type="password"
-                                                        name="login-password"
-                                                        id="login-password"
-                                                        class="form-control"
-                                                        placeholder="Password"
-                                                        required>
-                                                </div>
-                                            </div>
-                                            <div
-                                                class="col-lg-4 col-md-10 col-8 mx-auto">
-                                                <button type="submit"
-                                                    class="form-control">Login</button>
-                                            </div>
+                                    <div class="admin-check-container text-center">
+                                        <div class="admin-check-icon mb-4">
+                                            <i class="fas fa-user-shield" style="font-size: 4rem; color: #e76f2c;"></i>
                                         </div>
-                                    </form>
+                                        <h3 class="admin-check-title mb-4">Admin Access</h3>
+                                        <p class="admin-check-description mb-4">Are you an administrator of the Cultural Club?</p>
+                                        
+                                        <div class="admin-options">
+                                            <button type="button" class="btn btn-success btn-lg me-3" onclick="checkAdminStatus(true)">
+                                                <i class="fas fa-check me-2"></i>Yes, I am an Admin
+                                            </button>
+                                            <button type="button" class="btn btn-secondary btn-lg" onclick="checkAdminStatus(false)">
+                                                <i class="fas fa-times me-2"></i>No, I'm not
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="tab-pane fade" id="nav-ContactMap"
@@ -2397,6 +2470,42 @@ https://templatemo.com/tm-583-festava-live
         </script>
 
         <script>
+        // Admin Check Function
+        function checkAdminStatus(isAdmin) {
+            if (isAdmin) {
+                // Redirect to admin login page
+                window.location.href = 'admin-login.html';
+            } else {
+                // Show notification and redirect to header
+                showCustomNotification('Sorry, you are not an admin', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'index.html#section_1';
+                }, 2000);
+            }
+        }
+        
+        // Custom notification function
+        function showCustomNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `custom-notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Hide and remove notification
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+        
         function showInlineMessage(message, type = 'info') {
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
