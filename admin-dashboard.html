@@ -108,6 +108,7 @@
             text-decoration: none;
             transition: all 0.3s ease;
             border-left: 3px solid transparent;
+            cursor: pointer;
         }
         
         .nav-item:hover, .nav-item.active {
@@ -170,6 +171,12 @@
             width: 300px;
         }
         
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-yellow);
+            box-shadow: 0 0 10px rgba(243, 211, 92, 0.3);
+        }
+        
         .search-box i {
             position: absolute;
             left: 15px;
@@ -222,6 +229,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
         
         .stat-card::before {
@@ -287,23 +295,28 @@
             margin-bottom: 40px;
         }
         
-        .chart-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
+                 .chart-card {
+             background: rgba(255, 255, 255, 0.1);
+             backdrop-filter: blur(20px);
+             border-radius: 20px;
+             padding: 20px;
+             border: 1px solid rgba(255, 255, 255, 0.2);
+             height: 500px;
+             overflow: hidden;
+             position: relative;
+         }
+        
+
         
         .chart-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
         
         .chart-title {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #fff;
         }
@@ -317,10 +330,16 @@
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #ccc;
-            padding: 8px 15px;
-            border-radius: 15px;
-            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
             transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .chart-controls button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
         }
         
         .chart-controls button.active {
@@ -342,6 +361,15 @@
             align-items: center;
             padding: 15px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
         }
         
         .activity-item:last-child {
@@ -425,6 +453,12 @@
             padding: 10px;
             border-radius: 50%;
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background: var(--primary-yellow);
+            color: var(--dark-blue);
         }
         
         @media (max-width: 768px) {
@@ -432,6 +466,45 @@
                 display: block;
             }
         }
+        
+        /* Notification System */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            color: #fff;
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-left: 4px solid #51cf66;
+        }
+        
+                 .notification.error {
+             border-left: 4px solid #ff6b6b;
+         }
+         
+         /* Ensure chart content doesn't get cut off */
+         .chart-card .chart-header {
+             position: relative;
+             background: rgba(255, 255, 255, 0.1);
+             backdrop-filter: blur(20px);
+             z-index: 10;
+             margin: -20px -20px 15px -20px;
+             padding: 20px;
+             border-radius: 20px 20px 0 0;
+         }
     </style>
 </head>
 <body>
@@ -453,7 +526,7 @@
         <nav class="sidebar-nav">
             <div class="nav-section">
                 <div class="nav-section-title">Dashboard</div>
-                <a href="#" class="nav-item active">
+                <a href="#" class="nav-item active" data-section="overview">
                     <i class="fas fa-tachometer-alt"></i>
                     Overview
                 </a>
@@ -461,19 +534,19 @@
             
             <div class="nav-section">
                 <div class="nav-section-title">Management</div>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" data-section="members">
                     <i class="fas fa-users"></i>
                     Members
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" data-section="events">
                     <i class="fas fa-calendar-alt"></i>
                     Events
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" data-section="performances">
                     <i class="fas fa-music"></i>
                     Performances
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" data-section="analytics">
                     <i class="fas fa-chart-line"></i>
                     Analytics
                 </a>
@@ -481,15 +554,15 @@
             
             <div class="nav-section">
                 <div class="nav-section-title">Settings</div>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" data-section="general">
                     <i class="fas fa-cog"></i>
                     General
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" data-section="profile">
                     <i class="fas fa-user-cog"></i>
                     Profile
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
                     Logout
                 </a>
@@ -509,10 +582,10 @@
             <div class="header-right">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search...">
+                    <input type="text" placeholder="Search..." id="searchInput">
                 </div>
                 
-                <div class="user-profile">
+                <div class="user-profile" id="userProfile">
                     <div class="user-avatar">A</div>
                     <span>Admin</span>
                 </div>
@@ -521,7 +594,7 @@
         
         <!-- Stats Cards -->
         <div class="stats-grid">
-            <div class="stat-card">
+            <div class="stat-card" data-stat="members">
                 <div class="stat-icon">
                     <i class="fas fa-users"></i>
                 </div>
@@ -533,7 +606,7 @@
                 </div>
             </div>
             
-            <div class="stat-card">
+            <div class="stat-card" data-stat="events">
                 <div class="stat-icon">
                     <i class="fas fa-calendar-check"></i>
                 </div>
@@ -545,7 +618,7 @@
                 </div>
             </div>
             
-            <div class="stat-card">
+            <div class="stat-card" data-stat="performances">
                 <div class="stat-icon">
                     <i class="fas fa-music"></i>
                 </div>
@@ -557,17 +630,17 @@
                 </div>
             </div>
             
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-dollar-sign"></i>
-                </div>
-                <div class="stat-number">$12,450</div>
-                <div class="stat-label">Total Revenue</div>
-                <div class="stat-change positive">
-                    <i class="fas fa-arrow-up"></i>
-                    +15% this quarter
-                </div>
-            </div>
+                         <div class="stat-card" data-stat="sponsors">
+                 <div class="stat-icon">
+                     <i class="fas fa-handshake"></i>
+                 </div>
+                 <div class="stat-number">৳12,45,000</div>
+                 <div class="stat-label">Total Sponsors</div>
+                 <div class="stat-change positive">
+                     <i class="fas fa-arrow-up"></i>
+                     +15% this quarter
+                 </div>
+             </div>
         </div>
         
         <!-- Charts Section -->
@@ -575,20 +648,24 @@
             <div class="chart-card">
                 <div class="chart-header">
                     <h3 class="chart-title">Member Growth</h3>
-                    <div class="chart-controls">
-                        <button class="active">Month</button>
-                        <button>Quarter</button>
-                        <button>Year</button>
-                    </div>
+                                         <div class="chart-controls">
+                         <button class="active" data-period="1Y">1Y</button>
+                         <button data-period="2Y">2Y</button>
+                         <button data-period="3Y">3Y</button>
+                     </div>
                 </div>
-                <canvas id="memberGrowthChart" height="300"></canvas>
+                                 <div style="position: relative; height: 420px; width: 100%;">
+                     <canvas id="memberGrowthChart"></canvas>
+                 </div>
             </div>
             
             <div class="chart-card">
                 <div class="chart-header">
                     <h3 class="chart-title">Event Categories</h3>
                 </div>
-                <canvas id="eventCategoriesChart" height="300"></canvas>
+                                 <div style="position: relative; height: 420px; width: 100%;">
+                     <canvas id="eventCategoriesChart"></canvas>
+                 </div>
             </div>
         </div>
         
@@ -598,7 +675,7 @@
                 <h3 class="chart-title">Recent Activities</h3>
             </div>
             
-            <div class="activity-item">
+            <div class="activity-item" data-activity="member">
                 <div class="activity-icon">
                     <i class="fas fa-user-plus"></i>
                 </div>
@@ -609,7 +686,7 @@
                 <div class="activity-time">2 hours ago</div>
             </div>
             
-            <div class="activity-item">
+            <div class="activity-item" data-activity="event">
                 <div class="activity-icon">
                     <i class="fas fa-calendar-plus"></i>
                 </div>
@@ -620,7 +697,7 @@
                 <div class="activity-time">4 hours ago</div>
             </div>
             
-            <div class="activity-item">
+            <div class="activity-item" data-activity="performance">
                 <div class="activity-icon">
                     <i class="fas fa-music"></i>
                 </div>
@@ -631,7 +708,7 @@
                 <div class="activity-time">6 hours ago</div>
             </div>
             
-            <div class="activity-item">
+            <div class="activity-item" data-activity="analytics">
                 <div class="activity-icon">
                     <i class="fas fa-chart-line"></i>
                 </div>
@@ -644,61 +721,116 @@
         </div>
     </div>
     
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+    
     <!-- Bootstrap JS -->
     <script src="js/bootstrap.min.js"></script>
     
     <script>
+        let memberChart;
+        let eventChart;
+        
         // Initialize Charts
         function initCharts() {
-            // Member Growth Chart
-            const memberCtx = document.getElementById('memberGrowthChart').getContext('2d');
-            new Chart(memberCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [{
-                        label: 'Members',
-                        data: [850, 920, 980, 1050, 1120, 1180, 1247, 1300, 1350, 1400, 1450, 1500],
-                        borderColor: '#f3d35c',
-                        backgroundColor: 'rgba(243, 211, 92, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#ccc'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#ccc'
-                            }
-                        }
-                    }
-                }
-            });
+                         // Member Growth Chart - styled like the image
+             const memberCtx = document.getElementById('memberGrowthChart').getContext('2d');
+             memberChart = new Chart(memberCtx, {
+                 type: 'line',
+                 data: {
+                     labels: ['Fall 2024', 'Spring 2025', 'Summer 2025'],
+                     datasets: [{
+                         label: 'Members',
+                         data: [1180, 1250, 0],
+                         borderColor: '#51cf66',
+                         backgroundColor: 'rgba(81, 207, 102, 0.1)',
+                         borderWidth: 2,
+                         fill: false,
+                         tension: 0.4,
+                         pointBackgroundColor: '#51cf66',
+                         pointBorderColor: '#51cf66',
+                         pointRadius: 4,
+                         pointHoverRadius: 6
+                     }]
+                 },
+                 options: {
+                     responsive: true,
+                     maintainAspectRatio: false,
+                     layout: {
+                         padding: {
+                             top: 10,
+                             bottom: 20,
+                             left: 10,
+                             right: 10
+                         }
+                     },
+                     interaction: {
+                         intersect: false,
+                         mode: 'index'
+                     },
+                     plugins: {
+                         legend: {
+                             display: false
+                         },
+                         tooltip: {
+                             backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                             titleColor: '#fff',
+                             bodyColor: '#fff',
+                             borderColor: '#51cf66',
+                             borderWidth: 1,
+                             cornerRadius: 8,
+                             displayColors: false,
+                             callbacks: {
+                                 label: function(context) {
+                                     return `Members: ${context.parsed.y}`;
+                                 }
+                             }
+                         }
+                     },
+                     scales: {
+                         y: {
+                             beginAtZero: true,
+                             min: 0,
+                             max: 1300,
+                             grid: {
+                                 color: 'rgba(255, 255, 255, 0.1)',
+                                 drawBorder: false
+                             },
+                             ticks: {
+                                 color: '#fff',
+                                 font: {
+                                     size: 12
+                                 },
+                                 stepSize: 100
+                             }
+                         },
+                                                   x: {
+                              grid: {
+                                  display: false
+                              },
+                              ticks: {
+                                  color: '#fff',
+                                  font: {
+                                      size: 10
+                                  },
+                                  maxRotation: 45,
+                                  minRotation: 45
+                              }
+                          }
+                     },
+                     elements: {
+                         point: {
+                             hoverBackgroundColor: '#51cf66',
+                             hoverBorderColor: '#fff',
+                             hoverBorderWidth: 2
+                         }
+                     }
+                 }
+             });
             
             // Event Categories Chart
             const eventCtx = document.getElementById('eventCategoriesChart').getContext('2d');
-            new Chart(eventCtx, {
+            eventChart = new Chart(eventCtx, {
                 type: 'doughnut',
                 data: {
                     labels: ['Music', 'Dance', 'Drama', 'Art', 'Poetry'],
@@ -717,17 +849,37 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 10,
+                            bottom: 20,
+                            left: 10,
+                            right: 10
+                        }
+                    },
                     plugins: {
                         legend: {
                             position: 'bottom',
                             labels: {
                                 color: '#ccc',
-                                padding: 20
+                                padding: 20,
+                                usePointStyle: true
                             }
                         }
                     }
                 }
             });
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
         
         // Mobile Sidebar Toggle
@@ -740,12 +892,89 @@
             button.addEventListener('click', function() {
                 document.querySelectorAll('.chart-controls button').forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
+                
+                const period = this.dataset.period;
+                updateMemberChart(period);
             });
+        });
+        
+                 // Update member chart based on period
+         function updateMemberChart(period) {
+             let labels, data;
+             
+             switch(period) {
+                 case '1Y':
+                     labels = ['Fall 2024', 'Spring 2025', 'Summer 2025'];
+                     data = [1180, 1250, 0];
+                     break;
+                 case '2Y':
+                     labels = ['Spring 2023', 'Summer 2023', 'Fall 2023', 'Spring 2024', 'Summer 2024', 'Fall 2024', 'Spring 2025', 'Summer 2025'];
+                     data = [850, 920, 980, 1050, 1120, 1180, 1250, 0];
+                     break;
+                 case '3Y':
+                     labels = ['Spring 2022', 'Summer 2022', 'Fall 2022', 'Spring 2023', 'Summer 2023', 'Fall 2023', 'Spring 2024', 'Summer 2024', 'Fall 2024', 'Spring 2025', 'Summer 2025'];
+                     data = [720, 780, 820, 850, 920, 980, 1050, 1120, 1180, 1250, 0];
+                     break;
+             }
+             
+             memberChart.data.labels = labels;
+             memberChart.data.datasets[0].data = data;
+             memberChart.update();
+         }
+        
+        // Navigation items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                if (this.id === 'logoutBtn') {
+                    e.preventDefault();
+                    showNotification('Logging out...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'admin-login.html';
+                    }, 1500);
+                    return;
+                }
+                
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                const section = this.dataset.section;
+                showNotification(`Navigating to ${section} section...`, 'success');
+            });
+        });
+        
+        // Stats cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const stat = this.dataset.stat;
+                showNotification(`Viewing detailed ${stat} statistics...`, 'success');
+            });
+        });
+        
+        // Activity items
+        document.querySelectorAll('.activity-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const activity = this.dataset.activity;
+                showNotification(`Viewing ${activity} details...`, 'success');
+            });
+        });
+        
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            if (query.length > 2) {
+                showNotification(`Searching for "${query}"...`, 'success');
+            }
+        });
+        
+        // User profile
+        document.getElementById('userProfile').addEventListener('click', function() {
+            showNotification('Opening user profile...', 'success');
         });
         
         // Initialize everything when page loads
         document.addEventListener('DOMContentLoaded', function() {
             initCharts();
+            showNotification('Dashboard loaded successfully!', 'success');
         });
     </script>
 </body>
