@@ -41,6 +41,371 @@
         <style>
             /* SB Members Slideshow Styles */
             @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600&display=swap");
+            
+            /* Enhanced Sign Up Form Styles */
+            .signup-title {
+                font-size: 3rem;
+                font-weight: 800;
+                background: linear-gradient(135deg, #e76f2c, #f3d35c);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 2rem;
+                animation: titleGlow 3s ease-in-out infinite;
+            }
+            
+            @keyframes titleGlow {
+                0%, 100% { filter: brightness(1); }
+                50% { filter: brightness(1.2); }
+            }
+            
+            .signup-container {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px);
+                border-radius: 25px;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 
+                    0 25px 50px rgba(0, 0, 0, 0.15),
+                    0 0 0 1px rgba(255, 255, 255, 0.1);
+                overflow: hidden;
+                position: relative;
+            }
+            
+            .signup-container::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(45deg, #e76f2c, #f3d35c, #e76f2c);
+                border-radius: 25px;
+                z-index: -1;
+                opacity: 0.3;
+                animation: borderGlow 4s ease-in-out infinite;
+                background-size: 400% 400%;
+            }
+            
+            @keyframes borderGlow {
+                0%, 100% { 
+                    opacity: 0.3; 
+                    background-position: 0% 50%;
+                }
+                50% { 
+                    opacity: 0.6; 
+                    background-position: 100% 50%;
+                }
+            }
+            
+            .signup-tab, .login-tab, .maps-tab {
+                background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                border: none;
+                border-radius: 15px;
+                padding: 12px 24px;
+                margin: 0 5px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .signup-tab::before, .login-tab::before, .maps-tab::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(231, 111, 44, 0.2), transparent);
+                transition: left 0.5s ease;
+            }
+            
+            .signup-tab:hover::before, .login-tab:hover::before, .maps-tab:hover::before {
+                left: 100%;
+            }
+            
+            .signup-tab:hover, .login-tab:hover, .maps-tab:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px rgba(231, 111, 44, 0.3);
+            }
+            
+            .signup-tab.active {
+                background: linear-gradient(135deg, #e76f2c, #f3d35c);
+                color: white;
+                box-shadow: 0 8px 25px rgba(231, 111, 44, 0.4);
+            }
+            
+            .login-tab.active {
+                background: linear-gradient(135deg, #007bff, #0056b3);
+                color: white;
+                box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+            }
+            
+            .maps-tab.active {
+                background: linear-gradient(135deg, #28a745, #1e7e34);
+                color: white;
+                box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+            }
+            
+            .contact-form {
+                padding: 40px;
+                background: rgba(255, 255, 255, 0.8);
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
+            }
+            
+            .form-control {
+                background: rgba(255, 255, 255, 0.9);
+                border: 2px solid rgba(231, 111, 44, 0.1);
+                border-radius: 15px;
+                padding: 15px 20px;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .form-control::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(231, 111, 44, 0.1), transparent);
+                transition: left 0.6s ease;
+            }
+            
+            .form-control:focus::before {
+                left: 100%;
+            }
+            
+            .form-control:focus {
+                background: rgba(255, 255, 255, 1);
+                border-color: #e76f2c;
+                box-shadow: 0 0 20px rgba(231, 111, 44, 0.2);
+                transform: translateY(-2px);
+                outline: none;
+            }
+            
+            .form-control::placeholder {
+                color: #6c757d;
+                font-weight: 400;
+            }
+            
+            .form-label {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 10px;
+                display: block;
+            }
+            
+            .form-check-input {
+                border: 2px solid #e76f2c;
+                border-radius: 50%;
+                transition: all 0.3s ease;
+            }
+            
+            .form-check-input:checked {
+                background-color: #e76f2c;
+                border-color: #e76f2c;
+                box-shadow: 0 0 10px rgba(231, 111, 44, 0.3);
+            }
+            
+            .form-check-label {
+                font-weight: 500;
+                color: #333;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .form-check-label:hover {
+                color: #e76f2c;
+            }
+            
+            .form-check-inline {
+                margin-right: 20px;
+            }
+            
+            textarea.form-control {
+                resize: vertical;
+                min-height: 100px;
+                font-family: inherit;
+            }
+            
+            .form-control[type="submit"], button[type="submit"] {
+                background: linear-gradient(135deg, #e76f2c, #f3d35c);
+                border: none;
+                border-radius: 15px;
+                padding: 15px 30px;
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: white;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 5px 15px rgba(231, 111, 44, 0.3);
+            }
+            
+            .form-control[type="submit"]::before, button[type="submit"]::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                transition: left 0.6s ease;
+            }
+            
+            .form-control[type="submit"]:hover::before, button[type="submit"]:hover::before {
+                left: 100%;
+            }
+            
+            .form-control[type="submit"]:hover, button[type="submit"]:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 30px rgba(231, 111, 44, 0.5);
+            }
+            
+            /* Floating particles for signup section */
+            .signup-particles {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                pointer-events: none;
+                z-index: 1;
+            }
+            
+            .signup-particle {
+                position: absolute;
+                width: 4px;
+                height: 4px;
+                background: linear-gradient(45deg, #e76f2c, #f3d35c);
+                border-radius: 50%;
+                animation: signupFloat 8s infinite linear;
+                opacity: 0.6;
+            }
+            
+            @keyframes signupFloat {
+                0% {
+                    transform: translateY(100vh) rotate(0deg) scale(0);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 0.6;
+                    transform: scale(1);
+                }
+                90% {
+                    opacity: 0.6;
+                }
+                100% {
+                    transform: translateY(-100px) rotate(360deg) scale(0);
+                    opacity: 0;
+                }
+            }
+            
+            /* Enhanced admin check container */
+            .admin-check-container {
+                padding: 40px;
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(231, 111, 44, 0.1);
+            }
+            
+            .admin-check-icon {
+                width: 120px;
+                height: 120px;
+                background: linear-gradient(135deg, #e76f2c, #f3d35c);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 20px;
+                font-size: 3.5rem;
+                color: white;
+                box-shadow: 0 15px 40px rgba(231, 111, 44, 0.4);
+                animation: iconFloat 3s ease-in-out infinite;
+            }
+            
+            @keyframes iconFloat {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+            }
+            
+            .admin-check-title {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #333;
+                margin-bottom: 15px;
+            }
+            
+            .admin-check-description {
+                color: #666;
+                font-size: 1.1rem;
+                margin-bottom: 30px;
+            }
+            
+            .admin-options {
+                display: flex;
+                gap: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .admin-options .btn {
+                padding: 12px 24px;
+                border-radius: 15px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .admin-options .btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                transition: left 0.5s ease;
+            }
+            
+            .admin-options .btn:hover::before {
+                left: 100%;
+            }
+            
+            .admin-options .btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            }
+            
+            /* Responsive design */
+            @media (max-width: 768px) {
+                .signup-title {
+                    font-size: 2.5rem;
+                }
+                
+                .contact-form {
+                    padding: 30px 20px;
+                }
+                
+                .admin-options {
+                    flex-direction: column;
+                    gap: 15px;
+                }
+                
+                .admin-options .btn {
+                    width: 100%;
+                }
+            }
 
             .sb-section {
                 position: relative;
@@ -502,46 +867,136 @@
           }
         }
         </style>
-        <style>
-@media (max-width: 768px) {
-  .contact-form-body .form-check,
-  .contact-form-body .form-check-inline {
-    display: flex !important;
-    align-items: center !important;
-    margin-bottom: 16px !important;
-    margin-right: 0 !important;
-    width: 100%;
-    cursor: pointer;
-    position: relative;
-    padding-left: 0 !important;
-    min-height: 36px;
-  }
-  .form-check-input[type="radio"] {
-    margin-right: 10px;
-    margin-left: 0 !important;
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    min-height: 28px;
-    display: inline-block;
-    vertical-align: middle;
-  }
-  .form-check-label {
-    font-size: 1.12em;
-    flex: 1;
-    cursor: pointer;
-    user-select: none;
-    margin-bottom: 0;
-    display: flex;
-    align-items: center;
-    height: 28px;
-  }
-  /* Target the label for 'Current Member' radio */
-  label[for="status-current"] {
-    margin-left: 16px;
-  }
-}
-</style>
+                <style>
+        /* Admin Check Styles */
+        .admin-check-container {
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .admin-check-icon {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .admin-check-title {
+            color: #333;
+            font-weight: 700;
+            font-size: 2rem;
+        }
+        
+        .admin-check-description {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .admin-options {
+            margin-top: 30px;
+        }
+        
+        .admin-options .btn {
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            min-width: 180px;
+        }
+        
+        .admin-options .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            border: none;
+        }
+        
+        /* Notification Styles */
+        .custom-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .custom-notification.show {
+            transform: translateX(0);
+        }
+        
+        .custom-notification.warning {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+        }
+        
+        .custom-notification.success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        
+        @media (max-width: 768px) {
+          .contact-form-body .form-check,
+          .contact-form-body .form-check-inline {
+            display: flex !important;
+            align-items: center !important;
+            margin-bottom: 16px !important;
+            margin-right: 0 !important;
+            width: 100%;
+            cursor: pointer;
+            position: relative;
+            padding-left: 0 !important;
+            min-height: 36px;
+          }
+          .form-check-input[type="radio"] {
+            margin-right: 10px;
+            margin-left: 0 !important;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            min-height: 28px;
+            display: inline-block;
+            vertical-align: middle;
+          }
+          .form-check-label {
+            font-size: 1.12em;
+            flex: 1;
+            cursor: pointer;
+            user-select: none;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            height: 28px;
+          }
+          /* Target the label for 'Current Member' radio */
+          label[for="status-current"] {
+            margin-left: 16px;
+          }
+          
+          .admin-options .btn {
+            min-width: 150px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+          }
+        }
+        </style>
         <!--
 
 TemplateMo 583 BUCuC
@@ -1802,13 +2257,13 @@ https://templatemo.com/tm-583-festava-live
                     <div class="row">
 
                         <div class="col-lg-8 col-12 mx-auto">
-                            <h2 class="text-center mb-4">Sign Up</h2>
+                            <h2 class="text-center mb-4 signup-title">Sign Up</h2>
 
                             <nav class="d-flex justify-content-center">
                                 <div
                                     class="nav nav-tabs align-items-baseline justify-content-center"
                                     id="nav-tab" role="tablist">
-                                    <button class="nav-link active"
+                                    <button class="nav-link active signup-tab"
                                         id="nav-ContactForm-tab"
                                         data-bs-toggle="tab"
                                         data-bs-target="#nav-ContactForm"
@@ -1817,7 +2272,7 @@ https://templatemo.com/tm-583-festava-live
                                         aria-selected="true">
                                         <h5>Sign Up Form</h5>
                                     </button>
-                                    <button class="nav-link"
+                                    <button class="nav-link login-tab"
                                         id="nav-LoginForm-tab"
                                         data-bs-toggle="tab"
                                         data-bs-target="#nav-LoginForm"
@@ -1826,7 +2281,7 @@ https://templatemo.com/tm-583-festava-live
                                         aria-selected="false">
                                         <h5>Login</h5>
                                     </button>
-                                    <button class="nav-link"
+                                    <button class="nav-link maps-tab"
                                         id="nav-ContactMap-tab"
                                         data-bs-toggle="tab"
                                         data-bs-target="#nav-ContactMap"
@@ -1838,8 +2293,11 @@ https://templatemo.com/tm-583-festava-live
                                 </div>
                             </nav>
 
-                            <div class="tab-content shadow-lg mt-5"
+                            <div class="tab-content shadow-lg mt-5 signup-container"
                                 id="nav-tabContent">
+                                <!-- Floating particles for signup section -->
+                                <div class="signup-particles" id="signupParticles"></div>
+                                
                                 <div class="tab-pane fade show active"
                                     id="nav-ContactForm" role="tabpanel"
                                     aria-labelledby="nav-ContactForm-tab">
@@ -2065,39 +2523,22 @@ https://templatemo.com/tm-583-festava-live
                                 <div class="tab-pane fade" id="nav-LoginForm"
                                     role="tabpanel"
                                     aria-labelledby="nav-LoginForm-tab">
-                                    <form id="login-form"
-                                        class="custom-form contact-form mb-5 mb-lg-0"
-                                        action="#" method="post" role="form">
-                                        <div class="contact-form-body">
-                                            <div class="row">
-                                                <div
-                                                    class="col-lg-12 col-12 mb-3">
-                                                    <input type="email"
-                                                        name="login-email"
-                                                        id="login-email"
-                                                        class="form-control"
-                                                        placeholder="Email Address"
-                                                        required>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div
-                                                    class="col-lg-12 col-12 mb-3">
-                                                    <input type="password"
-                                                        name="login-password"
-                                                        id="login-password"
-                                                        class="form-control"
-                                                        placeholder="Password"
-                                                        required>
-                                                </div>
-                                            </div>
-                                            <div
-                                                class="col-lg-4 col-md-10 col-8 mx-auto">
-                                                <button type="submit"
-                                                    class="form-control">Login</button>
-                                            </div>
+                                    <div class="admin-check-container text-center">
+                                        <div class="admin-check-icon mb-4">
+                                            <i class="fas fa-user-shield" style="font-size: 3.5rem; color: white;"></i>
                                         </div>
-                                    </form>
+                                        <h3 class="admin-check-title mb-4">Admin Access</h3>
+                                        <p class="admin-check-description mb-4">Are you an administrator of the Cultural Club?</p>
+                                        
+                                        <div class="admin-options">
+                                            <button type="button" class="btn btn-success btn-lg me-3" onclick="checkAdminStatus(true)">
+                                                <i class="fas fa-check me-2"></i>Yes, I am an Admin
+                                            </button>
+                                            <button type="button" class="btn btn-secondary btn-lg" onclick="checkAdminStatus(false)">
+                                                <i class="fas fa-times me-2"></i>No, I'm not
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="tab-pane fade" id="nav-ContactMap"
@@ -2397,6 +2838,42 @@ https://templatemo.com/tm-583-festava-live
         </script>
 
         <script>
+        // Admin Check Function
+        function checkAdminStatus(isAdmin) {
+            if (isAdmin) {
+                // Redirect to admin login page
+                window.location.href = 'admin-login.html';
+            } else {
+                // Show notification and redirect to header
+                showCustomNotification('Sorry, you are not an admin', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'index.html#section_1';
+                }, 2000);
+            }
+        }
+        
+        // Custom notification function
+        function showCustomNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `custom-notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Hide and remove notification
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+        
         function showInlineMessage(message, type = 'info') {
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
@@ -2601,6 +3078,154 @@ https://templatemo.com/tm-583-festava-live
             padding: 10px 2px 6px 2px;
           }
         }
-        </style>
-    </body>
-</html>
+                </style>
+        
+        <script>
+        // Enhanced Signup Form Interactions and Floating Particles
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create floating particles for signup section
+            function createSignupParticles() {
+                const particlesContainer = document.getElementById('signupParticles');
+                if (!particlesContainer) return;
+                
+                const particleCount = 25;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'signup-particle';
+                    
+                    // Random size between 3px and 8px
+                    const size = Math.random() * 5 + 3;
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 8 + 's';
+                    particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                    
+                    particlesContainer.appendChild(particle);
+                }
+            }
+            
+            // Enhanced form field interactions
+            function enhanceFormFields() {
+                const formFields = document.querySelectorAll('.form-control');
+                
+                formFields.forEach(field => {
+                    // Add focus effects
+                    field.addEventListener('focus', function() {
+                        this.parentElement.style.transform = 'translateY(-2px)';
+                        this.parentElement.style.boxShadow = '0 5px 20px rgba(231, 111, 44, 0.2)';
+                    });
+                    
+                    field.addEventListener('blur', function() {
+                        this.parentElement.style.transform = 'translateY(0)';
+                        this.parentElement.style.boxShadow = 'none';
+                    });
+                    
+                    // Add typing animation
+                    field.addEventListener('input', function() {
+                        if (this.value.length > 0) {
+                            this.style.borderColor = '#e76f2c';
+                        } else {
+                            this.style.borderColor = 'rgba(231, 111, 44, 0.1)';
+                        }
+                    });
+                });
+            }
+            
+            // Enhanced tab switching with animations
+            function enhanceTabSwitching() {
+                const tabs = document.querySelectorAll('.nav-link');
+                
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        // Add click animation
+                        this.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1)';
+                        }, 150);
+                    });
+                });
+            }
+            
+            // Enhanced submit button
+            function enhanceSubmitButton() {
+                const submitBtn = document.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.addEventListener('click', function(e) {
+                        // Add loading state
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing Up...';
+                        this.disabled = true;
+                        
+                        // Simulate loading (remove this in production)
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.disabled = false;
+                        }, 2000);
+                    });
+                }
+            }
+            
+            // Enhanced radio button interactions
+            function enhanceRadioButtons() {
+                const radioButtons = document.querySelectorAll('.form-check-input[type="radio"]');
+                
+                radioButtons.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        // Add selection animation
+                        this.parentElement.style.transform = 'scale(1.05)';
+                        setTimeout(() => {
+                            this.parentElement.style.transform = 'scale(1)';
+                        }, 200);
+                    });
+                });
+            }
+            
+            // Enhanced checkbox interactions
+            function enhanceCheckbox() {
+                const checkbox = document.querySelector('#signup-terms');
+                if (checkbox) {
+                    checkbox.addEventListener('change', function() {
+                        if (this.checked) {
+                            this.parentElement.style.color = '#e76f2c';
+                            this.parentElement.style.fontWeight = '600';
+                        } else {
+                            this.parentElement.style.color = '#333';
+                            this.parentElement.style.fontWeight = '400';
+                        }
+                    });
+                }
+            }
+            
+            // Initialize all enhancements
+            createSignupParticles();
+            enhanceFormFields();
+            enhanceTabSwitching();
+            enhanceSubmitButton();
+            enhanceRadioButtons();
+            enhanceCheckbox();
+            
+            // Add scroll animation for signup section
+            const signupSection = document.querySelector('.contact-section');
+            if (signupSection) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                });
+                
+                signupSection.style.opacity = '0';
+                signupSection.style.transform = 'translateY(30px)';
+                signupSection.style.transition = 'all 0.8s ease';
+                
+                observer.observe(signupSection);
+            }
+        });
+        </script>
+        </body>
+        </html>
