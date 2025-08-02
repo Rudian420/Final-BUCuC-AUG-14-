@@ -1,7 +1,6 @@
 <?php
-require_once 'config.php';
-
-class DatabaseP {
+require 'config.php';
+class Database {
     private $host;
     private $dbname;
     private $user;
@@ -12,7 +11,7 @@ class DatabaseP {
         $this->host = DB_HOST;
         $this->dbname = DB_NAME;
         $this->user = DB_USER;
-        $this->pass = DB_PASS;
+        $this->pass = "";
 
         $dsn = "mysql:host={$this->host};dbname={$this->dbname};charset=utf8mb4";
 
