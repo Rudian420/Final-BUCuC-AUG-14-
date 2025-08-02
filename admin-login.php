@@ -31,8 +31,6 @@
           $success = "Login successful! Redirecting to dashboard...";
           $_SESSION['username'] = $admin[0]['username'];
           $_SESSION['admin'] = true;
-          $_SESSION['admin_id'] = $admin[0]['id'];
-          $_SESSION['admin_role'] = $admin[0]['role'];
           header("refresh:1;url=admin_dashboard.php");
 
         }else{

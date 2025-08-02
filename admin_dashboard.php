@@ -66,10 +66,6 @@ if (!isset($_SESSION["admin"])) {
                     <i class="fas fa-music"></i>
                     Performances
                 </a>
-                <a href="#" class="nav-item" data-section="admin-management">
-                    <i class="fas fa-user-shield"></i>
-                    Admin Management
-                </a>
                 <a href="#" class="nav-item" data-section="analytics">
                     <i class="fas fa-chart-line"></i>
                     Analytics
@@ -202,76 +198,6 @@ if (!isset($_SESSION["admin"])) {
             </div>
         </div>
         
-        <!-- Admin Management Section -->
-        <div class="admin-management-section" id="admin-management-section" style="display: none;">
-            <div class="chart-header">
-                <h3 class="chart-title">Admin Management</h3>
-                <button class="btn btn-primary" id="addAdminBtn">
-                    <i class="fas fa-plus"></i> Add New Admin
-                </button>
-            </div>
-            
-            <div class="admin-list">
-                <div class="table-responsive">
-                    <table class="table table-dark table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Created</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminTableBody">
-                            <!-- Admin data will be loaded here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add Admin Modal -->
-        <div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content bg-dark text-light">
-                    <div class="modal-header border-secondary">
-                        <h5 class="modal-title" id="addAdminModalLabel">Add New Admin</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form id="addAdminForm">
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="newAdminUsername" class="form-label">Username</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="newAdminUsername" name="username" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="newAdminEmail" class="form-label">Email</label>
-                                <input type="email" class="form-control bg-dark text-light border-secondary" id="newAdminEmail" name="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="newAdminPassword" class="form-label">Password</label>
-                                <input type="password" class="form-control bg-dark text-light border-secondary" id="newAdminPassword" name="password" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="newAdminRole" class="form-label">Role</label>
-                                <select class="form-select bg-dark text-light border-secondary" id="newAdminRole" name="role">
-                                    <option value="admin">Admin</option>
-                                    <option value="super_admin">Super Admin</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="modal-footer border-secondary">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Add Admin</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
         <!-- Recent Activities -->
         <div class="activities-section">
             <div class="chart-header">
@@ -528,28 +454,11 @@ if (!isset($_SESSION["admin"])) {
         // Navigation items
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function(e) {
-                e.preventDefault();
                 document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                 this.classList.add('active');
                 
                 const section = this.dataset.section;
-                
-                // Hide all sections
-                document.querySelectorAll('.stats-grid, .charts-section, .activities-section, .admin-management-section').forEach(el => {
-                    el.style.display = 'none';
-                });
-                
-                // Show selected section
-                if (section === 'overview') {
-                    document.querySelector('.stats-grid').style.display = 'grid';
-                    document.querySelector('.charts-section').style.display = 'grid';
-                    document.querySelector('.activities-section').style.display = 'block';
-                } else if (section === 'admin-management') {
-                    document.getElementById('admin-management-section').style.display = 'block';
-                    loadAdminList();
-                } else {
-                    showNotification(`Navigating to ${section} section...`, 'success');
-                }
+                showNotification(`Navigating to ${section} section...`, 'success');
             });
         });
         
@@ -582,113 +491,6 @@ if (!isset($_SESSION["admin"])) {
             showNotification('Opening user profile...', 'success');
         });
         
-        // Admin Management Functions
-        function loadAdminList() {
-            fetch('admin_actions.php?action=get_admins')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        displayAdminList(data.admins);
-                    } else {
-                        showNotification('Failed to load admin list', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showNotification('Error loading admin list', 'error');
-                });
-        }
-
-        function displayAdminList(admins) {
-            const tbody = document.getElementById('adminTableBody');
-            tbody.innerHTML = '';
-            
-            admins.forEach(admin => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${admin.id}</td>
-                    <td>${admin.username}</td>
-                    <td>${admin.email}</td>
-                    <td><span class="badge bg-${admin.role === 'super_admin' ? 'danger' : 'primary'}">${admin.role}</span></td>
-                    <td><span class="badge bg-${admin.status === 'active' ? 'success' : 'secondary'}">${admin.status}</span></td>
-                    <td>${new Date(admin.created_at).toLocaleDateString()}</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning me-1" onclick="editAdmin(${admin.id})" ${admin.id == 1 ? 'disabled' : ''}>
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteAdmin(${admin.id})" ${admin.id == 1 ? 'disabled' : ''}>
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function deleteAdmin(adminId) {
-            if (confirm('Are you sure you want to delete this admin? This action cannot be undone.')) {
-                fetch('admin_actions.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `action=delete_admin&admin_id=${adminId}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showNotification('Admin deleted successfully', 'success');
-                        loadAdminList();
-                    } else {
-                        showNotification(data.message || 'Failed to delete admin', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showNotification('Error deleting admin', 'error');
-                });
-            }
-        }
-
-        function editAdmin(adminId) {
-            // For now, just show a notification. You can implement edit functionality later
-            showNotification('Edit functionality will be implemented soon', 'info');
-        }
-
-        // Add Admin Modal Event Listeners
-        document.getElementById('addAdminBtn').addEventListener('click', function() {
-            const modal = new bootstrap.Modal(document.getElementById('addAdminModal'));
-            modal.show();
-        });
-
-        document.getElementById('addAdminForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            formData.append('action', 'add_admin');
-            
-            fetch('admin_actions.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification('Admin added successfully', 'success');
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('addAdminModal'));
-                    modal.hide();
-                    this.reset();
-                    loadAdminList();
-                } else {
-                    showNotification(data.message || 'Failed to add admin', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Error adding admin', 'error');
-            });
-        });
-
         // Initialize everything when page loads
         document.addEventListener('DOMContentLoaded', function() {
             initCharts();
