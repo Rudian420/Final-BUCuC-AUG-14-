@@ -1,12 +1,12 @@
 <?php 
 session_start();
 
-if(!$_SESSION["admin"]){
-    header("admin-login.php");
+if (!isset($_SESSION["admin"])) {
+    header("Location: admin-login.php");
     exit(); 
-
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,7 +82,7 @@ if(!$_SESSION["admin"]){
                     <i class="fas fa-user-cog"></i>
                     Profile
                 </a>
-                <a href="#" class="nav-item" id="logoutBtn">
+                <a href="logout.php" class="nav-item" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
                     Logout
                 </a>
@@ -454,15 +454,6 @@ if(!$_SESSION["admin"]){
         // Navigation items
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function(e) {
-                if (this.id === 'logoutBtn') {
-                    e.preventDefault();
-                    showNotification('Logging out...', 'success');
-                    setTimeout(() => {
-                        window.location.href = 'admin-login.php';
-                    }, 1500);
-                    return;
-                }
-                
                 document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                 this.classList.add('active');
                 
