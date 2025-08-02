@@ -6,7 +6,12 @@
 
     $conn = $database->createConnection();
 
+    
+    $success = "";
+    $error = "";
+
     if($_SERVER["REQUEST_METHOD"]=="POST"){
+
         
         $adminEmail = htmlspecialchars($_POST["adminEmail"]);
 
@@ -21,6 +26,16 @@
         $stmt->execute();
 
         $admin = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if($admin && $admin['password']===$adminPassword){
+          $success = "Login successful! Redirecting to dashboard...";
+          $_SESSION['username'] = $admin['username'];
+          $_SESSION['admin'] = true;
+          header("refresh:1;url=admin-dashboard.html");
+
+        }else{
+            $error = "Invalid admin credentials. Contact: bucuc@support.ac.bd";
+        }
 
 
 
@@ -63,15 +78,19 @@
         </p>
       </div>
 
-      <div class="error-message" id="errorMessage" style="display: none">
+    <?php if (!empty($error)): ?>
+      <div class="error-message" id="errorMessage">
         <i class="fas fa-exclamation-triangle me-2"></i>
-        <span id="errorText">Invalid credentials</span>
+        <span id="errorText"><?= htmlspecialchars($error) ?></span>
       </div>
+    <?php endif; ?>
 
-      <div class="success-message" id="successMessage" style="display: none">
+    <?php if (!empty($success)): ?>
+      <div class="success-message" id="successMessage">
         <i class="fas fa-check-circle me-2"></i>
-        <span id="successText">Login successful!</span>
+        <span id="successText"><?= htmlspecialchars($success) ?></span>
       </div>
+    <?php endif; ?>
 
       <form action="" method="POST" id="adminLoginForm">
         <div class="form-group">
@@ -131,37 +150,6 @@
         }
       }
 
-      // Form handling
-      document
-        .getElementById("adminLoginForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-
-          const email = document.getElementById("adminEmail").value;
-          const password = document.getElementById("adminPassword").value;
-
-          // Hide any existing messages
-          document.getElementById("errorMessage").style.display = "none";
-          document.getElementById("successMessage").style.display = "none";
-
-          // Simple admin validation
-          if (email === "admin@bucuc.com" && password === "admin123") {
-            // Show success message
-            document.getElementById("successMessage").style.display = "block";
-            document.getElementById("successText").textContent =
-              "Login successful! Redirecting to dashboard...";
-
-            // Redirect to admin dashboard after 2 seconds
-            setTimeout(() => {
-              window.open("admin-dashboard.html", "_blank");
-            }, 1000);
-          } else {
-            // Show error message
-            document.getElementById("errorMessage").style.display = "block";
-            document.getElementById("errorText").textContent =
-              "Invalid admin credentials. Please try again.";
-          }
-        });
 
       // Add interactive effects
       document.querySelectorAll(".form-control").forEach((input) => {
