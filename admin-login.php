@@ -31,7 +31,7 @@
           $success = "Login successful! Redirecting to dashboard...";
           $_SESSION['username'] = $admin[0]['username'];
           $_SESSION['admin'] = true;
-          header("refresh:1;url=admin-dashboard.php");
+          header("refresh:1;url=admin_dashboard.php");
 
         }else{
             $error = "Invalid admin credentials. Contact: bucuc@support.ac.bd";
