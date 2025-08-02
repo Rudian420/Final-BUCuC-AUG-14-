@@ -1,5 +1,10 @@
 <?php 
 session_start();
+
+if(!$_SESSION["admin"]){
+    header("admin-login.php");
+
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
