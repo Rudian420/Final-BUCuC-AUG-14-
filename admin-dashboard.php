@@ -3,6 +3,7 @@ session_start();
 
 if(!$_SESSION["admin"]){
     header("admin-login.php");
+    exit(); 
 
 }
 ?>
