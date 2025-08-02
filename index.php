@@ -1055,7 +1055,7 @@ https://templatemo.com/tm-583-festava-live
                         <div
                             class="col-lg-3 col-12 d-flex flex-wrap align-items-center">
                             <a class="navbar-brand d-flex align-items-center"
-                                href="index.html"
+                                href="index.php"
                                 style="color: #222; font-weight: bold; font-size: 1.5em;">
                                 <img src="images/logopng.png" alt="Club Logo"
                                     class="me-2" style="height: 1.2em;">
@@ -1108,7 +1108,7 @@ https://templatemo.com/tm-583-festava-live
             <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
                 <div class="container">
                     <a class="navbar-brand d-flex align-items-center"
-                        href="index.html">
+                        href="index.php">
                         <img src="images/logo.png" alt="Club Logo" class="me-2"
                             style="height: 1.5em;">
                         BUCuC
@@ -2847,7 +2847,7 @@ https://templatemo.com/tm-583-festava-live
                 // Show notification and redirect to header
                 showCustomNotification('Sorry, you are not an admin', 'warning');
                 setTimeout(() => {
-                    window.location.href = 'index.html#section_1';
+                    window.location.href = 'index.php#section_1';
                 }, 2000);
             }
         }
