@@ -27,11 +27,11 @@
 
         $admin = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        if($admin && $admin['password']===$adminPassword){
+        if($admin && $admin[0]['password']===$adminPassword){
           $success = "Login successful! Redirecting to dashboard...";
-          $_SESSION['username'] = $admin['username'];
+          $_SESSION['username'] = $admin[0]['username'];
           $_SESSION['admin'] = true;
-          header("refresh:1;url=admin-dashboard.html");
+          header("refresh:1;url=admin-dashboard.php");
 
         }else{
             $error = "Invalid admin credentials. Contact: bucuc@support.ac.bd";
@@ -79,14 +79,14 @@
       </div>
 
     <?php if (!empty($error)): ?>
-      <div class="error-message" id="errorMessage">
+      <div class="error-message" id="errorMessage" style="display: block;">
         <i class="fas fa-exclamation-triangle me-2"></i>
         <span id="errorText"><?= htmlspecialchars($error) ?></span>
       </div>
     <?php endif; ?>
 
     <?php if (!empty($success)): ?>
-      <div class="success-message" id="successMessage">
+      <div class="success-message" id="successMessage" style="display: block;">
         <i class="fas fa-check-circle me-2"></i>
         <span id="successText"><?= htmlspecialchars($success) ?></span>
       </div>
@@ -124,7 +124,7 @@
       </form>
 
       <div class="back-link">
-        <a href="index.html">
+        <a href="index.php">
           <i class="fas fa-arrow-left"></i>
           Back to Main Site
         </a>
@@ -168,4 +168,4 @@
       });
     </script>
   </body>
-</html>
+</html> -->
