@@ -82,6 +82,12 @@ if (!isset($_SESSION["admin"])) {
                     <i class="fas fa-user-cog"></i>
                     Profile
                 </a>
+                <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
+                <a href="#" class="nav-item" data-section="admin-management">
+                    <i class="fas fa-users-cog"></i>
+                    Admin Management
+                </a>
+                <?php endif; ?>
                 <a href="logout.php" class="nav-item" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
                     Logout
@@ -196,6 +202,15 @@ if (!isset($_SESSION["admin"])) {
                      <canvas id="eventCategoriesChart"></canvas>
                  </div>
             </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Gender Distribution by Event Category</h3>
+                </div>
+                <div style="position: relative; height: 420px; width: 100%;">
+                    <canvas id="genderDistributionChart"></canvas>
+                </div>
+            </div>
         </div>
         
         <!-- Recent Activities -->
@@ -248,7 +263,159 @@ if (!isset($_SESSION["admin"])) {
                 <div class="activity-time">1 day ago</div>
             </div>
         </div>
+
+        <!-- Admin Management Section (Only visible to Main Admin) -->
+        <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
+        <div class="admin-management-section" id="admin-management-section" style="display: none;">
+            <div class="chart-header">
+                <h3 class="chart-title">Admin Account Management</h3>
+                <button class="btn btn-primary" id="addAdminBtn">
+                    <i class="fas fa-plus"></i> Add New Admin
+                </button>
+            </div>
+            
+            <div class="admin-list-container">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover" id="adminTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody">
+                            <!-- Admin data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
     </div>
+    
+    <!-- Admin Management Modals -->
+    <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
+    <!-- Add Admin Modal -->
+    <div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="addAdminModalLabel">
+                        <i class="fas fa-user-plus me-2"></i>Add New Admin
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addAdminForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="newAdminName" class="form-label">Admin Name</label>
+                            <input type="text" class="form-control bg-dark text-light border-secondary" id="newAdminName" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newAdminEmail" class="form-label">Gmail Address</label>
+                            <input type="email" class="form-control bg-dark text-light border-secondary" id="newAdminEmail" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newAdminPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control bg-dark text-light border-secondary" id="newAdminPassword" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newAdminRole" class="form-label">Role</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="newAdminRole" name="role" required>
+                                <option value="admin">Admin</option>
+                                <option value="main_admin">Main Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-secondary">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Create Admin
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Admin Modal -->
+    <div class="modal fade" id="editAdminModal" tabindex="-1" aria-labelledby="editAdminModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="editAdminModalLabel">
+                        <i class="fas fa-user-edit me-2"></i>Edit Admin Password
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editAdminForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="editAdminId" name="admin_id">
+                        <div class="mb-3">
+                            <label class="form-label">Admin Name</label>
+                            <input type="text" class="form-control bg-dark text-light border-secondary" id="editAdminName" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control bg-dark text-light border-secondary" id="editAdminEmail" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editAdminPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control bg-dark text-light border-secondary" id="editAdminPassword" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control bg-dark text-light border-secondary" id="confirmPassword" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-secondary">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-key me-2"></i>Update Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Admin Modal -->
+    <div class="modal fade" id="deleteAdminModal" tabindex="-1" aria-labelledby="deleteAdminModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-danger">
+                    <h5 class="modal-title" id="deleteAdminModalLabel">
+                        <i class="fas fa-user-times me-2"></i>Delete Admin
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="deleteAdminId" name="admin_id">
+                    <p>Are you sure you want to delete the admin account for:</p>
+                    <div class="alert alert-danger">
+                        <strong id="deleteAdminName"></strong><br>
+                        <small id="deleteAdminEmail"></small>
+                    </div>
+                    <p class="text-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        This action cannot be undone!
+                    </p>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash me-2"></i>Delete Admin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
     
     <!-- Notification -->
     <div class="notification" id="notification"></div>
@@ -400,6 +567,95 @@ if (!isset($_SESSION["admin"])) {
             });
         }
         
+        // Initialize Gender Distribution Chart
+        function initGenderDistributionChart() {
+            const genderCtx = document.getElementById('genderDistributionChart').getContext('2d');
+            
+            // Fetch data from API
+            fetch('Action/gender_distribution_api.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        createGenderChart(genderCtx, data.data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading gender distribution data:', error);
+                    // Fallback data
+                    createGenderChart(genderCtx, [
+                        {gender: 'Male', count: 2, color: '#36A2EB'},
+                        {gender: 'Female', count: 3, color: '#FF6384'},
+                        {gender: 'Other', count: 1, color: '#9966FF'}
+                    ]);
+                });
+        }
+        
+        // Create Gender Distribution Chart
+        function createGenderChart(ctx, data) {
+            const labels = data.map(item => item.gender);
+            const counts = data.map(item => item.count);
+            const colors = data.map(item => item.color);
+            
+            if (window.genderChart) {
+                window.genderChart.destroy();
+            }
+            
+            window.genderChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: counts,
+                        backgroundColor: colors,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 10,
+                            bottom: 20,
+                            left: 10,
+                            right: 10
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#ccc',
+                                padding: 20,
+                                usePointStyle: true,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: '#51cf66',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const gender = context.label;
+                                    const count = context.parsed;
+                                    const genderIcon = gender === 'Male' ? '♂' : gender === 'Female' ? '♀' : '⚧';
+                                    return `${gender}: ${count} ${genderIcon}`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        }
+        
         // Show notification
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
@@ -419,11 +675,15 @@ if (!isset($_SESSION["admin"])) {
         // Chart Controls
         document.querySelectorAll('.chart-controls button').forEach(button => {
             button.addEventListener('click', function() {
-                document.querySelectorAll('.chart-controls button').forEach(btn => btn.classList.remove('active'));
+                const parent = this.closest('.chart-controls');
+                parent.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
                 
                 const period = this.dataset.period;
-                updateMemberChart(period);
+                
+                if (period) {
+                    updateMemberChart(period);
+                }
             });
         });
         
@@ -450,17 +710,38 @@ if (!isset($_SESSION["admin"])) {
              memberChart.data.datasets[0].data = data;
              memberChart.update();
          }
+         
+
         
         // Navigation items
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function(e) {
+                if (this.getAttribute('href') === 'logout.php') return;
+                
+                e.preventDefault();
                 document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                 this.classList.add('active');
                 
                 const section = this.dataset.section;
+                showSection(section);
                 showNotification(`Navigating to ${section} section...`, 'success');
             });
         });
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.main-content > div').forEach(div => {
+                if (div.id && div.id.includes('section')) {
+                    div.style.display = 'none';
+                }
+            });
+            
+            // Show the selected section
+            const targetSection = document.getElementById(sectionName + '-section');
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+        }
         
         // Stats cards
         document.querySelectorAll('.stat-card').forEach(card => {
@@ -494,8 +775,208 @@ if (!isset($_SESSION["admin"])) {
         // Initialize everything when page loads
         document.addEventListener('DOMContentLoaded', function() {
             initCharts();
+            initGenderDistributionChart();
             showNotification('Dashboard loaded successfully!', 'success');
+            
+            // Initialize admin management if user is main admin
+            <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
+            initAdminManagement();
+            <?php endif; ?>
         });
+
+        // Admin Management Functions
+        <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
+        function initAdminManagement() {
+            // Load admin list when admin management section is shown
+            document.querySelector('[data-section="admin-management"]').addEventListener('click', function() {
+                loadAdminList();
+            });
+            
+            // Add admin button
+            document.getElementById('addAdminBtn').addEventListener('click', function() {
+                const modal = new bootstrap.Modal(document.getElementById('addAdminModal'));
+                modal.show();
+            });
+            
+            // Add admin form submission
+            document.getElementById('addAdminForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                createAdmin();
+            });
+            
+            // Edit admin form submission
+            document.getElementById('editAdminForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                updateAdminPassword();
+            });
+            
+            // Confirm delete button
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                deleteAdmin();
+            });
+        }
+
+        function loadAdminList() {
+            fetch('Action/admin_management.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=get_admins'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayAdminList(data.data);
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to load admin list', 'error');
+            });
+        }
+
+        function displayAdminList(admins) {
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+            
+            admins.forEach(admin => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${admin.id}</td>
+                    <td>${admin.username}</td>
+                    <td>${admin.email}</td>
+                    <td>
+                        <span class="badge ${admin.role === 'main_admin' ? 'bg-danger' : 'bg-primary'}">
+                            ${admin.role === 'main_admin' ? 'Main Admin' : 'Admin'}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge ${admin.status === 'active' ? 'bg-success' : 'bg-secondary'}">
+                            ${admin.status}
+                        </span>
+                    </td>
+                    <td>${new Date(admin.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning me-1" onclick="editAdmin(${admin.id}, '${admin.username}', '${admin.email}')">
+                            <i class="fas fa-key"></i>
+                        </button>
+                        ${admin.id != <?php echo $_SESSION['admin_id']; ?> ? 
+                            `<button class="btn btn-sm btn-danger" onclick="deleteAdminPrompt(${admin.id}, '${admin.username}', '${admin.email}')">
+                                <i class="fas fa-trash"></i>
+                            </button>` : 
+                            '<span class="text-muted">Current User</span>'
+                        }
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function createAdmin() {
+            const formData = new FormData(document.getElementById('addAdminForm'));
+            formData.append('action', 'create_admin');
+            
+            fetch('Action/admin_management.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    document.getElementById('addAdminForm').reset();
+                    bootstrap.Modal.getInstance(document.getElementById('addAdminModal')).hide();
+                    loadAdminList();
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to create admin', 'error');
+            });
+        }
+
+        function editAdmin(adminId, username, email) {
+            document.getElementById('editAdminId').value = adminId;
+            document.getElementById('editAdminName').value = username;
+            document.getElementById('editAdminEmail').value = email;
+            document.getElementById('editAdminPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            
+            const modal = new bootstrap.Modal(document.getElementById('editAdminModal'));
+            modal.show();
+        }
+
+        function updateAdminPassword() {
+            const password = document.getElementById('editAdminPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+            
+            const formData = new FormData(document.getElementById('editAdminForm'));
+            formData.append('action', 'update_password');
+            
+            fetch('Action/admin_management.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('editAdminModal')).hide();
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to update password', 'error');
+            });
+        }
+
+        function deleteAdminPrompt(adminId, username, email) {
+            document.getElementById('deleteAdminId').value = adminId;
+            document.getElementById('deleteAdminName').textContent = username;
+            document.getElementById('deleteAdminEmail').textContent = email;
+            
+            const modal = new bootstrap.Modal(document.getElementById('deleteAdminModal'));
+            modal.show();
+        }
+
+        function deleteAdmin() {
+            const adminId = document.getElementById('deleteAdminId').value;
+            const formData = new FormData();
+            formData.append('action', 'delete_admin');
+            formData.append('admin_id', adminId);
+            
+            fetch('Action/admin_management.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('deleteAdminModal')).hide();
+                    loadAdminList();
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to delete admin', 'error');
+            });
+        }
+        <?php endif; ?>
     </script>
 </body>
 </html> 

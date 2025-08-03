@@ -2604,6 +2604,22 @@ https://templatemo.com/tm-583-festava-live
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="row mt-3">
+                                                <div class="col-12 mb-3">
+                                                    <label class="form-label">Event Category:</label>
+                                                    <select name="signup-event-category"
+                                                        id="signup-event-category"
+                                                        class="form-control"
+                                                        required>
+                                                        <option value="">Select Event Category</option>
+                                                        <option value="Music">🎵 Music</option>
+                                                        <option value="Dance">💃 Dance</option>
+                                                        <option value="Drama">🎭 Drama</option>
+                                                        <option value="Art">🎨 Art</option>
+                                                        <option value="Poetry">📝 Poetry</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <textarea name="signup-motivation"
                                                 rows="3"
                                                 class="form-control mt-3"
@@ -2936,19 +2952,48 @@ https://templatemo.com/tm-583-festava-live
 
             function handleSubmit(e) {
                 e.preventDefault();
-                const scriptUrl = "https://script.google.com/macros/s/AKfycbx62BkoxxYV0gOEvDPJhM8_fmeOUuC2mM8HGHLVTXlDMtvb6H9U01LOitln06T3D5Zj/exec"
-
-            const formData = document.forms["signupForm"];
-
-            fetch(scriptUrl,{
-                method: "POST",
-                body: new FormData(formData)
-            }).then((res)=> {
-                alert("Your form has been submitted successfully!");
-                console.log(res);
-        }).then(()=>{window.location.reload()}).catch((err)=>{
-            console.log(err);
-        })
+                
+                // Get form data
+                const formData = new FormData(document.forms["signupForm"]);
+                
+                // Validate password length
+                const password = formData.get('signup-password');
+                if (password.length < 6) {
+                    showCustomNotification('Password must be at least 6 characters long', 'error');
+                    return;
+                }
+                
+                // Validate email format
+                const email = formData.get('signup-main-email');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showCustomNotification('Please enter a valid email address', 'error');
+                    return;
+                }
+                
+                // Submit to our PHP handler
+                fetch('Action/signup_handler.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showCustomNotification(data.message, 'success');
+                        // Reset form
+                        document.forms["signupForm"].reset();
+                        // Redirect to login after 2 seconds
+                        setTimeout(() => {
+                            window.location.href = 'login.php';
+                        }, 2000);
+                    } else {
+                        showCustomNotification(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showCustomNotification('Registration failed. Please try again.', 'error');
+                });
             }
             
         </script>

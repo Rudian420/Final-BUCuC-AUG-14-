@@ -320,9 +320,10 @@ body {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ccc;
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 0.8rem;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
   transition: all 0.3s ease;
   cursor: pointer;
 }
@@ -494,4 +495,214 @@ body {
   margin: -20px -20px 15px -20px;
   padding: 20px;
   border-radius: 20px 20px 0 0;
+}
+
+/* Admin Management Section */
+.admin-management-section {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 40px;
+}
+
+.admin-management-section .chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.admin-management-section .btn-primary {
+  background: var(--primary-orange);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.admin-management-section .btn-primary:hover {
+  background: var(--primary-yellow);
+  color: var(--dark-blue);
+  transform: translateY(-2px);
+}
+
+.admin-list-container {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table-dark {
+  background: transparent;
+  color: #fff;
+}
+
+.table-dark th {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--primary-yellow);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.table-dark td {
+  border-color: rgba(255, 255, 255, 0.1);
+  vertical-align: middle;
+}
+
+.table-dark tbody tr {
+  transition: all 0.3s ease;
+}
+
+.table-dark tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: scale(1.01);
+}
+
+.badge {
+  font-size: 0.8rem;
+  padding: 5px 10px;
+  border-radius: 15px;
+}
+
+.badge.bg-danger {
+  background: #ff6b6b !important;
+}
+
+.badge.bg-primary {
+  background: var(--primary-orange) !important;
+}
+
+.badge.bg-success {
+  background: #51cf66 !important;
+}
+
+.badge.bg-secondary {
+  background: #6c757d !important;
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+.btn-sm:hover {
+  transform: translateY(-1px);
+}
+
+.btn-warning {
+  background: var(--primary-yellow);
+  border: none;
+  color: var(--dark-blue);
+}
+
+.btn-warning:hover {
+  background: #e6c200;
+  color: var(--dark-blue);
+}
+
+.btn-danger {
+  background: #ff6b6b;
+  border: none;
+}
+
+.btn-danger:hover {
+  background: #ff5252;
+}
+
+/* Modal Styles */
+.modal-content {
+  background: linear-gradient(135deg, var(--dark-blue) 0%, var(--medium-blue) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 20px 30px;
+}
+
+.modal-body {
+  padding: 30px;
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 20px 30px;
+}
+
+.form-control, .form-select {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 10px;
+  padding: 12px 15px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--primary-yellow);
+  box-shadow: 0 0 15px rgba(243, 211, 92, 0.3);
+  color: #fff;
+}
+
+.form-control::placeholder {
+  color: #ccc;
+}
+
+.form-control[readonly] {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ccc;
+}
+
+.form-label {
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.alert {
+  background: rgba(220, 53, 69, 0.2);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  border-radius: 10px;
+  color: #ff6b6b;
+}
+
+.text-warning {
+  color: var(--primary-yellow) !important;
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+/* Responsive adjustments for admin management */
+@media (max-width: 768px) {
+  .admin-management-section .chart-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .admin-management-section .btn-primary {
+    width: 100%;
+  }
+  
+  .table-responsive {
+    font-size: 0.9rem;
+  }
+  
+  .btn-sm {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+  }
 }

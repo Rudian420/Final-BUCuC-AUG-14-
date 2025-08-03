@@ -3,44 +3,32 @@
     require 'Database/db.php';
 
     $database = new Database();
-
     $conn = $database->createConnection();
-
     
     $success = "";
     $error = "";
 
     if($_SERVER["REQUEST_METHOD"]=="POST"){
-
-        
         $adminEmail = htmlspecialchars($_POST["adminEmail"]);
-
         $adminPassword = $_POST["adminPassword"];
 
-        $sql = "SELECT * FROM adminpanel WHERE email=:adminemail";
-
+        $sql = "SELECT * FROM adminpanel WHERE email=:adminemail AND status='active'";
         $stmt = $conn->prepare($sql);
-
-        $stmt->bindParam(":adminemail",$adminEmail);
-
+        $stmt->bindParam(":adminemail", $adminEmail);
         $stmt->execute();
-
         $admin = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        if($admin && $admin[0]['password']===$adminPassword){
-          $success = "Login successful! Redirecting to dashboard...";
-          $_SESSION['username'] = $admin[0]['username'];
-          $_SESSION['admin'] = true;
-          header("refresh:1;url=admin_dashboard.php");
-
-        }else{
+        if($admin && password_verify($adminPassword, $admin[0]['password'])){
+            $success = "Login successful! Redirecting to dashboard...";
+            $_SESSION['username'] = $admin[0]['username'];
+            $_SESSION['admin_id'] = $admin[0]['id'];
+            $_SESSION['admin_email'] = $admin[0]['email'];
+            $_SESSION['admin_role'] = $admin[0]['role'];
+            $_SESSION['admin'] = true;
+            header("refresh:1;url=admin_dashboard.php");
+        } else {
             $error = "Invalid admin credentials. Contact: bucuc@support.ac.bd";
         }
-
-
-
-        
-
     }
 ?>
 <!DOCTYPE html>
@@ -168,4 +156,4 @@
       });
     </script>
   </body>
-</html> -->
+</html>

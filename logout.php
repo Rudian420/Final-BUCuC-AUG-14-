@@ -1,7 +1,13 @@
 <?php
-session_start();           
-session_unset();              
-session_destroy();            
+session_start();
 
-header("Location: admin-login.php");
+// Clear all session variables
+$_SESSION = array();
+
+// Destroy the session
+session_destroy();
+
+// Redirect to main page
+header("Location: index.php");
 exit();
+?>
