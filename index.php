@@ -227,6 +227,98 @@
                 margin-right: 20px;
             }
             
+            /* Panel Year Selector Styles */
+            .panel-year-selector {
+                max-width: 400px;
+                margin: 0 auto;
+            }
+            
+            .panel-year-dropdown {
+                background: rgba(255, 255, 255, 0.95);
+                border: 2px solid #e76f2c;
+                border-radius: 15px;
+                padding: 12px 20px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #333;
+                transition: all 0.3s ease;
+            }
+            
+            .panel-year-dropdown:focus {
+                background: rgba(255, 255, 255, 1);
+                border-color: #f3d35c;
+                box-shadow: 0 0 20px rgba(231, 111, 44, 0.3);
+                outline: none;
+            }
+            
+            .panel-year-dropdown:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(231, 111, 44, 0.2);
+            }
+            
+            /* Panel Content Area */
+            .panel-content-area {
+                position: relative;
+                min-height: 500px;
+            }
+            
+            .panel-members-container,
+            .sb-members-container {
+                transition: opacity 0.5s ease, transform 0.5s ease;
+            }
+            
+            .panel-members-container.fade-out,
+            .sb-members-container.fade-out {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            
+            .panel-members-container.fade-in,
+            .sb-members-container.fade-in {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            
+            /* Three member layout */
+            .three-member .col-lg-5:nth-child(4) {
+                margin-top: 0 !important;
+            }
+            
+            .three-member .panel-members-grid {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+            
+            .three-member .panel-members-grid .col-lg-5 {
+                flex: 0 0 auto;
+                max-width: 300px;
+            }
+            
+            /* Loading spinner */
+            .panel-loading {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 10;
+            }
+            
+            .spinner {
+                width: 50px;
+                height: 50px;
+                border: 4px solid rgba(231, 111, 44, 0.3);
+                border-top: 4px solid #e76f2c;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
             textarea.form-control {
                 resize: vertical;
                 min-height: 100px;
@@ -1447,11 +1539,19 @@ https://templatemo.com/tm-583-festava-live
                         <div class="col-12 text-center">
                             <h2 class="mb-4">Meet Panel Members</h2>
                         </div>
-                        <!-- Add Previous Panels Button below Meet Panel Members title -->
-                        <div class="col-12 text-center mb-3">
-                            <a href="previous-panels.html" class="btn btn-warning">
-                                Previous Panels
-                            </a>
+                        <!-- Panel Year Selector -->
+                        <div class="col-12 text-center mb-4">
+                            <div class="panel-year-selector">
+                                <label for="panelYearSelect" class="form-label text-white fw-bold mb-2">View Panel by Year:</label>
+                                <select id="panelYearSelect" class="form-select panel-year-dropdown">
+                                    <option value="current">Current Panel (2024-2025)</option>
+                                    <option value="panel_23_24">2023–2024</option>
+                                    <option value="panel_22_23">2022–2023</option>
+                                    <option value="panel_21_22">2021–2022</option>
+                                    <option value="panel_20_21">2020–2021</option>
+                                    <option value="panel_19_20">2019–2020</option>
+                                </select>
+                            </div>
                         </div>
 
                         <!-- Previous Panels Modal -->
@@ -1625,128 +1725,136 @@ https://templatemo.com/tm-583-festava-live
                         </div>
                         <!-- End Previous Panels Modal -->
 
-                        <!-- 1 -->
-                        <div class="col-lg-5 col-12 mb-4">
-                            <div class="artists-thumb">
-                                <div class="artists-image-wrap">
-                                    <img src="images/Panel_24_25/Panel/aparup.jpg"
-                                        class="artists-image img-fluid">
-                                </div>
-
-                                <div class="artists-hover">
-                                    <p>
-                                        <strong>Name:</strong>
-                                        Aparup Chowdhury
-                                    </p>
-
-                                    <p>
-                                        <strong>Position:</strong>
-                                        President
-                                    </p>
-
-                                <!-- chanages -->
-                                    <hr>
-
-                                    <p class="mb-0">
-                                        <strong>Facebook:</strong>
-                                        <a
-                                            href="https://www.facebook.com/aparup.chy.77">Aparup
-                                            Chowdhury</a>
-                                    </p>
-                                </div>
+                        <!-- Panel Content Area -->
+                        <div class="panel-content-area col-12">
+                            <!-- Loading Spinner -->
+                            <div class="panel-loading" id="panelLoading" style="display: none;">
+                                <div class="spinner"></div>
                             </div>
-                        </div>
-                        <!-- done -->
-                        <!-- 2 -->
-                        <div class="col-lg-5 col-12 mb-4">
-                            <div class="artists-thumb">
-                                <div class="artists-image-wrap">
-                                    <img src="images/Panel_24_25/Panel/nafisa.jpg"
-                                        class="artists-image img-fluid">
-                                </div>
+                            
+                            <!-- Panel Members Container -->
+                            <div class="panel-members-container" id="panelMembersContainer">
+                                <div class="row justify-content-center panel-members-grid">
+                                    <!-- Current Panel Members (2024-2025) -->
+                                    <div class="col-lg-5 col-12 mb-4">
+                                        <div class="artists-thumb">
+                                            <div class="artists-image-wrap">
+                                                <img src="images/Panel_24_25/Panel/aparup.jpg"
+                                                    class="artists-image img-fluid">
+                                            </div>
 
-                                <div class="artists-hover">
-                                    <p>
-                                        <strong>Name:</strong>
-                                        Nafisa Noor
-                                    </p>
+                                            <div class="artists-hover">
+                                                <p>
+                                                    <strong>Name:</strong>
+                                                    Aparup Chowdhury
+                                                </p>
 
-                                    <p>
-                                        <strong>Position:</strong>
-                                        General Secretary
-                                    </p>
+                                                <p>
+                                                    <strong>Position:</strong>
+                                                    President
+                                                </p>
 
-                                    <hr>
+                                                <hr>
 
-                                    <p class="mb-0">
-                                        <strong>Facebook:</strong>
-                                        <a
-                                            href="https://www.facebook.com/nafisa.noor.57685">Nafisa
-                                            Noor</a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- done -->
-                        <!-- 3 -->
-                        <div class="col-lg-5 col-12 mb-4">
-                            <div class="artists-thumb">
-                                <div class="artists-image-wrap">
-                                    <img src="images/Panel_24_25/Panel/zia.jpg"
-                                        class="artists-image img-fluid">
-                                </div>
+                                                <p class="mb-0">
+                                                    <strong>Facebook:</strong>
+                                                    <a
+                                                        href="https://www.facebook.com/aparup.chy.77">Aparup
+                                                        Chowdhury</a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <div class="artists-hover">
-                                    <p>
-                                        <strong>Name:</strong>
-                                        Towkeer Mohammad Zia
-                                    </p>
+                                    <div class="col-lg-5 col-12 mb-4">
+                                        <div class="artists-thumb">
+                                            <div class="artists-image-wrap">
+                                                <img src="images/Panel_24_25/Panel/nafisa.jpg"
+                                                    class="artists-image img-fluid">
+                                            </div>
 
-                                    <p>
-                                        <strong>Position:</strong>
-                                        Joint Secretary
-                                    </p>
+                                            <div class="artists-hover">
+                                                <p>
+                                                    <strong>Name:</strong>
+                                                    Nafisa Noor
+                                                </p>
 
-                                    <hr>
+                                                <p>
+                                                    <strong>Position:</strong>
+                                                    General Secretary
+                                                </p>
 
-                                    <p class="mb-0">
-                                        <strong>Facebook:</strong>
-                                        <a
-                                            href="https://www.facebook.com/towkeer.mohammad.zia.2024">Towkeer
-                                            Mohammad Zia</a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                                                <hr>
 
-                        <div class="col-lg-5 col-12 mb-4"
-                            style="margin-top: -174px;">
-                            <div class="artists-thumb">
-                                <div class="artists-image-wrap">
-                                    <img src="images/Panel_24_25/Panel/mamun.jpg"
-                                        class="artists-image img-fluid"
-                                        style="max-width: 600px; height: 700px;">
-                                </div>
+                                                <p class="mb-0">
+                                                    <strong>Facebook:</strong>
+                                                    <a
+                                                        href="https://www.facebook.com/nafisa.noor.57685">Nafisa
+                                                        Noor</a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <div class="artists-hover">
-                                    <p>
-                                        <strong>Name:</strong>
-                                        Mamun Abdullah
-                                    </p>
+                                    <div class="col-lg-5 col-12 mb-4">
+                                        <div class="artists-thumb">
+                                            <div class="artists-image-wrap">
+                                                <img src="images/Panel_24_25/Panel/zia.jpg"
+                                                    class="artists-image img-fluid">
+                                            </div>
 
-                                    <p>
-                                        <strong>Position:</strong>
-                                        Vice President
-                                    </p>
+                                            <div class="artists-hover">
+                                                <p>
+                                                    <strong>Name:</strong>
+                                                    Towkeer Mohammad Zia
+                                                </p>
 
-                                    <hr>
+                                                <p>
+                                                    <strong>Position:</strong>
+                                                    Joint Secretary
+                                                </p>
 
-                                    <p class="mb-0">
-                                        <strong>Facebook:</strong>
-                                        <a
-                                            href="https://www.facebook.com/aam099">Mamun
-                                            Abdullah</a>
-                                    </p>
+                                                <hr>
+
+                                                <p class="mb-0">
+                                                    <strong>Facebook:</strong>
+                                                    <a
+                                                        href="https://www.facebook.com/towkeer.mohammad.zia.2024">Towkeer
+                                                        Mohammad Zia</a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-5 col-12 mb-4">
+                                        <div class="artists-thumb">
+                                            <div class="artists-image-wrap">
+                                                <img src="images/Panel_24_25/Panel/mamun.jpg"
+                                                    class="artists-image img-fluid">
+                                            </div>
+
+                                            <div class="artists-hover">
+                                                <p>
+                                                    <strong>Name:</strong>
+                                                    Mamun Abdullah
+                                                </p>
+
+                                                <p>
+                                                    <strong>Position:</strong>
+                                                    Vice President
+                                                </p>
+
+                                                <hr>
+
+                                                <p class="mb-0">
+                                                    <strong>Facebook:</strong>
+                                                    <a
+                                                        href="https://www.facebook.com/aam099">Mamun
+                                                        Abdullah</a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1759,11 +1867,13 @@ https://templatemo.com/tm-583-festava-live
             <!-- SB Members Section -->
             <section class="sb-section" id="section_4">
                 <div class="container">
-                    <h2 class="sb-section-title">Meet Our SB Members</h2>
+                    <h2 class="sb-section-title" id="sbSectionTitle">Meet Our SB Members</h2>
 
-                    <div class="album-cover">
-                        <div class="swiper sb-swiper">
-                            <div class="swiper-wrapper">
+                    <!-- SB Members Container -->
+                    <div class="sb-members-container" id="sbMembersContainer">
+                        <div class="album-cover">
+                            <div class="swiper sb-swiper" id="sbSwiper">
+                                <div class="swiper-wrapper" id="sbSwiperWrapper">
                                 <div class="swiper-slide">
                                     <img src="images/Panel_24_25/Secreteries/rudian.jpg"
                                         onerror="this.src='images/placeholder.png'" />
@@ -2172,7 +2282,7 @@ https://templatemo.com/tm-583-festava-live
                                     Schedule</div>
                                 <div class="event-cards-grid">
                                     <!-- Card 1 -->
-                                    <div class="event-card" onclick="window.location.href='past-events.html#pop-night'" style="cursor: pointer;">
+                                    <div class="event-card" onclick="window.location.href='past_events.html#pop-night'" style="cursor: pointer;">
                                         <div class="event-card-bg"
                                             style="background-image: url('images/slide2.jpg');"></div>
                                         <div class="event-card-content">
@@ -2186,7 +2296,7 @@ https://templatemo.com/tm-583-festava-live
                                         </div>
                                     </div>
                                     <!-- Card 2 -->
-                                    <div class="event-card" onclick="window.location.href='past-events.html#rock-roll'" style="cursor: pointer;">
+                                    <div class="event-card" onclick="window.location.href='past_events.html#rock-roll'" style="cursor: pointer;">
                                         <div class="event-card-bg"
                                             style="background-image: url('images/slide3.jpg');"></div>
                                         <div class="event-card-content">
@@ -2201,7 +2311,7 @@ https://templatemo.com/tm-583-festava-live
                                         </div>
                                     </div>
                                     <!-- Card 3 -->
-                                    <div class="event-card" onclick="window.location.href='past-events.html#dj-night'" style="cursor: pointer;">
+                                    <div class="event-card" onclick="window.location.href='past_events.html#dj-night'" style="cursor: pointer;">
                                         <div class="event-card-bg"
                                             style="background-image: url('images/slide4.jpg');"></div>
                                         <div class="event-card-content">
@@ -2216,7 +2326,7 @@ https://templatemo.com/tm-583-festava-live
                                         </div>
                                     </div>
                                     <!-- Card 4 -->
-                                    <div class="event-card" onclick="window.location.href='past-events.html#country-music'" style="cursor: pointer;">
+                                    <div class="event-card" onclick="window.location.href='past_events.html#country-music'" style="cursor: pointer;">
                                         <div class="event-card-bg"
                                             style="background-image: url('images/slide5.jpg');"></div>
                                         <div class="event-card-content">
@@ -2231,7 +2341,7 @@ https://templatemo.com/tm-583-festava-live
                                         </div>
                                     </div>
                                     <!-- Card 5 -->
-                                    <div class="event-card" onclick="window.location.href='past-events.html#free-styles'" style="cursor: pointer;">
+                                    <div class="event-card" onclick="window.location.href='past_events.html#free-styles'" style="cursor: pointer;">
                                         <div class="event-card-bg"
                                             style="background-image: url('images/slide1.jpg');"></div>
                                         <div class="event-card-content">
@@ -2735,11 +2845,17 @@ https://templatemo.com/tm-583-festava-live
 
         <!-- Initialize Swiper -->
         <script>
-            const swiper = new Swiper('.sb-swiper', {
+            // Function to determine if loop should be enabled
+            function shouldEnableLoop() {
+                const slides = document.querySelectorAll('.sb-swiper .swiper-slide');
+                return slides.length > 5; // Enable loop only if more than 5 slides
+            }
+            
+            window.sbSwiper = new Swiper('.sb-swiper', {
                 effect: 'coverflow',
                 grabCursor: true,
                 centeredSlides: true,
-                loop: true,
+                loop: shouldEnableLoop(),
                 initialSlide: 0,
                 coverflowEffect: {
                     rotate: 30,
@@ -2778,12 +2894,12 @@ https://templatemo.com/tm-583-festava-live
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting && !autoplayStarted) {
-                        swiper.slideToLoop(0, 0); // Go to Rudian Ahmed (first slide, instantly)
-                        swiper.params.autoplay = {
+                        window.sbSwiper.slideToLoop(0, 0); // Go to Rudian Ahmed (first slide, instantly)
+                        window.sbSwiper.params.autoplay = {
                             delay: 3000,
                             disableOnInteraction: false,
                         };
-                        swiper.autoplay.start();
+                        window.sbSwiper.autoplay.start();
                         autoplayStarted = true;
                     }
                 });
@@ -3225,6 +3341,686 @@ https://templatemo.com/tm-583-festava-live
                 
                 observer.observe(signupSection);
             }
+        });
+        </script>
+        
+        <!-- Panel Year Dropdown JavaScript -->
+        <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Correct panel-year-dropdown identifier
+    const dropdown = document.getElementById('panelYearSelect');
+    if (!dropdown) {
+        console.error('Panel year dropdown not found!');
+        return;
+    }
+     // Map dropdown values to panel data keys
+     const panelDataKeys = {
+         'current': '2024',
+         'panel_23_24': '2023',
+         'panel_22_23': '2022',
+         'panel_21_22': '2021',
+         'panel_20_21': '2020',
+         'panel_19_20': '2019'
+     };
+
+    // Panel data mapping
+    const panelData = {
+        '2024': {
+            panelMembers: [
+                {
+                    name: 'Aparup Chowdhury',
+                    image: 'images/Panel_24_25/Panel/aparup.jpg'
+                },
+                {
+                    name: 'Mamun Abdullah',
+                    image: 'images/Panel_24_25/Panel/mamun.jpg'
+                },
+                {
+                    name: 'Nafisa Noor',
+                    image: 'images/Panel_24_25/Panel/nafisa.jpg'
+                },
+                {
+                    name: 'Towkeer Mohammad Zia',
+                    image: 'images/Panel_24_25/Panel/zia.jpg'
+                }
+            ],
+            sbMembers: [
+                {
+                    name: 'Kazi Tawsiat Binte Ehsan',
+                    image: 'images/Panel_24_25/Secreteries/Kazi_Tawsiat_Binte_Ehsan.jpg'
+                },
+                {
+                    name: 'Avibadhan Das',
+                    image: 'images/Panel_24_25/Secreteries/Avibadhan_Das.jpg'
+                },
+                {
+                    name: 'Diana Halder Momo',
+                    image: 'images/Panel_24_25/Secreteries/Diana_Halder_Momo.jpg'
+                },
+                {
+                    name: 'Fabiha Bushra Ali',
+                    image: 'images/Panel_24_25/Secreteries/Fabiha_Bushra_Ali.jpg'
+                },
+                {
+                    name: 'Habib Hasan',
+                    image: 'images/Panel_24_25/Secreteries/Habib_Hasan.jpg'
+                },
+                {
+                    name: 'Jareen Tasnim Bushra',
+                    image: 'images/Panel_24_25/Secreteries/Jareen_Tasnim_Bushra.jpg'
+                },
+                {
+                    name: 'Jubair Rahman',
+                    image: 'images/Panel_24_25/Secreteries/Jubair_Rahman.jpg'
+                },
+                {
+                    name: 'Rudian Ahmed',
+                    image: 'images/Panel_24_25/Secreteries/rudian.jpg'
+                }
+            ]
+        },
+        '2023': {
+          panelMembers: [
+              {
+                  name: 'Nashib Siam',
+                  image: 'images/Panel_23_24/Panels/Nashib Siam (President).jpg'
+              },
+              {
+                  name: 'Nawshaba Maniza Riddhi',
+                  image: 'images/Panel_23_24/Panels/Nawshaba Maniza Riddhi (VP).jpg'
+              },
+              {
+                  name: 'Musharrat Quazi',
+                  image: 'images/Panel_23_24/Panels/Musharrat Quazi (GS).jpg'
+              },
+              {
+                  name: 'Tamima Diba',
+                  image: 'images/Panel_23_24/Panels/Tamima Diba (Financial Secretary).jpg'
+              }
+          ],
+          sbMembers: [
+              {
+                  name: 'Affan Adid',
+                  image: 'images/Panel_23_24/Secretary/Admin/Affan Adid (Admin).jpg'
+              },
+              {
+                  name: 'Shadman Sakib',
+                  image: 'images/Panel_23_24/Secretary/Admin/Shadman Sakib (Admin).jpg'
+              },
+              {
+                  name: 'Humayra',
+                  image: 'images/Panel_23_24/Secretary/Creative/Humayra (Creative).jpg'
+              },
+              {
+                  name: 'Mamun Abdullah',
+                  image: 'images/Panel_23_24/Secretary/Events/Mamun Abdullah ( Events).jpg'
+              },
+              {
+                  name: 'Towkeer Zia',
+                  image: 'images/Panel_23_24/Secretary/Events/Towkeer Zia ( Events).jpg'
+              },
+              {
+                  name: 'Ayam',
+                  image: 'images/Panel_23_24/Secretary/Marketing/Ayam (Marketing).jpg'
+              },
+              {
+                  name: 'Aparup Chowdhury',
+                  image: 'images/Panel_23_24/Secretary/Performance/Aparup Chy (Performance).jpg'
+              },
+              {
+                  name: 'Nafisa Noor',
+                  image: 'images/Panel_23_24/Secretary/Performance/Nafisa Noor (Performance).jpg'
+              },
+              {
+                  name: 'Priyata',
+                  image: 'images/Panel_23_24/Secretary/Performance/Priyata (Performance).jpg'
+              },
+              {
+                  name: 'Taufiq',
+                  image: 'images/Panel_23_24/Secretary/Performance/Taufiq (Performance).jpg'
+              },
+              {
+                  name: 'Jisa',
+                  image: 'images/Panel_23_24/Secretary/PR/Jisa (PR).jpg'
+              },
+              {
+                  name: 'Sadid',
+                  image: 'images/Panel_23_24/Secretary/RD/Sadid ( Rd).jpg'
+              },
+              {
+                  name: 'Zaarin',
+                  image: 'images/Panel_23_24/Secretary/RD/Zaarin RD.jpg'
+              }
+          ]
+        },
+        '2022': {
+            panelMembers: [
+                {
+                    name: 'John Doe',
+                    image: 'images/Panel_22_23/Panel/454317040_10225148019343878_7594567972609169834_n.jpg'
+                },
+                {
+                    name: 'Jane Smith',
+                    image: 'images/Panel_22_23/Panel/489790186_122124644834718672_952791625051701298_n.jpg'
+                },
+                {
+                    name: 'Alice Johnson',
+                    image: 'images/Panel_22_23/Panel/515437567_1952489408489387_1315940866281760937_n.jpg'
+                },
+                {
+                    name: 'Ethan Green',
+                    image: 'images/Panel_22_23/Panel/Copy of 487208029_4090148864590979_892055582219564636_n.jpg'
+                }
+            ],
+            sbMembers: [
+                {
+                    name: 'Bob Brown',
+                    image: 'images/Panel_22_23/Secreteries/Creative/490736541_1977798036086773_3000833491529229081_n.jpg'
+                },
+                {
+                    name: 'Charlie Davis',
+                    image: 'images/Panel_22_23/Secreteries/Creative/510740052_2819515388251792_6735446540811213763_n.jpg'
+                },
+                {
+                    name: 'Diana Prince',
+                    image: 'images/Panel_22_23/Secreteries/Events/480995672_2660218930991191_8235151262219661059_n.jpg'
+                },
+                {
+                    name: 'Eve Wilson',
+                    image: 'images/Panel_22_23/Secreteries/Events/489028088_4153227901564307_6545631968149006210_n.jpg'
+                },
+                {
+                    name: 'Frank Miller',
+                    image: 'images/Panel_22_23/Secreteries/Hr/472370182_1149915786477951_6056069315363886104_n.jpg'
+                },
+                {
+                    name: 'Grace Lee',
+                    image: 'images/Panel_22_23/Secreteries/Performance/473764764_1254931698931721_8299944785147251773_n.jpg'
+                },
+                {
+                    name: 'Henry Kim',
+                    image: 'images/Panel_22_23/Secreteries/Performance/486450617_1919606155485104_6809497294325923308_n.jpg'
+                },
+                {
+                    name: 'Ivy Chen (PR)',
+                    image: 'images/Panel_22_23/Secreteries/pr/444153012_3785493371736142_462752584676454365_n.jpg'
+                },
+                {
+                    name: 'Jack Ryan (PR)',
+                    image: 'images/Panel_22_23/Secreteries/pr/477762506_1629168234369158_7049362160222121335_n.jpg'
+                },
+                {
+                    name: 'Kelly Green (PR)',
+                    image: 'images/Panel_22_23/Secreteries/pr/480423169_3848521462027733_2531340458933374732_n.jpg'
+                },
+                {
+                    name: 'Liam Stone (HR)',
+                    image: 'images/Panel_22_23/Secreteries/Hr/501121457_1886902955416097_5984553724984653614_n.jpg'
+                },
+                {
+                    name: 'Maya Patel (Performance)',
+                    image: 'images/Panel_22_23/Secreteries/Performance/493336238_3882899925356160_2734435013679817532_n.jpg'
+                },
+                {
+                    name: 'Noah Davis (Performance)',
+                    image: 'images/Panel_22_23/Secreteries/Performance/494677560_3567139276915951_500501141503205430_n.jpg'
+                },
+                {
+                    name: 'Olivia Smith (Performance)',
+                    image: 'images/Panel_22_23/Secreteries/Performance/497848042_3934565303471734_3886354026328395083_n.jpg'
+                },
+                {
+                    name: 'Paul Wilson (Miap)',
+                    image: 'images/Panel_22_23/Secreteries/Miap/125222830_1519850231543985_6741215565114242602_n.jpg'
+                },
+                {
+                    name: 'Quinn Taylor (Miap)',
+                    image: 'images/Panel_22_23/Secreteries/Miap/471131890_2674590862712918_1095176438308251710_n.jpg'
+                },
+                {
+                    name: 'Ryan Mitchell (RD)',
+                    image: 'images/Panel_22_23/Secreteries/Rd/476365485_1667974633790431_7689234733040607911_n.jpg'
+                }
+            ]
+        },
+        '2021': {
+            panelMembers: [
+                {
+                    name: 'Sarah Connor',
+                    image: 'images/Panel_21_22/Panel/183667601_2775574012753527_371707836928886195_n.jpg'
+                },
+                {
+                    name: 'Kyle Reese',
+                    image: 'images/Panel_21_22/Panel/476383228_3256767717796347_285371354205090761_n.jpg'
+                },
+                {
+                    name: 'John Connor',
+                    image: 'images/Panel_21_22/Panel/487048639_3105546046276958_9148728155394135784_n.jpg'
+                }
+            ],
+            sbMembers: [
+                {
+                    name: 'Marcus Wright (Admin)',
+                    image: 'images/Panel_21_22/Secreteries/admin/476856981_4123432817892541_1624224823209103418_n.jpg'
+                },
+                {
+                    name: 'Kate Brewster (Admin)',
+                    image: 'images/Panel_21_22/Secreteries/admin/480205108_1673069036614324_5079654607934815247_n.jpg'
+                },
+                {
+                    name: 'Cameron Phillips (Creative)',
+                    image: 'images/Panel_21_22/Secreteries/creative/471658768_1664068401128077_7406622409763109517_n.jpg'
+                },
+                {
+                    name: 'Derek Reese (Creative)',
+                    image: 'images/Panel_21_22/Secreteries/creative/69861786_510323629778636_5845785793657831424_n.jpg'
+                },
+                {
+                    name: 'Jesse Flores (Events)',
+                    image: 'images/Panel_21_22/Secreteries/events/454317040_10225148019343878_7594567972609169834_n.jpg'
+                },
+                {
+                    name: 'Riley Dawson (Events)',
+                    image: 'images/Panel_21_22/Secreteries/events/504868796_4146322538979491_918509307535544619_n.jpg'
+                },
+                {
+                    name: 'Allison Young (Finance)',
+                    image: 'images/Panel_21_22/Secreteries/fin/500367999_3581840292112516_2140517489434280250_n.jpg'
+                },
+                {
+                    name: 'Charley Dixon (Finance)',
+                    image: 'images/Panel_21_22/Secreteries/fin/Copy of 487208029_4090148864590979_892055582219564636_n.jpg'
+                },
+                {
+                    name: 'Ellison (HR)',
+                    image: 'images/Panel_21_22/Secreteries/hr/465844472_2640701509435187_7978154684435128783_n.jpg'
+                },
+                {
+                    name: 'Weaver (HR)',
+                    image: 'images/Panel_21_22/Secreteries/hr/515437567_1952489408489387_1315940866281760937_n.jpg'
+                },
+                {
+                    name: 'Cromartie (Performance)',
+                    image: 'images/Panel_21_22/Secreteries/perform/471993795_1815017182236611_7554013114998935137_n.jpg'
+                },
+                {
+                    name: 'Bloodhound (Performance)',
+                    image: 'images/Panel_21_22/Secreteries/perform/482211523_1686167981971096_5335183090621960727_n.jpg'
+                },
+                {
+                    name: 'Shirley (Performance)',
+                    image: 'images/Panel_21_22/Secreteries/perform/489790186_122124644834718672_952791625051701298_n.jpg'
+                },
+                {
+                    name: 'Vick (PR)',
+                    image: 'images/Panel_21_22/Secreteries/pr/469337595_3924168784509776_3814304461961048715_n.jpg'
+                },
+                {
+                    name: 'Fischer (PR)',
+                    image: 'images/Panel_21_22/Secreteries/pr/483106530_4026994964252647_8895841218075580060_n.jpg'
+                },
+                {
+                    name: 'Tarissa (RD)',
+                    image: 'images/Panel_21_22/Secreteries/rd/128351021_228325362052613_4561984735401676055_n.jpg'
+                },
+                {
+                    name: 'Sarkissian (RD)',
+                    image: 'images/Panel_21_22/Secreteries/rd/470235244_2667326150106056_3872053460634156449_n.jpg'
+                },
+                {
+                    name: 'Goode (RD)',
+                    image: 'images/Panel_21_22/Secreteries/rd/475195409_1168331491303047_2401447768072024913_n.jpg'
+                }
+            ]
+        },
+        '2020': {
+            panelMembers: [
+                {
+                    name: 'Olivia Johnson',
+                    image: 'images/Panel_20_21/Panel/36678546_2204235406270192_6483776573861265408_n.jpg'
+                },
+                {
+                    name: 'William Smith',
+                    image: 'images/Panel_20_21/Panel/475290115_1167819264687603_7003520522544381593_n.jpg'
+                },
+                {
+                    name: 'Liam Anderson',
+                    image: 'images/Panel_20_21/Panel/e592a15e-74a5-4ddf-b8f5-1b59aaf9a1c2.jpg'
+                }
+            ],
+            sbMembers: [
+                {
+                    name: 'Emily Davis (Admin)',
+                    image: 'images/Panel_20_21/ Secreteries/admin/476231235_1669345223653372_3407867370287020034_n.jpg'
+                },
+                {
+                    name: 'James Brown (Creative)',
+                    image: 'images/Panel_20_21/ Secreteries/creative/123926406_3095940650510775_7926925358628684138_n.jpg'
+                },
+                {
+                    name: 'Mia Taylor (Creative)',
+                    image: 'images/Panel_20_21/ Secreteries/creative/170745495_1691963967642284_8994484908450075508_n.jpg'
+                },
+                {
+                    name: 'Noah Wilson (Creative)',
+                    image: 'images/Panel_20_21/ Secreteries/creative/471644167_1812589182479411_6622247673044813939_n.jpg'
+                },
+                {
+                    name: 'Ava Clark (Creative)',
+                    image: 'images/Panel_20_21/ Secreteries/creative/474080428_2696073080564696_2146795879080295010_n.jpg'
+                },
+                {
+                    name: 'Mason Lewis (Event)',
+                    image: 'images/Panel_20_21/ Secreteries/event/464713040_2792921144222449_472237782771168408_n.jpg'
+                },
+                {
+                    name: 'Isabella King (Event)',
+                    image: 'images/Panel_20_21/ Secreteries/event/487048639_3105546046276958_9148728155394135784_n.jpg'
+                },
+                {
+                    name: 'Lucas Anderson (Fin)',
+                    image: 'images/Panel_20_21/ Secreteries/fin/454267796_3980565755491577_2874358743371603141_n.jpg'
+                },
+                {
+                    name: 'Sophia Johnson (Fin)',
+                    image: 'images/Panel_20_21/ Secreteries/fin/478539252_1178973010238895_1597122680872953961_n.jpg'
+                },
+                {
+                    name: 'Ethan Martinez (HR)',
+                    image: 'images/Panel_20_21/ Secreteries/hr/471583557_1813851939019802_6471843107952171020_n.jpg'
+                },
+                {
+                    name: 'Amelia Harris (HR)',
+                    image: 'images/Panel_20_21/ Secreteries/hr/516591792_3616860595277152_2104663676730743326_n.jpg'
+                },
+                {
+                    name: 'Jacob Thompson (Miap)',
+                    image: 'images/Panel_20_21/ Secreteries/miap/122523984_3062594330512074_6233342128374299200_n.jpg'
+                },
+                {
+                    name: 'Charlotte White (Miap)',
+                    image: 'images/Panel_20_21/ Secreteries/miap/66852429_2590974680915041_3878385481519464448_n.jpg'
+                },
+                {
+                    name: 'Aiden Hall (Performance)',
+                    image: 'images/Panel_20_21/ Secreteries/performance/469825113_2665417436963594_4201553788795341419_n (1).jpg'
+                },
+                {
+                    name: 'Scarlett Allen (Performance)',
+                    image: 'images/Panel_20_21/ Secreteries/performance/470238528_8671941482933412_630060569786467991_n.jpg'
+                },
+                {
+                    name: 'Oliver Walker (Performance)',
+                    image: 'images/Panel_20_21/ Secreteries/performance/471089076_2674572022714802_9175108119770714368_n.jpg'
+                },
+                {
+                    name: 'Aubrey Scott (Performance)',
+                    image: 'images/Panel_20_21/ Secreteries/performance/481067682_1684472232140671_6947975985174216726_n.jpg'
+                },
+                {
+                    name: 'Sebastian Wright (Performance)',
+                    image: 'images/Panel_20_21/ Secreteries/performance/494080037_3561101540853058_349832023715608278_n.jpg'
+                },
+                {
+                    name: 'Zoey Baker (PR)',
+                    image: 'images/Panel_20_21/ Secreteries/pr/146167213_3320171584754346_6243508639537889689_n.jpg'
+                },
+                {
+                    name: 'Logan Phillips (PR)',
+                    image: 'images/Panel_20_21/ Secreteries/pr/472235864_1815019072236422_1600336458892749079_n.jpg'
+                },
+                {
+                    name: 'Lily Campbell (RD)',
+                    image: 'images/Panel_20_21/ Secreteries/rd/404806443_7232254810171158_6587854861112096768_n.jpg'
+                },
+                {
+                    name: 'Ben Mitchell (RD)',
+                    image: 'images/Panel_20_21/ Secreteries/rd/468920931_8708487025893905_8271555839924075526_n.jpg'
+                },
+                {
+                    name: 'Amelia Perez (RD)',
+                    image: 'images/Panel_20_21/ Secreteries/rd/471327187_2679088635596474_4983230428569764592_n.jpg'
+                },
+                {
+                    name: 'Jackson Garcia (RD)',
+                    image: 'images/Panel_20_21/ Secreteries/rd/475698755_3192983197535274_4204510840426245112_n.jpg'
+                                 }
+             ]
+         },
+         '2019': {
+             panelMembers: [
+                 {
+                     name: 'Murtafa Mridha',
+                     image: 'images/Panel_19_20/Panel/Murtafa Mridha.jpg'
+                 },
+                 {
+                     name: 'Samara Mehruz',
+                     image: 'images/Panel_19_20/Panel/Samara Mehruz.jpg'
+                 },
+                 {
+                     name: 'Shoaib Kamal',
+                     image: 'images/Panel_19_20/Panel/Shoaib Kamal.jpg'
+                 }
+             ],
+             sbMembers: [
+                 {
+                     name: 'Shahriar Nasif',
+                     image: 'images/Panel_19_20/Secretaries/admin/Shahriar Nasif.jpg'
+                 },
+                 {
+                     name: 'Sadia Ishtiaque',
+                     image: 'images/Panel_19_20/Secretaries/creative/Sadia Ishtiaque.jpg'
+                 },
+                 {
+                     name: 'Sayeda Lamia Tabassum',
+                     image: 'images/Panel_19_20/Secretaries/creative/Sayeda Lamia Tabassum.jpg'
+                 },
+                 {
+                     name: 'Iffat Binte Hakim',
+                     image: 'images/Panel_19_20/Secretaries/creative/Iffat Binte Hakim.jpg'
+                 },
+                 {
+                     name: 'Nafiz Noor',
+                     image: 'images/Panel_19_20/Secretaries/event/Nafiz Noor.jpg'
+                 },
+                 {
+                     name: 'Ishraq Avi',
+                     image: 'images/Panel_19_20/Secretaries/fin/Ishraq Avi.jpg'
+                 },
+                 {
+                     name: 'Zuairya Ashger Khan Nuha',
+                     image: 'images/Panel_19_20/Secretaries/hr/Zuairya Ashger Khan Nuha.jpg'
+                 },
+                 {
+                     name: 'Sadman Sakib Ayon',
+                     image: 'images/Panel_19_20/Secretaries/miap/Sadman Sakib Ayon.jpg'
+                 },
+                 {
+                     name: 'Aninda Nahiyan',
+                     image: 'images/Panel_19_20/Secretaries/perfromance/Aninda Nahiyan.jpg'
+                 },
+                 {
+                     name: 'Munirul Azam Zayed',
+                     image: 'images/Panel_19_20/Secretaries/perfromance/Munirul Azam Zayed.jpg'
+                 },
+                 {
+                     name: 'Saib Sizan',
+                     image: 'images/Panel_19_20/Secretaries/perfromance/Saib Sizan.jpg'
+                 },
+                 {
+                     name: 'George Gourab',
+                     image: 'images/Panel_19_20/Secretaries/perfromance/George Gourab .jpg'
+                 },
+                 {
+                     name: 'Sumit Dutta',
+                     image: 'images/Panel_19_20/Secretaries/perfromance/Sumit Dutta.jpg'
+                 },
+                 {
+                     name: 'Deepita Chakrabortty',
+                     image: 'images/Panel_19_20/Secretaries/perfromance/Deepita Chakrabortty.jpg'
+                 },
+                 {
+                     name: 'Pritam Chakraborty',
+                     image: 'images/Panel_19_20/Secretaries/pr/Pritam Chakraborty.jpg'
+                 },
+                 {
+                     name: 'Modhumonty Das',
+                     image: 'images/Panel_19_20/Secretaries/pr/Modhumonty Das.jpg'
+                 },
+                 {
+                     name: 'Afeed Nur',
+                     image: 'images/Panel_19_20/Secretaries/rd/Afeed Nur.jpg'
+                 },
+                 {
+                     name: 'Tanzim Ahmed Ornob',
+                     image: 'images/Panel_19_20/Secretaries/rd/Tanzim Ahmed Ornob.jpg'
+                 },
+                 {
+                     name: 'Kanika Saha',
+                     image: 'images/Panel_19_20/Secretaries/rd/Kanika Saha.jpg'
+                 },
+                 {
+                     name: 'Anika Anjum Sadia',
+                     image: 'images/Panel_19_20/Secretaries/rd/Anika Anjum Sadia.jpg'
+                 }
+             ]
+         }
+     };
+
+    // Handle dropdown change event
+    dropdown.addEventListener('change', function() {
+        const selectedYearKey = panelDataKeys[this.value];
+        if (!selectedYearKey) {
+            console.error('No data found for year:', this.value);
+            return;
+        }
+        
+        const data = panelData[selectedYearKey];
+        updateMembers(data);
+    });
+
+console.log('JavaScript loaded correctly!');
+
+function updateMembers(data) {
+        const panelContainer = document.getElementById('panelMembersContainer');
+        
+        if (!panelContainer) {
+            console.error('Panel container not found!');
+            return;
+        }
+        
+        console.log('Panel container found:', panelContainer);
+        
+        // Find the existing grid within the panel container
+        const existingGrid = panelContainer.querySelector('.row.justify-content-center.panel-members-grid');
+        console.log('Existing grid:', existingGrid);
+        
+        if (!existingGrid) {
+            console.error('Panel grid not found! Container HTML:', panelContainer.innerHTML);
+            return;
+        }
+        
+        // Clear existing member cards
+        existingGrid.innerHTML = '';
+        
+        // Add new panel members with full structure
+        data.panelMembers.forEach((member, index) => {
+            const memberDiv = document.createElement('div');
+            
+            // Adjust grid layout based on number of members
+            const memberCount = data.panelMembers.length;
+            if (memberCount === 4) {
+                // For 4 members: 2 on top, 2 on bottom
+                memberDiv.className = 'col-lg-6 col-12 mb-4';
+            } else if (memberCount === 3) {
+                // For 3 members: 2 on top, 1 centered below
+                if (index < 2) {
+                    memberDiv.className = 'col-lg-6 col-12 mb-4';
+                } else {
+                    memberDiv.className = 'col-lg-6 col-12 mb-4 mx-auto';
+                }
+            } else {
+                // For other numbers: use original sizing
+                memberDiv.className = 'col-lg-5 col-12 mb-4';
+            }
+            
+            memberDiv.innerHTML = `
+                <div class="artists-thumb">
+                    <div class="artists-image-wrap">
+                        <img src="${encodeURI(member.image)}" class="artists-image img-fluid" alt="${member.name}" 
+                             onerror="this.src='images/placeholder.svg'; console.error('Failed to load image:', '${member.image}');" />
+                    </div>
+                    <div class="artists-hover">
+                        <p><strong>Name:</strong> ${member.name}</p>
+                        <p><strong>Position:</strong> Panel Member</p>
+                        <hr>
+                        <p class="mb-0"><strong>Facebook:</strong> <a href="#">${member.name}</a></p>
+                    </div>
+                </div>
+            `;
+            
+            existingGrid.appendChild(memberDiv);
+        });
+
+        // Update SB members
+        const swiperWrapper = document.getElementById('sbSwiperWrapper');
+        if (swiperWrapper) {
+            // Clear existing slides
+            swiperWrapper.innerHTML = '';
+            
+            // Add new SB member slides
+            data.sbMembers.forEach(member => {
+                const slide = document.createElement('div');
+                slide.className = 'swiper-slide';
+                slide.innerHTML = `
+                    <img src="${encodeURI(member.image)}" alt="${member.name}" onerror="this.src='images/placeholder.svg'; console.error('Failed to load SB image:', '${member.image}');" />
+                    <div class="overlay">
+                        <a href="#" target="_blank">
+                            <ion-icon name="logo-facebook" style="color: #1877f2"></ion-icon>
+                        </a>
+                    </div>
+                    <div class="member-name">
+                        <span class="name">${member.name}</span>
+                        <span class="position">Secretary</span>
+                    </div>
+                `;
+                swiperWrapper.appendChild(slide);
+            });
+            
+            // Reinitialize Swiper if it exists
+            if (window.Swiper && window.sbSwiper) {
+                // Update the swiper with new slides
+                window.sbSwiper.update();
+                
+                // Check if we have enough slides for loop mode
+                const slideCount = data.sbMembers.length;
+                const maxSlidesPerView = 5; // Based on largest breakpoint
+                
+                if (slideCount <= maxSlidesPerView) {
+                    // Disable loop if not enough slides
+                    window.sbSwiper.params.loop = false;
+                    window.sbSwiper.loopDestroy();
+                } else {
+                    // Enable loop if we have enough slides
+                    window.sbSwiper.params.loop = true;
+                    window.sbSwiper.loopCreate();
+                }
+                
+                // Reinitialize to apply changes
+                window.sbSwiper.update();
+            }
+        }
+        
+        console.log('Updated members for selected year:', data);
+    }
+    
+    // Initialize with current panel data when page loads
+    console.log('Initializing with dropdown value:', dropdown.value);
+    if (dropdown.value === 'current' || !dropdown.value) {
+        console.log('Loading 2024 data on initialization');
+        const currentData = panelData['2024'];
+        updateMembers(currentData);
+    }
         });
         </script>
         </body>
