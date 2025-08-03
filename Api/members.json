@@ -38,6 +38,22 @@
       ],
       "secretaries": [
         {
+          "id": "rudian_2024",
+          "name": "Rudian Borneel",
+          "position": "Secretary of Human Resource",
+          "image": "images/Panel_24_25/Secreteries/rudian.jpg",
+          "facebook": "https://www.facebook.com/rudian.borneel",
+          "department": "HR"
+        },
+        {
+          "id": "sadman_2024",
+          "name": "MD Sadman Safin Oasif",
+          "position": "Secretary of Human Resource",
+          "image": "images/Panel_24_25/Secreteries/MD_Sadman_Safin_Oasif.jpg",
+          "facebook": "https://www.facebook.com/profile.php?id=100008597416622",
+          "department": "HR"
+        },
+        {
           "id": "kazi_tawsiat_2024",
           "name": "Kazi Tawsiat Binte Ehsan",
           "position": "Secretary",
@@ -53,10 +69,56 @@
           "department": "Performance"
         },
         {
+          "id": "lalon_2024",
+          "name": "Lalon Mostafa",
+          "position": "Secretary of Performance (Music)",
+          "image": "images/Panel_24_25/Secreteries/Lalon.jpg",
+          "facebook": "https://www.facebook.com/andalib.mostafa.1",
+          "department": "Performance"
+        },
+        {
+          "id": "rudra_2024",
+          "name": "Rudra Mathew Gomes",
+          "position": "Secretary of Performance (Music)",
+          "image": "images/Panel_24_25/Secreteries/Rudra_Mathew_Gomes.jpg",
+          "facebook": "https://www.facebook.com/henry.ribeiro.33",
+          "department": "Performance"
+        },
+        {
+          "id": "syed_ariful_2024",
+          "name": "Syed Ariful Islam Aowan",
+          "position": "Secretary of Performance (Music)",
+          "image": "images/Panel_24_25/Secreteries/Syed_Ariful_Islam_Aowan.jpg",
+          "facebook": "https://www.facebook.com/syedariful.aowan",
+          "department": "Performance"
+        },
+        {
+          "id": "rubaba_2024",
+          "name": "Rubaba Khijir Nusheen",
+          "position": "Secretary of Performance (Dance)",
+          "image": "images/Panel_24_25/Secreteries/Rubaba_Khijir_Nusheen.jpg",
+          "facebook": "https://www.facebook.com/rubaba.nusheen",
+          "department": "Performance"
+        },
+        {
           "id": "diana_2024",
           "name": "Diana Halder Momo",
           "position": "Secretary",
           "image": "images/Panel_24_25/Secreteries/Diana_Halder_Momo.jpg",
+          "department": "General"
+        },
+        {
+          "id": "maria_2024",
+          "name": "Maria Kamal Katha",
+          "position": "Secretary of Performance (Dance)",
+          "image": "images/Panel_24_25/Secreteries/Maria_Kamal_Katha.jpg",
+          "department": "Performance"
+        },
+        {
+          "id": "jubair_2024",
+          "name": "Jubair Rahman",
+          "position": "Secretary",
+          "image": "images/Panel_24_25/Secreteries/Jubair_Rahman.jpg",
           "department": "General"
         },
         {
@@ -67,70 +129,11 @@
           "department": "General"
         },
         {
-          "id": "habib_2024",
-          "name": "Habib Hasan",
-          "position": "Secretary",
-          "image": "images/Panel_24_25/Secreteries/Habib_Hasan.jpg",
-          "department": "General"
-        },
-        {
-          "id": "jareen_2024",
-          "name": "Jareen Tasnim Bushra",
-          "position": "Secretary",
-          "image": "images/Panel_24_25/Secreteries/Jareen_Tasnim_Bushra.jpg",
-          "department": "General"
-        },
-        {
-          "id": "jubair_2024",
-          "name": "Jubair Rahman",
-          "position": "Secretary",
-          "image": "images/Panel_24_25/Secreteries/Jubair_Rahman.jpg",
-          "department": "General"
-        },
-        {
           "id": "khaled_2024",
           "name": "Khaled Bin Taher",
           "position": "Secretary",
           "image": "images/Panel_24_25/Secreteries/Khaled_Bin_Taher.jpg",
           "department": "General"
-        },
-        {
-          "id": "lalon_2024",
-          "name": "Lalon Mostafa",
-          "position": "Secretary of Performance (Music)",
-          "image": "images/Panel_24_25/Secreteries/Lalon.jpg",
-          "facebook": "https://www.facebook.com/andalib.mostafa.1",
-          "department": "Performance"
-        },
-        {
-          "id": "lawrence_2024",
-          "name": "Lawrence Clifford Gomes",
-          "position": "Secretary",
-          "image": "images/Panel_24_25/Secreteries/Lawrence_Clifford_Gomes.jpg",
-          "department": "General"
-        },
-        {
-          "id": "sadman_2024",
-          "name": "MD Sadman Safin Oasif",
-          "position": "Secretary of Human Resource",
-          "image": "images/Panel_24_25/Secreteries/MD_Sadman_Safin_Oasif.jpg",
-          "facebook": "https://www.facebook.com/profile.php?id=100008597416622",
-          "department": "HR"
-        },
-        {
-          "id": "mahamudul_2024",
-          "name": "Mahamudul Hossain Jisun",
-          "position": "Secretary of Event Management & Logistics",
-          "image": "images/Panel_24_25/Secreteries/Mahamudul_Hossain_Jisun.jpg",
-          "facebook": "https://www.facebook.com/foggy.winter.007",
-          "department": "Events"
-        },
-        {
-          "id": "maria_2024",
-          "name": "Maria Kamal Katha",
-          "position": "Secretary of Performance (Dance)",
-          "image": "images/Panel_24_25/Secreteries/Maria_Kamal_Katha.jpg",
-          "department": "Performance"
         },
         {
           "id": "ahnaf_2024",
@@ -148,28 +151,28 @@
           "department": "Creative"
         },
         {
+          "id": "shreya_2024",
+          "name": "Shreya Sangbriti",
+          "position": "Secretary of Creative",
+          "image": "images/Panel_24_25/Secreteries/Shreya_Sangbriti.jpg",
+          "facebook": "https://web.facebook.com/shreyasangbriti#",
+          "department": "Creative"
+        },
+        {
+          "id": "mahamudul_2024",
+          "name": "Mahamudul Hossain Jisun",
+          "position": "Secretary of Event Management & Logistics",
+          "image": "images/Panel_24_25/Secreteries/Mahamudul_Hossain_Jisun.jpg",
+          "facebook": "https://www.facebook.com/foggy.winter.007",
+          "department": "Events"
+        },
+        {
           "id": "nilonjana_2024",
           "name": "Nilonjana Mojumder",
           "position": "Secretary of Event Management & Logistics",
           "image": "images/Panel_24_25/Secreteries/Nilonjana_Mojumder.jpg",
           "facebook": "https://www.facebook.com/arushi.lien",
           "department": "Events"
-        },
-        {
-          "id": "rubaba_2024",
-          "name": "Rubaba Khijir Nusheen",
-          "position": "Secretary of Performance (Dance)",
-          "image": "images/Panel_24_25/Secreteries/Rubaba_Khijir_Nusheen.jpg",
-          "facebook": "https://www.facebook.com/rubaba.nusheen",
-          "department": "Performance"
-        },
-        {
-          "id": "rudra_2024",
-          "name": "Rudra Mathew Gomes",
-          "position": "Secretary of Performance (Music)",
-          "image": "images/Panel_24_25/Secreteries/Rudra_Mathew_Gomes.jpg",
-          "facebook": "https://www.facebook.com/henry.ribeiro.33",
-          "department": "Performance"
         },
         {
           "id": "showmik_2024",
@@ -180,28 +183,19 @@
           "department": "Events"
         },
         {
-          "id": "shreya_2024",
-          "name": "Shreya Sangbriti",
-          "position": "Secretary of Creative",
-          "image": "images/Panel_24_25/Secreteries/Shreya_Sangbriti.jpg",
-          "facebook": "https://web.facebook.com/shreyasangbriti#",
-          "department": "Creative"
-        },
-        {
-          "id": "syed_ariful_2024",
-          "name": "Syed Ariful Islam Aowan",
-          "position": "Secretary of Performance (Music)",
-          "image": "images/Panel_24_25/Secreteries/Syed_Ariful_Islam_Aowan.jpg",
-          "facebook": "https://www.facebook.com/syedariful.aowan",
-          "department": "Performance"
-        },
-        {
           "id": "tamejul_2024",
           "name": "Tamejul Habib",
           "position": "Secretary of Finance",
           "image": "images/Panel_24_25/Secreteries/Tamejul_habib.jpg",
           "facebook": "https://www.facebook.com/INCcharlie19",
           "department": "Finance"
+        },
+        {
+          "id": "jareen_2024",
+          "name": "Jareen Tasnim Bushra",
+          "position": "Secretary",
+          "image": "images/Panel_24_25/Secreteries/Jareen_Tasnim_Bushra.jpg",
+          "department": "General"
         },
         {
           "id": "tasnimul_2024",
@@ -211,25 +205,39 @@
           "department": "General"
         },
         {
+          "id": "habib_2024",
+          "name": "Habib Hasan",
+          "position": "Secretary",
+          "image": "images/Panel_24_25/Secreteries/Habib_Hasan.jpg",
+          "department": "General"
+        },
+        {
           "id": "reshad_2024",
           "name": "Reshad",
           "position": "Secretary",
           "image": "images/Panel_24_25/Secreteries/reshad.jpg",
           "department": "General"
-        },
-        {
-          "id": "rudian_2024",
-          "name": "Rudian Borneel",
-          "position": "Secretary of Human Resource",
-          "image": "images/Panel_24_25/Secreteries/rudian.jpg",
-          "facebook": "https://www.facebook.com/rudian.borneel",
-          "department": "HR"
         }
+        
       ]
     },
     {
       "year": 2024,
       "panel_members": [
+        {
+          "id": "nashib_2023",
+          "name": "Nashib Siam",
+          "position": "President",
+          "image": "images/Panel_23_24/Panel/Nashib Siam (President).jpg",
+          "department": "Panel"
+        },
+        {
+          "id": "nawshaba_2023",
+          "name": "Nawshaba Maniza Riddhi",
+          "position": "Vice President",
+          "image": "images/Panel_23_24/Panel/Nawshaba Maniza Riddhi (VP).jpg",
+          "department": "Panel"
+        },
         {
           "id": "tamima_2023",
           "name": "Tamima Diba",
@@ -242,20 +250,6 @@
           "name": "Musharrat Quazi",
           "position": "General Secretary",
           "image": "images/Panel_23_24/Panel/Musharrat Quazi (GS).jpg",
-          "department": "Panel"
-        },
-        {
-          "id": "nawshaba_2023",
-          "name": "Nawshaba Maniza Riddhi",
-          "position": "Vice President",
-          "image": "images/Panel_23_24/Panel/Nawshaba Maniza Riddhi (VP).jpg",
-          "department": "Panel"
-        },
-        {
-          "id": "nashib_2023",
-          "name": "Nashib Siam",
-          "position": "President",
-          "image": "images/Panel_23_24/Panel/Nashib Siam (President).jpg",
           "department": "Panel"
         }
       ],
