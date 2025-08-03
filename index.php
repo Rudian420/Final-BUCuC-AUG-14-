@@ -2266,6 +2266,8 @@ https://templatemo.com/tm-583-festava-live
                                     </div>
                                 </div>
                             </div>
+                            <!-- Add Swiper Pagination -->
+                            <div class="swiper-pagination"></div>
                         </div>
                     </div>
                 </div>
@@ -2845,67 +2847,91 @@ https://templatemo.com/tm-583-festava-live
 
         <!-- Initialize Swiper -->
         <script>
-            // Function to determine if loop should be enabled
-            function shouldEnableLoop() {
-                const slides = document.querySelectorAll('.sb-swiper .swiper-slide');
-                return slides.length > 5; // Enable loop only if more than 5 slides
-            }
-            
-            window.sbSwiper = new Swiper('.sb-swiper', {
-                effect: 'coverflow',
-                grabCursor: true,
-                centeredSlides: true,
-                loop: shouldEnableLoop(),
-                initialSlide: 0,
-                coverflowEffect: {
-                    rotate: 30,
-                    stretch: 0,
-                    depth: 120,
-                    modifier: 1,
-                    slideShadows: true,
-                },
-                pagination: {
-                    el: '.swiper-pagination',
-                },
-                autoplay: false,
-                // Responsive breakpoints:
-                breakpoints: {
-                    320: {
-                        slidesPerView: 1,
-                        spaceBetween: 10,
-                    },
-                    480: {
-                        slidesPerView: 2,
-                        spaceBetween: 20,
-                    },
-                    768: {
-                        slidesPerView: 3,
-                        spaceBetween: 30,
-                    },
-                    1024: {
-                        slidesPerView: 5,
-                        spaceBetween: 56,
-                    },
+            // Initialize Swiper after DOM is fully loaded
+            document.addEventListener('DOMContentLoaded', function() {
+                // Function to determine if loop should be enabled
+                function shouldEnableLoop() {
+                    const slides = document.querySelectorAll('.sb-swiper .swiper-slide');
+                    console.log('SB Slides found:', slides.length);
+                    return slides.length > 5; // Enable loop only if more than 5 slides
                 }
-            });
-
-            let autoplayStarted = false;
-            const sbSection = document.getElementById('section_4');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && !autoplayStarted) {
-                        window.sbSwiper.slideToLoop(0, 0); // Go to Rudian Ahmed (first slide, instantly)
-                        window.sbSwiper.params.autoplay = {
-                            delay: 3000,
-                            disableOnInteraction: false,
-                        };
-                        window.sbSwiper.autoplay.start();
-                        autoplayStarted = true;
+                
+                // Count slides before initializing
+                const totalSlides = document.querySelectorAll('.sb-swiper .swiper-slide').length;
+                console.log('Total SB slides detected:', totalSlides);
+                
+                window.sbSwiper = new Swiper('.sb-swiper', {
+                    effect: 'coverflow',
+                    grabCursor: true,
+                    centeredSlides: true,
+                    loop: totalSlides > 5, // Enable loop if more than 5 slides
+                    loopAdditionalSlides: 2,
+                    initialSlide: 0,
+                    coverflowEffect: {
+                        rotate: 30,
+                        stretch: 0,
+                        depth: 120,
+                        modifier: 1,
+                        slideShadows: true,
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    autoplay: false,
+                    // Responsive breakpoints:
+                    breakpoints: {
+                        320: {
+                            slidesPerView: 1,
+                            spaceBetween: 10,
+                        },
+                        480: {
+                            slidesPerView: 2,
+                            spaceBetween: 20,
+                        },
+                        768: {
+                            slidesPerView: 3,
+                            spaceBetween: 30,
+                        },
+                        1024: {
+                            slidesPerView: 5,
+                            spaceBetween: 56,
+                        },
+                    },
+                    on: {
+                        init: function() {
+                            console.log('SB Swiper initialized with', this.slides.length, 'slides');
+                        },
+                        slideChange: function() {
+                            console.log('Slide changed to:', this.activeIndex);
+                        }
                     }
                 });
-            }, { threshold: 0.7 });
+                
+                // Setup intersection observer for autoplay
+                let autoplayStarted = false;
+                const sbSection = document.getElementById('section_4');
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && !autoplayStarted && window.sbSwiper) {
+                            try {
+                                window.sbSwiper.slideToLoop(0, 0); // Go to first slide instantly
+                                if (window.sbSwiper.autoplay) {
+                                    window.sbSwiper.autoplay.start();
+                                }
+                                autoplayStarted = true;
+                                console.log('SB Swiper autoplay started');
+                            } catch (error) {
+                                console.error('Error starting autoplay:', error);
+                            }
+                        }
+                    });
+                }, { threshold: 0.7 });
 
-            observer.observe(sbSection);
+                if (sbSection) {
+                    observer.observe(sbSection);
+                }
+            });
         </script>
 
         <script>
@@ -3896,12 +3922,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const data = panelData[selectedYearKey];
-        updateMembers(data);
+        updateMembers(data, selectedYearKey);
     });
 
 console.log('JavaScript loaded correctly!');
 
-function updateMembers(data) {
+async function updateMembers(data, yearKey = null) {
         const panelContainer = document.getElementById('panelMembersContainer');
         
         if (!panelContainer) {
@@ -3962,26 +3988,39 @@ function updateMembers(data) {
             existingGrid.appendChild(memberDiv);
         });
 
-        // Update SB members
+        // Update SB members - try JSON data first, fallback to hardcoded data
+        let sbMembersData = data.sbMembers; // Default to hardcoded data
+        
+        if (yearKey) {
+            const jsonSBMembers = await loadSBMembersForYear(yearKey);
+            if (jsonSBMembers) {
+                sbMembersData = jsonSBMembers;
+            }
+        }
+        
         const swiperWrapper = document.getElementById('sbSwiperWrapper');
-        if (swiperWrapper) {
+        if (swiperWrapper && sbMembersData) {
             // Clear existing slides
             swiperWrapper.innerHTML = '';
             
             // Add new SB member slides
-            data.sbMembers.forEach(member => {
+            sbMembersData.forEach(member => {
                 const slide = document.createElement('div');
                 slide.className = 'swiper-slide';
+                const facebookLink = member.facebook || '#';
+                const memberName = member.name || 'Unknown';
+                const memberPosition = member.position || 'Secretary';
+                
                 slide.innerHTML = `
-                    <img src="${encodeURI(member.image)}" alt="${member.name}" onerror="this.src='images/placeholder.svg'; console.error('Failed to load SB image:', '${member.image}');" />
+                    <img src="${encodeURI(member.image)}" alt="${memberName}" onerror="this.src='images/placeholder.png'; console.error('Failed to load SB image:', '${member.image}');" />
                     <div class="overlay">
-                        <a href="#" target="_blank">
+                        <a href="${facebookLink}" target="_blank">
                             <ion-icon name="logo-facebook" style="color: #1877f2"></ion-icon>
                         </a>
                     </div>
                     <div class="member-name">
-                        <span class="name">${member.name}</span>
-                        <span class="position">Secretary</span>
+                        <span class="name">${memberName}</span>
+                        <span class="position">${memberPosition}</span>
                     </div>
                 `;
                 swiperWrapper.appendChild(slide);
@@ -3989,38 +4028,95 @@ function updateMembers(data) {
             
             // Reinitialize Swiper if it exists
             if (window.Swiper && window.sbSwiper) {
-                // Update the swiper with new slides
-                window.sbSwiper.update();
+                // Destroy existing swiper
+                window.sbSwiper.destroy(true, true);
                 
-                // Check if we have enough slides for loop mode
-                const slideCount = data.sbMembers.length;
-                const maxSlidesPerView = 5; // Based on largest breakpoint
+                // Reinitialize with new slides
+                const slideCount = sbMembersData.length;
+                console.log('Reinitializing SB Swiper with', slideCount, 'slides for year:', yearKey);
                 
-                if (slideCount <= maxSlidesPerView) {
-                    // Disable loop if not enough slides
-                    window.sbSwiper.params.loop = false;
-                    window.sbSwiper.loopDestroy();
-                } else {
-                    // Enable loop if we have enough slides
-                    window.sbSwiper.params.loop = true;
-                    window.sbSwiper.loopCreate();
-                }
-                
-                // Reinitialize to apply changes
-                window.sbSwiper.update();
+                window.sbSwiper = new Swiper('.sb-swiper', {
+                    effect: 'coverflow',
+                    grabCursor: true,
+                    centeredSlides: true,
+                    loop: slideCount > 5,
+                    loopAdditionalSlides: 2,
+                    initialSlide: 0,
+                    coverflowEffect: {
+                        rotate: 30,
+                        stretch: 0,
+                        depth: 120,
+                        modifier: 1,
+                        slideShadows: true,
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    autoplay: {
+                        delay: 3000,
+                        disableOnInteraction: false,
+                    },
+                    breakpoints: {
+                        320: { slidesPerView: 1, spaceBetween: 10 },
+                        480: { slidesPerView: 2, spaceBetween: 20 },
+                        768: { slidesPerView: 3, spaceBetween: 30 },
+                        1024: { slidesPerView: 5, spaceBetween: 56 },
+                    },
+                    on: {
+                        init: function() {
+                            console.log('SB Swiper reinitialized with', this.slides.length, 'slides');
+                        }
+                    }
+                });
             }
         }
         
         console.log('Updated members for selected year:', data);
     }
     
-    // Initialize with current panel data when page loads
-    console.log('Initializing with dropdown value:', dropdown.value);
-    if (dropdown.value === 'current' || !dropdown.value) {
-        console.log('Loading 2024 data on initialization');
-        const currentData = panelData['2024'];
-        updateMembers(currentData);
+// Enhanced updateMembers function to work with both hardcoded and JSON data
+    async function loadSBMembersForYear(yearKey) {
+        try {
+            const response = await fetch("Api/members.json");
+            const jsonData = await response.json();
+            
+            // Map yearKey to actual year number
+            const yearMapping = {
+                '2024': 2025, // Current year data
+                '2023': 2024,
+                '2022': 2023,
+                '2021': 2022,
+                '2020': 2021,
+                '2019': 2020
+            };
+            
+            const targetYear = yearMapping[yearKey];
+            const yearData = jsonData.years.find(y => y.year === targetYear);
+            
+            if (yearData && yearData.secretaries) {
+                console.log(`Found ${yearData.secretaries.length} secretaries for ${targetYear}`);
+                return yearData.secretaries;
+            } else {
+                console.warn(`No JSON data found for year ${targetYear}, using hardcoded data`);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error loading JSON data:', error);
+            return null;
+        }
     }
+
+    // Initialize with current panel data (2024-2025)
+    const initializeSBMembers = async () => {
+        const currentData = panelData['2024'];
+        if (currentData) {
+            await updateMembers(currentData, '2024');
+        }
+    };
+
+    // Call the initialization function
+    initializeSBMembers();
         });
         </script>
         </body>
