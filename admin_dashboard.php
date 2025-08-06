@@ -1,6 +1,6 @@
 <?php 
 session_start();
-
+print_r($_SESSION);
 if (!isset($_SESSION["admin"])) {
     header("Location: admin-login.php");
     exit(); 
@@ -266,7 +266,7 @@ if (!isset($_SESSION["admin"])) {
 
         <!-- Admin Management Section (Only visible to Main Admin) -->
         <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
-        <div class="admin-management-section" id="admin-management-section" style="display: none;">
+        <div class="admin-management-section" id="admin-management-section" style="display: none; margin-top: 2rem;">
             <div class="chart-header">
                 <h3 class="chart-title">Admin Account Management</h3>
                 <button class="btn btn-primary" id="addAdminBtn">
