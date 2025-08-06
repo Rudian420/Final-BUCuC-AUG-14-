@@ -212,57 +212,6 @@ if (!isset($_SESSION["admin"])) {
                 </div>
             </div>
         </div>
-        
-        <!-- Recent Activities -->
-        <div class="activities-section">
-            <div class="chart-header">
-                <h3 class="chart-title">Recent Activities</h3>
-            </div>
-            
-            <div class="activity-item" data-activity="member">
-                <div class="activity-icon">
-                    <i class="fas fa-user-plus"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>New Member Registration</h4>
-                    <p>Sarah Ahmed joined the Music Club</p>
-                </div>
-                <div class="activity-time">2 hours ago</div>
-            </div>
-            
-            <div class="activity-item" data-activity="event">
-                <div class="activity-icon">
-                    <i class="fas fa-calendar-plus"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>Event Created</h4>
-                    <p>Pop Night event scheduled for next week</p>
-                </div>
-                <div class="activity-time">4 hours ago</div>
-            </div>
-            
-            <div class="activity-item" data-activity="performance">
-                <div class="activity-icon">
-                    <i class="fas fa-music"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>Performance Added</h4>
-                    <p>Rock Band performance added to upcoming event</p>
-                </div>
-                <div class="activity-time">6 hours ago</div>
-            </div>
-            
-            <div class="activity-item" data-activity="analytics">
-                <div class="activity-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>Analytics Updated</h4>
-                    <p>Monthly performance report generated</p>
-                </div>
-                <div class="activity-time">1 day ago</div>
-            </div>
-        </div>
 
         <!-- Admin Management Section (Only visible to Main Admin) -->
         <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
