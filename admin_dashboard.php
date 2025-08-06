@@ -57,6 +57,11 @@ if (!isset($_SESSION["admin"])) {
                     <i class="fas fa-users"></i>
                     Members
                 </a>
+                <a href="#" class="nav-item" data-section="applications">
+                    <i class="fas fa-user-plus"></i>
+                    Applications
+                    <span class="badge bg-warning ms-2" id="pendingApplicationsBadge" style="display: none;">0</span>
+                </a>
                 <a href="#" class="nav-item" data-section="events">
                     <i class="fas fa-calendar-alt"></i>
                     Events
@@ -244,6 +249,35 @@ if (!isset($_SESSION["admin"])) {
             </div>
         </div>
         <?php endif; ?>
+
+        <!-- Applications Section -->
+        <div class="applications-section" id="applications-section" style="display: none; margin-top: 2rem;">
+            <div class="chart-header">
+                <h3 class="chart-title">Member Applications</h3>
+                <div class="d-flex gap-3 align-items-center">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="applicationSystemToggle">
+                        <label class="form-check-label text-white" for="applicationSystemToggle">
+                            Application System
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" id="refreshApplicationsBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <div class="applications-container">
+                <div class="alert alert-info" id="noApplicationsMessage" style="display: none;">
+                    <i class="fas fa-info-circle me-2"></i>
+                    No pending applications found.
+                </div>
+                
+                <div class="row" id="applicationsList">
+                    <!-- Applications will be loaded here -->
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Admin Management Modals -->
@@ -517,91 +551,131 @@ if (!isset($_SESSION["admin"])) {
         
         // Initialize Gender Distribution Chart
         function initGenderDistributionChart() {
-            const genderCtx = document.getElementById('genderDistributionChart').getContext('2d');
+            const chartContainer = document.getElementById('genderDistributionChart');
+            if (!chartContainer) {
+                console.error('Gender distribution chart container not found');
+                return;
+            }
+            
+            const genderCtx = chartContainer.getContext('2d');
+            
+            // Show loading state
+            showNotification('Loading gender distribution data...', 'info');
             
             // Fetch data from API
-            fetch('Action/gender_distribution_api.php')
-                .then(response => response.json())
+            fetch('Action/gender_distribution_api.php', {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    if (data.success) {
+                    console.log('Gender distribution API response:', data);
+                    if (data.success && data.data && data.data.length > 0) {
                         createGenderChart(genderCtx, data.data);
+                        showNotification(data.message || 'Gender distribution loaded successfully', 'success');
+                    } else {
+                        console.warn('No gender data available, using fallback');
+                        createFallbackGenderChart(genderCtx);
+                        showNotification('Using sample data - no member data available', 'warning');
                     }
                 })
                 .catch(error => {
                     console.error('Error loading gender distribution data:', error);
-                    // Fallback data
-                    createGenderChart(genderCtx, [
-                        {gender: 'Male', count: 2, color: '#36A2EB'},
-                        {gender: 'Female', count: 3, color: '#FF6384'},
-                        {gender: 'Other', count: 1, color: '#9966FF'}
-                    ]);
+                    createFallbackGenderChart(genderCtx);
+                    showNotification('Failed to load data, using sample data', 'warning');
                 });
         }
         
         // Create Gender Distribution Chart
         function createGenderChart(ctx, data) {
-            const labels = data.map(item => item.gender);
-            const counts = data.map(item => item.count);
-            const colors = data.map(item => item.color);
-            
-            if (window.genderChart) {
-                window.genderChart.destroy();
-            }
-            
-            window.genderChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: counts,
-                        backgroundColor: colors,
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            top: 10,
-                            bottom: 20,
-                            left: 10,
-                            right: 10
-                        }
+            try {
+                const labels = data.map(item => item.gender);
+                const counts = data.map(item => item.count);
+                const colors = data.map(item => item.color);
+                
+                if (window.genderChart) {
+                    window.genderChart.destroy();
+                }
+                
+                window.genderChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: counts,
+                            backgroundColor: colors,
+                            borderWidth: 0
+                        }]
                     },
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: '#ccc',
-                                padding: 20,
-                                usePointStyle: true,
-                                font: {
-                                    size: 12
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                top: 10,
+                                bottom: 20,
+                                left: 10,
+                                right: 10
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#ccc',
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                borderColor: '#51cf66',
+                                borderWidth: 1,
+                                cornerRadius: 8,
+                                displayColors: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        const gender = context.label;
+                                        const count = context.parsed;
+                                        const genderIcon = gender === 'Male' ? '♂' : gender === 'Female' ? '♀' : '⚧';
+                                        return `${gender}: ${count} ${genderIcon}`;
+                                    }
                                 }
                             }
                         },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            borderColor: '#51cf66',
-                            borderWidth: 1,
-                            cornerRadius: 8,
-                            displayColors: true,
-                            callbacks: {
-                                label: function(context) {
-                                    const gender = context.label;
-                                    const count = context.parsed;
-                                    const genderIcon = gender === 'Male' ? '♂' : gender === 'Female' ? '♀' : '⚧';
-                                    return `${gender}: ${count} ${genderIcon}`;
-                                }
-                            }
-                        }
-                    },
-                    cutout: '60%'
-                }
-            });
+                        cutout: '60%'
+                    }
+                });
+                
+                console.log('Gender distribution chart created successfully');
+            } catch (error) {
+                console.error('Error creating gender chart:', error);
+                createFallbackGenderChart(ctx);
+            }
+        }
+        
+        // Create fallback gender chart with dummy data
+        function createFallbackGenderChart(ctx) {
+            const fallbackData = [
+                {gender: 'Male', count: 3, color: '#36A2EB'},
+                {gender: 'Female', count: 4, color: '#FF6384'},
+                {gender: 'Other', count: 1, color: '#9966FF'}
+            ];
+            
+            createGenderChart(ctx, fallbackData);
         }
         
         // Show notification
@@ -724,6 +798,7 @@ if (!isset($_SESSION["admin"])) {
         document.addEventListener('DOMContentLoaded', function() {
             initCharts();
             initGenderDistributionChart();
+            initMemberApplications();
             showNotification('Dashboard loaded successfully!', 'success');
             
             // Initialize admin management if user is main admin
@@ -925,6 +1000,242 @@ if (!isset($_SESSION["admin"])) {
             });
         }
         <?php endif; ?>
+
+        // Member Applications Management Functions
+        function initMemberApplications() {
+            // Load applications when applications section is shown
+            document.querySelector('[data-section="applications"]').addEventListener('click', function() {
+                loadPendingApplications();
+                loadApplicationSystemStatus();
+            });
+            
+            // Application system toggle
+            document.getElementById('applicationSystemToggle').addEventListener('change', function() {
+                toggleApplicationSystem(this.checked);
+            });
+            
+            // Refresh applications button
+            document.getElementById('refreshApplicationsBtn').addEventListener('click', function() {
+                loadPendingApplications();
+            });
+            
+            // Load initial status and pending count
+            loadApplicationSystemStatus();
+            loadPendingApplicationsCount();
+        }
+
+        function loadApplicationSystemStatus() {
+            fetch('Action/member_management.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=get_application_status'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('applicationSystemToggle').checked = data.enabled;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading application status:', error);
+            });
+        }
+
+        function toggleApplicationSystem(enabled) {
+            const formData = new FormData();
+            formData.append('action', 'toggle_application_system');
+            formData.append('enabled', enabled ? 'true' : 'false');
+            
+            fetch('Action/member_management.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                } else {
+                    showNotification(data.message, 'error');
+                    // Revert toggle if failed
+                    document.getElementById('applicationSystemToggle').checked = !enabled;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to update application system', 'error');
+                // Revert toggle if failed
+                document.getElementById('applicationSystemToggle').checked = !enabled;
+            });
+        }
+
+        function loadPendingApplications() {
+            fetch('Action/member_management.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=get_pending_members'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayPendingApplications(data.data);
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to load applications', 'error');
+            });
+        }
+
+        function loadPendingApplicationsCount() {
+            fetch('Action/member_management.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=get_pending_members'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const count = data.data.length;
+                    const badge = document.getElementById('pendingApplicationsBadge');
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error loading applications count:', error);
+            });
+        }
+
+        function displayPendingApplications(applications) {
+            const applicationsList = document.getElementById('applicationsList');
+            const noApplicationsMessage = document.getElementById('noApplicationsMessage');
+            
+            applicationsList.innerHTML = '';
+            
+            if (applications.length === 0) {
+                noApplicationsMessage.style.display = 'block';
+                return;
+            }
+            
+            noApplicationsMessage.style.display = 'none';
+            
+            applications.forEach(app => {
+                const applicationCard = document.createElement('div');
+                applicationCard.className = 'col-lg-6 col-md-8 col-12 mb-4';
+                applicationCard.innerHTML = `
+                    <div class="card bg-dark text-light border-secondary h-100">
+                        <div class="card-header border-secondary">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user me-2 text-warning"></i>
+                                ${app.full_name}
+                            </h5>
+                            <small class="text-muted">Applied: ${new Date(app.created_at).toLocaleDateString()}</small>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="mb-2"><strong>ID:</strong> ${app.university_id}</p>
+                                    <p class="mb-2"><strong>Email:</strong> ${app.email}</p>
+                                    <p class="mb-2"><strong>Department:</strong> ${app.department}</p>
+                                    <p class="mb-2"><strong>Semester:</strong> ${app.semester}</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="mb-2"><strong>Phone:</strong> ${app.phone}</p>
+                                    <p class="mb-2"><strong>Gender:</strong> ${app.gender}</p>
+                                    <p class="mb-2"><strong>Status:</strong> ${app.membership_status}</p>
+                                    <p class="mb-2"><strong>Category:</strong> ${app.event_category}</p>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <p class="mb-2"><strong>Motivation:</strong></p>
+                                <p class="text-muted small">${app.motivation}</p>
+                            </div>
+                        </div>
+                        <div class="card-footer border-secondary">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button class="btn btn-success btn-sm" onclick="acceptApplication(${app.id})">
+                                    <i class="fas fa-check me-1"></i> Accept
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="rejectApplication(${app.id}, '${app.full_name}')">
+                                    <i class="fas fa-times me-1"></i> Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                applicationsList.appendChild(applicationCard);
+            });
+        }
+
+        function acceptApplication(memberId) {
+            if (!confirm('Are you sure you want to accept this application? An email will be sent to the member.')) {
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('action', 'accept_member');
+            formData.append('member_id', memberId);
+            
+            fetch('Action/member_management.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    loadPendingApplications();
+                    loadPendingApplicationsCount();
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to accept application', 'error');
+            });
+        }
+
+        function rejectApplication(memberId, memberName) {
+            if (!confirm(`Are you sure you want to reject ${memberName}'s application? This will permanently delete their information.`)) {
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('action', 'reject_member');
+            formData.append('member_id', memberId);
+            
+            fetch('Action/member_management.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    loadPendingApplications();
+                    loadPendingApplicationsCount();
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to reject application', 'error');
+            });
+        }
     </script>
 </body>
-</html> 
+</html>
