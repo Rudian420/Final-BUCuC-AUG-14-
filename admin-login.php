@@ -93,7 +93,7 @@
           />
         </div>
 
-        <div class="form-group">
+        <div class="form-group password-input-group">
           <i class="fas fa-lock input-icon"></i>
           <input
             type="password"
@@ -103,6 +103,7 @@
             placeholder="Admin Password"
             required
           />
+          <i class="fas fa-eye password-toggle" id="togglePassword"></i>
         </div>
 
         <button type="submit" class="btn btn-login">
@@ -148,6 +149,20 @@
         input.addEventListener("blur", function () {
           this.parentElement.style.transform = "scale(1)";
         });
+      });
+
+      // Password toggle functionality
+      const togglePassword = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('adminPassword');
+      
+      togglePassword.addEventListener('click', function() {
+        // Toggle password visibility
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // Toggle eye icon
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
       });
 
       // Initialize particles when page loads
