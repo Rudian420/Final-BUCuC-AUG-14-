@@ -37,6 +37,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             getApplicationStatus($conn);
             break;
         
+        case 'get_member_statistics':
+            getMemberStatistics($conn);
+            break;
+        
+        case 'get_members_by_category':
+            getMembersByCategory($conn, $_POST['category'] ?? '');
+            break;
+        
         default:
             echo json_encode(['success' => false, 'message' => 'Invalid action']);
     }
@@ -48,7 +56,7 @@ function getPendingMembers($conn) {
     try {
         $sql = "SELECT id, full_name, university_id, email, department, phone, semester, 
                 gender, date_of_birth, membership_status, event_category, motivation,
-                created_at, application_status 
+                created_at, application_status, facebook_url, gsuite_email, gender_tracking
                 FROM members 
                 WHERE application_status = 'pending' 
                 ORDER BY created_at DESC";
@@ -57,7 +65,7 @@ function getPendingMembers($conn) {
         $stmt->execute();
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        echo json_encode(['success' => true, 'data' => $members]);
+        echo json_encode(['success' => true, 'data' => $members, 'count' => count($members)]);
     } catch (PDOException $e) {
         echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
     }
@@ -71,32 +79,33 @@ function acceptMember($conn, $memberId) {
     
     try {
         // Get member details for email
-        $getMemberSql = "SELECT full_name, email FROM members WHERE id = :member_id";
+        $getMemberSql = "SELECT full_name, email, event_category FROM members WHERE id = :member_id AND application_status = 'pending'";
         $getMemberStmt = $conn->prepare($getMemberSql);
         $getMemberStmt->bindParam(':member_id', $memberId);
         $getMemberStmt->execute();
         $member = $getMemberStmt->fetch();
         
         if (!$member) {
-            echo json_encode(['success' => false, 'message' => 'Member not found']);
+            echo json_encode(['success' => false, 'message' => 'Member not found or already processed']);
             return;
         }
         
-        // Update member status
-        $sql = "UPDATE members 
-                SET application_status = 'accepted', 
-                    admin_action_at = NOW(), 
-                    admin_action_by = :admin_id 
-                WHERE id = :member_id";
-        
+        // Use the stored procedure for consistent handling
+        $sql = "CALL AcceptMemberApplication(:member_id, :admin_id)";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':member_id', $memberId);
         $stmt->bindParam(':admin_id', $_SESSION['admin_id']);
         
         if ($stmt->execute()) {
             // Send acceptance email
-            sendAcceptanceEmail($member['email'], $member['full_name']);
-            echo json_encode(['success' => true, 'message' => 'Member accepted successfully and email sent']);
+            $emailSent = sendAcceptanceEmail($member['email'], $member['full_name'], $member['event_category']);
+            $message = 'Member accepted successfully';
+            if ($emailSent) {
+                $message .= ' and welcome email sent';
+            } else {
+                $message .= ' but email notification failed';
+            }
+            echo json_encode(['success' => true, 'message' => $message]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to accept member']);
         }
@@ -112,13 +121,28 @@ function rejectMember($conn, $memberId) {
     }
     
     try {
-        // Delete the member record
-        $sql = "DELETE FROM members WHERE id = :member_id";
+        // Get member details before deletion (for logging/audit purposes)
+        $getMemberSql = "SELECT full_name, email FROM members WHERE id = :member_id AND application_status = 'pending'";
+        $getMemberStmt = $conn->prepare($getMemberSql);
+        $getMemberStmt->bindParam(':member_id', $memberId);
+        $getMemberStmt->execute();
+        $member = $getMemberStmt->fetch();
+        
+        if (!$member) {
+            echo json_encode(['success' => false, 'message' => 'Member not found or already processed']);
+            return;
+        }
+        
+        // Use the stored procedure for consistent handling
+        $sql = "CALL RejectMemberApplication(:member_id, :admin_id)";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':member_id', $memberId);
+        $stmt->bindParam(':admin_id', $_SESSION['admin_id']);
         
         if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Member rejected and removed successfully']);
+            // Optional: Log the rejection for audit purposes
+            error_log("Member application rejected: {$member['full_name']} ({$member['email']}) by admin ID: {$_SESSION['admin_id']}");
+            echo json_encode(['success' => true, 'message' => 'Member application rejected successfully']);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to reject member']);
         }
@@ -163,14 +187,28 @@ function getApplicationStatus($conn) {
     }
 }
 
-function sendAcceptanceEmail($to_email, $full_name) {
+require_once '../vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+function sendAcceptanceEmail($to_email, $full_name, $event_category = 'General') {
+    // Check if email notifications are enabled
+    global $conn;
+    try {
+        $settingSql = "SELECT setting_value FROM application_settings WHERE setting_name = 'welcome_email_enabled'";
+        $settingStmt = $conn->prepare($settingSql);
+        $settingStmt->execute();
+        $setting = $settingStmt->fetch();
+        
+        if (!$setting || $setting['setting_value'] !== 'true') {
+            return false; // Email notifications disabled
+        }
+    } catch (Exception $e) {
+        // Continue with email if setting check fails
+    }
+    
     // Using PHPMailer
-    require_once '../vendor/autoload.php';
-    
-    use PHPMailer\PHPMailer\PHPMailer;
-    use PHPMailer\PHPMailer\SMTP;
-    use PHPMailer\PHPMailer\Exception;
-    
     $mail = new PHPMailer(true);
     
     try {
@@ -189,7 +227,7 @@ function sendAcceptanceEmail($to_email, $full_name) {
         
         // Content
         $mail->isHTML(true);
-        $mail->Subject = 'Welcome to BRAC University Cultural Club!';
+        $mail->Subject = 'Welcome to BRAC University Cultural Club - ' . $event_category . ' Category!';
         $mail->Body = "
         <html>
         <head>
@@ -209,16 +247,17 @@ function sendAcceptanceEmail($to_email, $full_name) {
                 </div>
                 <div class='content'>
                     <h2>Dear $full_name,</h2>
-                    <p>Congratulations! Your application to join the <strong>BRAC University Cultural Club</strong> has been <strong>accepted</strong>!</p>
+                    <p>Congratulations! Your application to join the <strong>BRAC University Cultural Club</strong> in the <strong>$event_category category</strong> has been <strong>accepted</strong>!</p>
                     
-                    <p>We are thrilled to have you as part of our vibrant community of artists, performers, and cultural enthusiasts. Your journey with us promises to be filled with creativity, friendship, and unforgettable experiences.</p>
+                    <p>We are thrilled to have you as part of our vibrant community of artists, performers, and cultural enthusiasts. Your journey with us promises to be filled with creativity, friendship, and unforgettable experiences in the $event_category domain.</p>
                     
                     <h3>What's Next?</h3>
                     <ul>
-                        <li>🎭 Join our upcoming events and workshops</li>
-                        <li>🤝 Connect with fellow club members</li>
-                        <li>🎨 Showcase your talents in our performances</li>
-                        <li>📚 Access exclusive club resources and materials</li>
+                        <li>🎭 Join our upcoming $event_category events and workshops</li>
+                        <li>🤝 Connect with fellow $event_category category members</li>
+                        <li>🎨 Showcase your $event_category talents in our performances</li>
+                        <li>📚 Access exclusive club resources and $event_category materials</li>
+                        <li>🌟 Participate in inter-category collaborations</li>
                     </ul>
                     
                     <p>Keep an eye on your email for updates about our upcoming events, meetings, and opportunities to get involved!</p>
@@ -236,13 +275,70 @@ function sendAcceptanceEmail($to_email, $full_name) {
         </html>
         ";
         
-        $mail->AltBody = "Dear $full_name,\n\nCongratulations! Your application to join the BRAC University Cultural Club has been accepted!\n\nWe look forward to your participation in our upcoming events.\n\nBest regards,\nBRAC University Cultural Club";
+        $mail->AltBody = "Dear $full_name,\n\nCongratulations! Your application to join the BRAC University Cultural Club in the $event_category category has been accepted!\n\nWe look forward to your participation in our upcoming $event_category events and activities.\n\nBest regards,\nBRAC University Cultural Club";
         
         $mail->send();
         return true;
     } catch (Exception $e) {
         error_log("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
         return false;
+    }
+}
+
+function getMemberStatistics($conn) {
+    try {
+        // Use the new member_statistics view
+        $sql = "SELECT * FROM member_statistics";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($stats) {
+            echo json_encode(['success' => true, 'data' => $stats]);
+        } else {
+            // Fallback to manual calculation if view doesn't exist
+            $fallbackSql = "SELECT 
+                COUNT(*) as total_members,
+                SUM(CASE WHEN application_status = 'pending' THEN 1 ELSE 0 END) as pending_applications,
+                SUM(CASE WHEN application_status = 'accepted' THEN 1 ELSE 0 END) as accepted_members,
+                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_members,
+                SUM(CASE WHEN gender = 'Male' THEN 1 ELSE 0 END) as total_males,
+                SUM(CASE WHEN gender = 'Female' THEN 1 ELSE 0 END) as total_females,
+                SUM(CASE WHEN gender = 'Other' THEN 1 ELSE 0 END) as total_others
+                FROM members";
+            
+            $fallbackStmt = $conn->prepare($fallbackSql);
+            $fallbackStmt->execute();
+            $fallbackStats = $fallbackStmt->fetch(PDO::FETCH_ASSOC);
+            
+            echo json_encode(['success' => true, 'data' => $fallbackStats]);
+        }
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    }
+}
+
+function getMembersByCategory($conn, $category) {
+    try {
+        if (empty($category)) {
+            echo json_encode(['success' => false, 'message' => 'Category is required']);
+            return;
+        }
+        
+        $sql = "SELECT id, full_name, email, department, semester, gender, 
+                membership_status, event_category, status, created_at
+                FROM members 
+                WHERE event_category = :category AND status = 'active'
+                ORDER BY full_name ASC";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':category', $category);
+        $stmt->execute();
+        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        echo json_encode(['success' => true, 'data' => $members, 'category' => $category, 'count' => count($members)]);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
     }
 }
 ?>

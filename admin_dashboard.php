@@ -137,49 +137,49 @@ if (!isset($_SESSION["admin"])) {
                 <div class="stat-icon">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="stat-number">1,247</div>
+                <div class="stat-number" id="totalMembersCount">Loading...</div>
                 <div class="stat-label">Total Members</div>
                 <div class="stat-change positive">
                     <i class="fas fa-arrow-up"></i>
-                    +12% this month
+                    <span id="activeMembersCount">Active: Loading...</span>
                 </div>
             </div>
             
-            <div class="stat-card" data-stat="events">
+            <div class="stat-card" data-stat="applications">
                 <div class="stat-icon">
-                    <i class="fas fa-calendar-check"></i>
+                    <i class="fas fa-user-plus"></i>
                 </div>
-                <div class="stat-number">24</div>
-                <div class="stat-label">Events This Month</div>
-                <div class="stat-change positive">
-                    <i class="fas fa-arrow-up"></i>
-                    +3 new events
+                <div class="stat-number" id="pendingApplicationsCount">Loading...</div>
+                <div class="stat-label">Pending Applications</div>
+                <div class="stat-change" id="applicationsChange">
+                    <i class="fas fa-clock"></i>
+                    Awaiting Review
                 </div>
             </div>
             
-            <div class="stat-card" data-stat="performances">
+            <div class="stat-card" data-stat="categories">
                 <div class="stat-icon">
                     <i class="fas fa-music"></i>
                 </div>
-                <div class="stat-number">156</div>
-                <div class="stat-label">Performances</div>
+                <div class="stat-number">5</div>
+                <div class="stat-label">Event Categories</div>
                 <div class="stat-change positive">
-                    <i class="fas fa-arrow-up"></i>
-                    +8% this week
+                    <i class="fas fa-palette"></i>
+                    Music, Dance, Drama, Art, Poetry
                 </div>
             </div>
             
-                         <div class="stat-card" data-stat="sponsors">
-                 <div class="stat-icon">
-                     <i class="fas fa-handshake"></i>
-                 </div>
-                 <div class="stat-number">৳12,45,000</div>
-                 <div class="stat-label">Total Sponsors</div>
-                 <div class="stat-change positive">
-                     <i class="fas fa-arrow-up"></i>
-                     +15% this quarter
-                 </div>
-             </div>
+            <div class="stat-card" data-stat="gender">
+                <div class="stat-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <div class="stat-number" id="genderRatio">Loading...</div>
+                <div class="stat-label">Gender Distribution</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-chart-pie"></i>
+                    <span id="genderBreakdown">Loading...</span>
+                </div>
+            </div>
         </div>
         
         <!-- Charts Section -->
@@ -506,47 +506,9 @@ if (!isset($_SESSION["admin"])) {
                  }
              });
             
-            // Event Categories Chart
+            // Event Categories Chart - Load real data
             const eventCtx = document.getElementById('eventCategoriesChart').getContext('2d');
-            eventChart = new Chart(eventCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Music', 'Dance', 'Drama', 'Art', 'Poetry'],
-                    datasets: [{
-                        data: [35, 25, 20, 15, 5],
-                        backgroundColor: [
-                            '#f3d35c',
-                            '#e76f2c',
-                            '#28a745',
-                            '#17a2b8',
-                            '#6f42c1'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            top: 10,
-                            bottom: 20,
-                            left: 10,
-                            right: 10
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: '#ccc',
-                                padding: 20,
-                                usePointStyle: true
-                            }
-                        }
-                    }
-                }
-            });
+            initEventCategoriesChart(eventCtx);
         }
         
         // Initialize Gender Distribution Chart
@@ -677,6 +639,142 @@ if (!isset($_SESSION["admin"])) {
             
             createGenderChart(ctx, fallbackData);
         }
+
+        // Initialize Event Categories Chart with real data
+        function initEventCategoriesChart() {
+            const chartContainer = document.getElementById('eventCategoriesChart');
+            if (!chartContainer) {
+                console.error('Event categories chart container not found');
+                return;
+            }
+            
+            const eventCtx = chartContainer.getContext('2d');
+            
+            // Fetch data from new API
+            fetch('Action/event_statistics_api.php', {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Event categories API response:', data);
+                    if (data.success && data.data && data.data.length > 0) {
+                        createEventCategoriesChart(eventCtx, data.data);
+                        showNotification(data.message || 'Event categories loaded successfully', 'success');
+                    } else {
+                        console.warn('No event category data available, using fallback');
+                        createFallbackEventChart(eventCtx);
+                        showNotification('Using sample data - no category data available', 'warning');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading event categories data:', error);
+                    createFallbackEventChart(eventCtx);
+                    showNotification('Failed to load category data, using sample data', 'warning');
+                });
+        }
+
+        // Create Event Categories Chart
+        function createEventCategoriesChart(ctx, data) {
+            try {
+                const labels = data.map(item => item.category);
+                const counts = data.map(item => item.count);
+                const colors = data.map(item => item.color);
+                
+                if (window.eventChart) {
+                    window.eventChart.destroy();
+                }
+                
+                window.eventChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: counts,
+                            backgroundColor: colors,
+                            borderWidth: 0,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                top: 10,
+                                bottom: 20,
+                                left: 10,
+                                right: 10
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#ccc',
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                borderColor: '#51cf66',
+                                borderWidth: 1,
+                                cornerRadius: 8,
+                                displayColors: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        const category = context.label;
+                                        const count = context.parsed;
+                                        const dataPoint = data[context.dataIndex];
+                                        let tooltip = `${category}: ${count} members`;
+                                        if (dataPoint.male_count !== undefined) {
+                                            tooltip += `\nMale: ${dataPoint.male_count}, Female: ${dataPoint.female_count}`;
+                                            if (dataPoint.other_count > 0) {
+                                                tooltip += `, Other: ${dataPoint.other_count}`;
+                                            }
+                                        }
+                                        return tooltip;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '60%'
+                    }
+                });
+                
+                console.log('Event categories chart created successfully');
+            } catch (error) {
+                console.error('Error creating event categories chart:', error);
+                createFallbackEventChart(ctx);
+            }
+        }
+
+        // Create fallback event categories chart with dummy data
+        function createFallbackEventChart(ctx) {
+            const fallbackData = [
+                {category: 'Music', count: 35, color: '#f3d35c'},
+                {category: 'Dance', count: 25, color: '#e76f2c'},
+                {category: 'Drama', count: 20, color: '#28a745'},
+                {category: 'Art', count: 15, color: '#17a2b8'},
+                {category: 'Poetry', count: 5, color: '#6f42c1'}
+            ];
+            
+            createEventCategoriesChart(ctx, fallbackData);
+        }
         
         // Show notification
         function showNotification(message, type = 'success') {
@@ -798,7 +896,9 @@ if (!isset($_SESSION["admin"])) {
         document.addEventListener('DOMContentLoaded', function() {
             initCharts();
             initGenderDistributionChart();
+            initEventCategoriesChart();
             initMemberApplications();
+            loadMemberStatistics();
             showNotification('Dashboard loaded successfully!', 'success');
             
             // Initialize admin management if user is main admin
@@ -1198,6 +1298,7 @@ if (!isset($_SESSION["admin"])) {
                     showNotification(data.message, 'success');
                     loadPendingApplications();
                     loadPendingApplicationsCount();
+                    loadMemberStatistics(); // Refresh statistics
                 } else {
                     showNotification(data.message, 'error');
                 }
@@ -1227,6 +1328,7 @@ if (!isset($_SESSION["admin"])) {
                     showNotification(data.message, 'success');
                     loadPendingApplications();
                     loadPendingApplicationsCount();
+                    loadMemberStatistics(); // Refresh statistics
                 } else {
                     showNotification(data.message, 'error');
                 }
@@ -1235,6 +1337,72 @@ if (!isset($_SESSION["admin"])) {
                 console.error('Error:', error);
                 showNotification('Failed to reject application', 'error');
             });
+        }
+
+        // Load member statistics from the new database structure
+        function loadMemberStatistics() {
+            fetch('Action/member_management.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=get_member_statistics'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    updateStatisticsDisplay(data.data);
+                } else {
+                    console.warn('Failed to load member statistics, using fallback');
+                    updateStatisticsDisplay({
+                        total_members: 0,
+                        active_members: 0,
+                        pending_applications: 0,
+                        total_males: 0,
+                        total_females: 0,
+                        total_others: 0
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading member statistics:', error);
+                showNotification('Failed to load member statistics', 'warning');
+            });
+        }
+
+        // Update statistics display with real data
+        function updateStatisticsDisplay(stats) {
+            // Update total members
+            document.getElementById('totalMembersCount').textContent = stats.total_members || 0;
+            document.getElementById('activeMembersCount').textContent = `Active: ${stats.active_members || 0}`;
+            
+            // Update pending applications
+            const pendingCount = stats.pending_applications || 0;
+            document.getElementById('pendingApplicationsCount').textContent = pendingCount;
+            
+            // Update applications change indicator
+            const applicationsChange = document.getElementById('applicationsChange');
+            if (pendingCount > 0) {
+                applicationsChange.className = 'stat-change';
+                applicationsChange.innerHTML = '<i class="fas fa-clock"></i> Needs Attention';
+            } else {
+                applicationsChange.className = 'stat-change positive';
+                applicationsChange.innerHTML = '<i class="fas fa-check"></i> All Reviewed';
+            }
+            
+            // Update gender distribution
+            const totalGender = (stats.total_males || 0) + (stats.total_females || 0) + (stats.total_others || 0);
+            if (totalGender > 0) {
+                const malePercent = Math.round((stats.total_males / totalGender) * 100);
+                const femalePercent = Math.round((stats.total_females / totalGender) * 100);
+                const otherPercent = Math.round((stats.total_others / totalGender) * 100);
+                
+                document.getElementById('genderRatio').textContent = `${malePercent}/${femalePercent}/${otherPercent}%`;
+                document.getElementById('genderBreakdown').textContent = `M: ${stats.total_males}, F: ${stats.total_females}, O: ${stats.total_others}`;
+            } else {
+                document.getElementById('genderRatio').textContent = 'No Data';
+                document.getElementById('genderBreakdown').textContent = 'No members yet';
+            }
         }
     </script>
 </body>

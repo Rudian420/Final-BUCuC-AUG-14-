@@ -36,12 +36,20 @@ switch ($action) {
 
 function getAdmins($conn) {
     try {
-        $sql = "SELECT id, username, email, role, status, created_at FROM adminpanel ORDER BY created_at DESC";
+        $sql = "SELECT id, username, email, role, status, created_at, updated_at FROM adminpanel ORDER BY created_at DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $admins = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        echo json_encode(['success' => true, 'data' => $admins]);
+        // Format dates for better display
+        foreach ($admins as &$admin) {
+            $admin['created_at'] = date('Y-m-d H:i:s', strtotime($admin['created_at']));
+            if ($admin['updated_at']) {
+                $admin['updated_at'] = date('Y-m-d H:i:s', strtotime($admin['updated_at']));
+            }
+        }
+        
+        echo json_encode(['success' => true, 'data' => $admins, 'count' => count($admins)]);
     } catch (PDOException $e) {
         http_response_code(500);
         echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
@@ -96,8 +104,8 @@ function createAdmin($conn) {
         // Hash password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         
-        // Insert new admin
-        $sql = "INSERT INTO adminpanel (username, email, password, role) VALUES (:username, :email, :password, :role)";
+        // Insert new admin with proper status
+        $sql = "INSERT INTO adminpanel (username, email, password, role, status) VALUES (:username, :email, :password, :role, 'active')";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
@@ -105,7 +113,16 @@ function createAdmin($conn) {
         $stmt->bindParam(':role', $role);
         
         if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Admin account created successfully']);
+            $newAdminId = $conn->lastInsertId();
+            
+            // Log the creation
+            error_log("New admin created: ID {$newAdminId}, Username: {$username}, Email: {$email}, Role: {$role} by admin ID: {$_SESSION['admin_id']}");
+            
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Admin account created successfully',
+                'admin_id' => $newAdminId
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to create admin account']);
         }
@@ -153,6 +170,9 @@ function updatePassword($conn) {
         $stmt->bindParam(':id', $adminId);
         
         if ($stmt->execute()) {
+            // Log the password update
+            error_log("Admin password updated: ID {$adminId} by admin ID: {$_SESSION['admin_id']}");
+            
             echo json_encode(['success' => true, 'message' => 'Password updated successfully']);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to update password']);
@@ -198,6 +218,9 @@ function deleteAdmin($conn) {
         $stmt->bindParam(':id', $adminId);
         
         if ($stmt->execute()) {
+            // Log the deletion
+            error_log("Admin deleted: {$admin['username']} ({$admin['email']}) by admin ID: {$_SESSION['admin_id']}");
+            
             echo json_encode(['success' => true, 'message' => 'Admin account deleted successfully']);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to delete admin account']);

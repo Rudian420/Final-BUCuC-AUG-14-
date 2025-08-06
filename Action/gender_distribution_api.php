@@ -40,13 +40,12 @@ try {
         exit();
     }
     
-    // Get total gender distribution across all event categories
+    // Use the new view for optimized gender distribution data
     $sql = "SELECT 
-                gender_tracking,
+                gender,
                 COUNT(*) as count
-            FROM members 
-            WHERE status = 'active' AND gender_tracking IS NOT NULL
-            GROUP BY gender_tracking
+            FROM gender_distribution_view
+            GROUP BY gender
             ORDER BY count DESC";
     
     $stmt = $conn->prepare($sql);
@@ -70,7 +69,7 @@ try {
         ];
     } else {
         foreach ($data as $row) {
-            $gender = $row['gender_tracking'];
+            $gender = $row['gender'];
             $count = (int)$row['count'];
             
             $chartData[] = [
@@ -81,36 +80,35 @@ try {
         }
     }
     
-    // Get summary statistics
-    if (empty($data)) {
-        // Use dummy summary data
-        $summary = [
-            'total_males' => 3,
-            'total_females' => 4,
-            'total_others' => 1,
-            'total_members' => 8
-        ];
-        $message = 'Using dummy data - no active members found';
-    } else {
-        $summarySql = "SELECT 
-                            SUM(CASE WHEN gender_tracking = 'Male' THEN 1 ELSE 0 END) as total_males,
-                            SUM(CASE WHEN gender_tracking = 'Female' THEN 1 ELSE 0 END) as total_females,
-                            SUM(CASE WHEN gender_tracking = 'Other' THEN 1 ELSE 0 END) as total_others,
-                            COUNT(*) as total_members
-                        FROM members 
-                        WHERE status = 'active' AND gender_tracking IS NOT NULL";
-        
-        $summaryStmt = $conn->prepare($summarySql);
-        $summaryStmt->execute();
-        $summaryData = $summaryStmt->fetch(PDO::FETCH_ASSOC);
-        
+    // Get summary statistics using the new member_statistics view
+    $summarySql = "SELECT * FROM member_statistics";
+    $summaryStmt = $conn->prepare($summarySql);
+    $summaryStmt->execute();
+    $summaryData = $summaryStmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($summaryData) {
         $summary = [
             'total_males' => (int)$summaryData['total_males'],
             'total_females' => (int)$summaryData['total_females'],
             'total_others' => (int)$summaryData['total_others'],
-            'total_members' => (int)$summaryData['total_members']
+            'total_members' => (int)$summaryData['total_members'],
+            'active_members' => (int)$summaryData['active_members'],
+            'pending_applications' => (int)$summaryData['pending_applications'],
+            'accepted_members' => (int)$summaryData['accepted_members']
         ];
-        $message = 'Data loaded successfully';
+        $message = 'Data loaded successfully from enhanced database';
+    } else {
+        // Fallback to dummy data
+        $summary = [
+            'total_males' => 3,
+            'total_females' => 4,
+            'total_others' => 1,
+            'total_members' => 8,
+            'active_members' => 8,
+            'pending_applications' => 0,
+            'accepted_members' => 8
+        ];
+        $message = 'Using dummy data - no member statistics available';
     }
     
     $response = [

@@ -2459,17 +2459,7 @@ https://templatemo.com/tm-583-festava-live
                                                         placeholder="GSuite Email (if available)">
                                                 </div>
                                             </div>
-                                            <div class="row">
-                                                <div
-                                                    class="col-lg-6 col-md-6 col-12 mb-3">
-                                                    <input type="password"
-                                                        name="signup-password"
-                                                        id="signup-password"
-                                                        class="form-control"
-                                                        placeholder="Password"
-                                                        required>
-                                                </div>
-                                            </div>
+                             
                                             <div class="row">
                                                 <div
                                                     class="col-lg-6 col-md-6 col-12 mb-3">
