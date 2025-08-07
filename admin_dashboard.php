@@ -66,6 +66,10 @@ if (!isset($_SESSION["admin"])) {
                     <i class="fas fa-calendar-alt"></i>
                     Events
                 </a>
+                <a href="#" class="nav-item" data-section="dashboard-update">
+                    <i class="fas fa-cogs"></i>
+                    Dashboard Updates
+                </a>
              
               
             </div>
@@ -263,6 +267,84 @@ if (!isset($_SESSION["admin"])) {
                 </div>
             </div>
         </div>
+
+        <!-- Dashboard Update Section -->
+        <div class="dashboard-update-section" id="dashboard-update-section" style="display: none; margin-top: 2rem;">
+            <div class="chart-header">
+                <h3 class="chart-title">Dashboard Data Management</h3>
+                <div class="d-flex gap-3 align-items-center">
+                    <p class="text-muted mb-0">Update dashboard statistics and data for testing and management purposes</p>
+                    <button class="btn btn-secondary btn-sm" id="testModalBtn" style="margin-right: 10px;">
+                        <i class="fas fa-bug"></i> Test Modal
+                    </button>
+                    <button class="btn btn-primary" id="refreshDashboardStatsBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh Data
+                    </button>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <!-- Total Members Update -->
+                <div class="col-lg-6 col-md-12 mb-4">
+                    <div class="update-card">
+                        <div class="update-card-header">
+                            <h5><i class="fas fa-users me-2 text-warning"></i>Total Members</h5>
+                            <span class="current-value" id="currentMembersValue">Loading...</span>
+                        </div>
+                        <div class="update-card-body">
+                            <button class="btn btn-primary btn-sm" onclick="openUpdateModal('members')">
+                                <i class="fas fa-edit me-1"></i> Update Members
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Applications Update -->
+                <div class="col-lg-6 col-md-12 mb-4">
+                    <div class="update-card">
+                        <div class="update-card-header">
+                            <h5><i class="fas fa-user-plus me-2 text-info"></i>Pending Applications</h5>
+                            <span class="current-value" id="currentApplicationsValue">Loading...</span>
+                        </div>
+                        <div class="update-card-body">
+                            <button class="btn btn-info btn-sm" onclick="openUpdateModal('applications')">
+                                <i class="fas fa-edit me-1"></i> Update Applications
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Data Update -->
+                <div class="col-lg-6 col-md-12 mb-4">
+                    <div class="update-card">
+                        <div class="update-card-header">
+                            <h5><i class="fas fa-chart-line me-2 text-success"></i>Performance Metrics</h5>
+                            <span class="current-value" id="currentPerformanceValue">5 Categories</span>
+                        </div>
+                        <div class="update-card-body">
+                            <button class="btn btn-success btn-sm" onclick="openUpdateModal('performance')">
+                                <i class="fas fa-edit me-1"></i> Update Performance
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gender Distribution Update -->
+                <div class="col-lg-6 col-md-12 mb-4">
+                    <div class="update-card">
+                        <div class="update-card-header">
+                            <h5><i class="fas fa-balance-scale me-2 text-warning"></i>Gender Distribution</h5>
+                            <span class="current-value" id="currentGenderValue">Loading...</span>
+                        </div>
+                        <div class="update-card-body">
+                            <button class="btn btn-warning btn-sm" onclick="openUpdateModal('gender')">
+                                <i class="fas fa-edit me-1"></i> Update Distribution
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Admin Management Modals -->
@@ -383,6 +465,171 @@ if (!isset($_SESSION["admin"])) {
         </div>
     </div>
     <?php endif; ?>
+
+    <!-- Dashboard Update Modal -->
+    <div class="modal fade" id="dashboardUpdateModal" tabindex="-1" aria-labelledby="dashboardUpdateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="dashboardUpdateModalLabel">
+                        <i class="fas fa-cogs me-2"></i>Update Dashboard Data
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="dashboardUpdateForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="updateType" name="update_type">
+                        
+                        <!-- Members Update Form -->
+                        <div id="membersUpdateForm" class="update-form-section" style="display: none;">
+                            <h6 class="text-warning mb-3"><i class="fas fa-users me-2"></i>Update Total Members</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="memberOperation" class="form-label">Operation</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="memberOperation" name="operation">
+                                        <option value="add">Add Members</option>
+                                        <option value="remove">Remove Members</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="memberAmount" class="form-label">Amount</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="memberAmount" name="amount" min="1" max="100" value="1">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="memberCategory" class="form-label">Category</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="memberCategory" name="category">
+                                        <option value="Music">Music</option>
+                                        <option value="Dance">Dance</option>
+                                        <option value="Drama">Drama</option>
+                                        <option value="Art">Art</option>
+                                        <option value="Poetry">Poetry</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="memberGender" class="form-label">Gender (for new members)</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="memberGender" name="gender">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="memberName" class="form-label">Member Name (optional, for add operation)</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" id="memberName" name="member_name" placeholder="Leave empty for auto-generated name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="memberEmail" class="form-label">Member Email (optional, for add operation)</label>
+                                <input type="email" class="form-control bg-dark text-light border-secondary" id="memberEmail" name="member_email" placeholder="Leave empty for auto-generated email">
+                            </div>
+                        </div>
+
+                        <!-- Applications Update Form -->
+                        <div id="applicationsUpdateForm" class="update-form-section" style="display: none;">
+                            <h6 class="text-info mb-3"><i class="fas fa-user-plus me-2"></i>Update Pending Applications</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="applicationOperation" class="form-label">Operation</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="applicationOperation" name="operation">
+                                        <option value="add">Add Applications</option>
+                                        <option value="remove">Remove Applications</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="applicationAmount" class="form-label">Amount</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="applicationAmount" name="amount" min="1" max="50" value="1">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="applicationCategory" class="form-label">Category</label>
+                                <select class="form-select bg-dark text-light border-secondary" id="applicationCategory" name="category">
+                                    <option value="Music">Music</option>
+                                    <option value="Dance">Dance</option>
+                                    <option value="Drama">Drama</option>
+                                    <option value="Art">Art</option>
+                                    <option value="Poetry">Poetry</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Performance Update Form -->
+                        <div id="performanceUpdateForm" class="update-form-section" style="display: none;">
+                            <h6 class="text-success mb-3"><i class="fas fa-chart-line me-2"></i>Update Performance Metrics</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="performanceOperation" class="form-label">Operation</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="performanceOperation" name="operation">
+                                        <option value="add">Add/Increase Metric</option>
+                                        <option value="remove">Decrease Metric</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="performanceValue" class="form-label">Value</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="performanceValue" name="value" min="1" max="1000" value="1">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="performanceType" class="form-label">Metric Type</label>
+                                <select class="form-select bg-dark text-light border-secondary" id="performanceType" name="metric_type">
+                                    <option value="events">Events</option>
+                                    <option value="participation">Participation</option>
+                                    <option value="achievements">Achievements</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="performanceDescription" class="form-label">Description</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" id="performanceDescription" name="description" placeholder="e.g., Annual Cultural Show, Monthly Workshop" required>
+                            </div>
+                        </div>
+
+                        <!-- Gender Distribution Update Form -->
+                        <div id="genderUpdateForm" class="update-form-section" style="display: none;">
+                            <h6 class="text-warning mb-3"><i class="fas fa-balance-scale me-2"></i>Update Gender Distribution</h6>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="genderOperation" class="form-label">Operation</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="genderOperation" name="operation">
+                                        <option value="add">Add Members</option>
+                                        <option value="remove">Remove Members</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="genderType" class="form-label">Gender</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="genderType" name="gender">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="genderAmount" class="form-label">Amount</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="genderAmount" name="amount" min="1" max="100" value="1">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="genderCategory" class="form-label">Category</label>
+                                <select class="form-select bg-dark text-light border-secondary" id="genderCategory" name="category">
+                                    <option value="Music">Music</option>
+                                    <option value="Dance">Dance</option>
+                                    <option value="Drama">Drama</option>
+                                    <option value="Art">Art</option>
+                                    <option value="Poetry">Poetry</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-secondary">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Apply Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     
     <!-- Notification -->
     <div class="notification" id="notification"></div>
@@ -890,6 +1137,22 @@ if (!isset($_SESSION["admin"])) {
             <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
             initAdminManagement();
             <?php endif; ?>
+            
+            // Initialize dashboard updates
+            initDashboardUpdates();
+            
+            // Make functions globally available for debugging
+            window.debugDashboard = {
+                openUpdateModal: openUpdateModal,
+                loadCurrentDashboardStats: loadCurrentDashboardStats,
+                setupUpdateButtons: setupUpdateButtons,
+                testModal: function() {
+                    console.log('Testing modal functionality...');
+                    openUpdateModal('members');
+                }
+            };
+            
+            console.log('Dashboard initialization complete. Use window.debugDashboard.testModal() to test modal.');
         });
 
         // Admin Management Functions
@@ -1388,6 +1651,512 @@ if (!isset($_SESSION["admin"])) {
                 document.getElementById('genderRatio').textContent = 'No Data';
                 document.getElementById('genderBreakdown').textContent = 'No members yet';
             }
+        }
+
+        // Dashboard Update Management Functions
+        function initDashboardUpdates() {
+            console.log('Initializing dashboard updates...');
+            
+            // Load dashboard update section when selected
+            const dashboardUpdateNav = document.querySelector('[data-section="dashboard-update"]');
+            if (dashboardUpdateNav) {
+                dashboardUpdateNav.addEventListener('click', function() {
+                    console.log('Dashboard update section clicked');
+                    setTimeout(() => {
+                        loadCurrentDashboardStats();
+                        setupUpdateButtons(); // Ensure buttons are set up when section is shown
+                    }, 200);
+                });
+            } else {
+                console.warn('Dashboard update navigation not found');
+            }
+            
+            // Dashboard update form submission
+            const updateForm = document.getElementById('dashboardUpdateForm');
+            if (updateForm) {
+                updateForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Form submitted');
+                    submitDashboardUpdate();
+                });
+            } else {
+                console.error('Dashboard update form not found during initialization');
+            }
+            
+            // Refresh button click handler
+            const refreshBtn = document.getElementById('refreshDashboardStatsBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    console.log('Refresh button clicked');
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        refreshAllDashboardData();
+                        this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+                        this.disabled = false;
+                    }, 1000);
+                });
+            } else {
+                console.warn('Refresh button not found during initialization');
+            }
+            
+            // Test modal button click handler
+            const testModalBtn = document.getElementById('testModalBtn');
+            if (testModalBtn) {
+                testModalBtn.addEventListener('click', function() {
+                    console.log('Test modal button clicked');
+                    showNotification('Testing modal functionality...', 'info');
+                    openUpdateModal('members');
+                });
+            } else {
+                console.warn('Test modal button not found during initialization');
+            }
+            
+            // Set up update buttons immediately
+            setupUpdateButtons();
+        }
+
+        // Function to set up update button click handlers
+        function setupUpdateButtons() {
+            console.log('Setting up update buttons...');
+            
+            // Wait for DOM to be ready
+            setTimeout(() => {
+                // Update Members button
+                const membersBtn = document.querySelector('.update-card button[onclick*="members"]');
+                if (membersBtn) {
+                    membersBtn.onclick = null; // Remove old onclick
+                    membersBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('Members update button clicked');
+                        openUpdateModal('members');
+                    });
+                    console.log('Members button setup complete');
+                } else {
+                    console.warn('Members update button not found');
+                }
+                
+                // Update Applications button
+                const applicationsBtn = document.querySelector('.update-card button[onclick*="applications"]');
+                if (applicationsBtn) {
+                    applicationsBtn.onclick = null; // Remove old onclick
+                    applicationsBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('Applications update button clicked');
+                        openUpdateModal('applications');
+                    });
+                    console.log('Applications button setup complete');
+                } else {
+                    console.warn('Applications update button not found');
+                }
+                
+                // Update Performance button
+                const performanceBtn = document.querySelector('.update-card button[onclick*="performance"]');
+                if (performanceBtn) {
+                    performanceBtn.onclick = null; // Remove old onclick
+                    performanceBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('Performance update button clicked');
+                        openUpdateModal('performance');
+                    });
+                    console.log('Performance button setup complete');
+                } else {
+                    console.warn('Performance update button not found');
+                }
+                
+                // Update Gender button
+                const genderBtn = document.querySelector('.update-card button[onclick*="gender"]');
+                if (genderBtn) {
+                    genderBtn.onclick = null; // Remove old onclick
+                    genderBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('Gender update button clicked');
+                        openUpdateModal('gender');
+                    });
+                    console.log('Gender button setup complete');
+                } else {
+                    console.warn('Gender update button not found');
+                }
+            }, 100);
+        }
+
+        function loadCurrentDashboardStats() {
+            console.log('Loading current dashboard stats...');
+            
+            fetch('Action/dashboard_update_management.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=get_current_stats'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Dashboard stats API response:', data);
+                if (data.success && data.data) {
+                    updateCurrentStatsDisplay(data.data);
+                } else {
+                    console.error('API returned failure:', data);
+                    showNotification(data.message || 'Failed to load current statistics', 'error');
+                    
+                    // Set fallback values
+                    updateCurrentStatsDisplay({
+                        members: {
+                            total_members: 0,
+                            active_members: 0,
+                            pending_applications: 0,
+                            total_males: 0,
+                            total_females: 0,
+                            total_others: 0
+                        },
+                        categories: [],
+                        performance: []
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading dashboard stats:', error);
+                showNotification('Failed to load current statistics: ' + error.message, 'error');
+                
+                // Set fallback values
+                updateCurrentStatsDisplay({
+                    members: {
+                        total_members: 0,
+                        active_members: 0,
+                        pending_applications: 0,
+                        total_males: 0,
+                        total_females: 0,
+                        total_others: 0
+                    },
+                    categories: [],
+                    performance: []
+                });
+            });
+        }
+
+        function updateCurrentStatsDisplay(stats) {
+            console.log('Updating current stats display with:', stats);
+            
+            // Update members count
+            if (stats && stats.members) {
+                const members = stats.members;
+                
+                // Update total members display
+                const totalMembers = parseInt(members.total_members) || 0;
+                const activeMembers = parseInt(members.active_members) || 0;
+                document.getElementById('currentMembersValue').textContent = 
+                    `${totalMembers} Total (${activeMembers} Active)`;
+                
+                // Update pending applications display
+                const pendingApps = parseInt(members.pending_applications) || 0;
+                document.getElementById('currentApplicationsValue').textContent = 
+                    `${pendingApps} Pending`;
+                
+                // Update gender distribution display
+                const totalMales = parseInt(members.total_males) || 0;
+                const totalFemales = parseInt(members.total_females) || 0;
+                const totalOthers = parseInt(members.total_others) || 0;
+                const totalGender = totalMales + totalFemales + totalOthers;
+                
+                if (totalGender > 0) {
+                    const malePercent = Math.round((totalMales / totalGender) * 100);
+                    const femalePercent = Math.round((totalFemales / totalGender) * 100);
+                    const otherPercent = Math.round((totalOthers / totalGender) * 100);
+                    document.getElementById('currentGenderValue').textContent = 
+                        `${malePercent}% M, ${femalePercent}% F, ${otherPercent}% O`;
+                } else {
+                    document.getElementById('currentGenderValue').textContent = 'No Data';
+                }
+                
+                // Update performance display based on categories
+                if (stats.categories && stats.categories.length > 0) {
+                    document.getElementById('currentPerformanceValue').textContent = 
+                        `${stats.categories.length} Active Categories`;
+                } else {
+                    document.getElementById('currentPerformanceValue').textContent = '5 Categories';
+                }
+            } else {
+                console.warn('No stats.members data available:', stats);
+                // Set default values
+                document.getElementById('currentMembersValue').textContent = '0 Total (0 Active)';
+                document.getElementById('currentApplicationsValue').textContent = '0 Pending';
+                document.getElementById('currentGenderValue').textContent = 'No Data';
+                document.getElementById('currentPerformanceValue').textContent = '5 Categories';
+            }
+        }
+
+        function openUpdateModal(type) {
+            console.log('Opening update modal for type:', type);
+            
+            try {
+                // Check if modal exists
+                const modalElement = document.getElementById('dashboardUpdateModal');
+                if (!modalElement) {
+                    console.error('Dashboard update modal not found');
+                    showNotification('Modal not found. Please refresh the page.', 'error');
+                    return;
+                }
+                
+                // Reset modal state
+                modalElement.classList.remove('show');
+                modalElement.style.display = 'none';
+                modalElement.setAttribute('aria-hidden', 'true');
+                
+                // Remove any existing backdrop
+                const existingBackdrop = document.getElementById('modal-backdrop-fallback');
+                if (existingBackdrop) {
+                    existingBackdrop.remove();
+                }
+                
+                // Hide all form sections
+                const formSections = document.querySelectorAll('.update-form-section');
+                console.log('Found form sections:', formSections.length);
+                formSections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                // Set update type
+                const updateTypeField = document.getElementById('updateType');
+                if (!updateTypeField) {
+                    console.error('Update type field not found');
+                    showNotification('Form configuration error. Please refresh the page.', 'error');
+                    return;
+                }
+                updateTypeField.value = type;
+                
+                // Show relevant form section and update modal title
+                let modalTitle = 'Update Dashboard Data';
+                let sectionId = '';
+                
+                switch(type) {
+                    case 'members':
+                        modalTitle = 'Update Total Members';
+                        sectionId = 'membersUpdateForm';
+                        break;
+                    case 'applications':
+                        modalTitle = 'Update Pending Applications';
+                        sectionId = 'applicationsUpdateForm';
+                        break;
+                    case 'performance':
+                        modalTitle = 'Update Performance Metrics';
+                        sectionId = 'performanceUpdateForm';
+                        break;
+                    case 'gender':
+                        modalTitle = 'Update Gender Distribution';
+                        sectionId = 'genderUpdateForm';
+                        break;
+                    default:
+                        console.error('Unknown modal type:', type);
+                        showNotification('Unknown update type: ' + type, 'error');
+                        return;
+                }
+                
+                // Update modal title
+                const modalLabel = document.getElementById('dashboardUpdateModalLabel');
+                if (modalLabel) {
+                    modalLabel.innerHTML = `<i class="fas fa-cogs me-2"></i>${modalTitle}`;
+                } else {
+                    console.warn('Modal label not found');
+                }
+                
+                // Show the relevant form section
+                const formSection = document.getElementById(sectionId);
+                if (formSection) {
+                    formSection.style.display = 'block';
+                    console.log('Showing form section:', sectionId);
+                } else {
+                    console.error('Form section not found:', sectionId);
+                    showNotification('Form section not found: ' + sectionId, 'error');
+                    return;
+                }
+                
+                // Show modal
+                console.log('Attempting to show modal...');
+                
+                // Check if Bootstrap is available
+                if (typeof bootstrap === 'undefined') {
+                    console.error('Bootstrap is not loaded, using fallback');
+                    // Fallback: show modal manually
+                    modalElement.classList.add('show');
+                    modalElement.style.display = 'block';
+                    modalElement.setAttribute('aria-hidden', 'false');
+                    document.body.classList.add('modal-open');
+                    
+                    // Add backdrop
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    backdrop.id = 'modal-backdrop-fallback';
+                    document.body.appendChild(backdrop);
+                    
+                    // Add close functionality
+                    const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"]');
+                    closeButtons.forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            closeModalFallback();
+                        });
+                    });
+                    
+                    showNotification('Update form opened', 'success');
+                    return;
+                }
+                
+                // Try to create and show the modal with Bootstrap
+                try {
+                    const modal = new bootstrap.Modal(modalElement, {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    modal.show();
+                    showNotification('Update form opened', 'success');
+                } catch (bootstrapError) {
+                    console.error('Bootstrap modal error:', bootstrapError);
+                    // Fallback: try to show modal manually
+                    modalElement.classList.add('show');
+                    modalElement.style.display = 'block';
+                    modalElement.setAttribute('aria-hidden', 'false');
+                    document.body.classList.add('modal-open');
+                    
+                    // Add backdrop
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    backdrop.id = 'modal-backdrop-fallback';
+                    document.body.appendChild(backdrop);
+                    
+                    // Add close functionality
+                    const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"]');
+                    closeButtons.forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            closeModalFallback();
+                        });
+                    });
+                    
+                    showNotification('Update form opened (fallback mode)', 'warning');
+                }
+                
+                // Add event listener for modal shown event
+                modalElement.addEventListener('shown.bs.modal', function() {
+                    console.log('Modal successfully shown');
+                    showNotification('Update form opened', 'info');
+                }, { once: true });
+                
+                // Add event listener for modal show failed
+                modalElement.addEventListener('hide.bs.modal', function(e) {
+                    if (e.target === modalElement) {
+                        console.log('Modal was hidden');
+                    }
+                }, { once: true });
+                
+            } catch (error) {
+                console.error('Error opening modal:', error);
+                showNotification('Error opening update form: ' + error.message, 'error');
+            }
+        }
+
+        function submitDashboardUpdate() {
+            const form = document.getElementById('dashboardUpdateForm');
+            const formData = new FormData(form);
+            const updateType = document.getElementById('updateType').value;
+            
+            // Set the appropriate action based on update type
+            let action = '';
+            switch(updateType) {
+                case 'members':
+                    action = 'update_total_members';
+                    break;
+                case 'applications':
+                    action = 'update_pending_applications';
+                    break;
+                case 'performance':
+                    action = 'update_performance_data';
+                    break;
+                case 'gender':
+                    action = 'update_gender_distribution';
+                    break;
+            }
+            
+            formData.append('action', action);
+            
+            // Show loading notification
+            showNotification('Processing update...', 'info');
+            
+            fetch('Action/dashboard_update_management.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('dashboardUpdateModal')).hide();
+                    
+                    // Force refresh all dashboard data with a small delay to ensure database changes are committed
+                    setTimeout(() => {
+                        refreshAllDashboardData();
+                    }, 500);
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to update dashboard data', 'error');
+            });
+        }
+
+        // Fallback modal close function
+        function closeModalFallback() {
+            console.log('Closing modal using fallback method');
+            const modalElement = document.getElementById('dashboardUpdateModal');
+            const backdrop = document.getElementById('modal-backdrop-fallback');
+            
+            if (modalElement) {
+                modalElement.classList.remove('show');
+                modalElement.style.display = 'none';
+                modalElement.setAttribute('aria-hidden', 'true');
+            }
+            
+            if (backdrop) {
+                backdrop.remove();
+            }
+            
+            document.body.classList.remove('modal-open');
+            showNotification('Update form closed', 'info');
+        }
+        
+        // Comprehensive refresh function for all dashboard data
+        function refreshAllDashboardData() {
+            console.log('Refreshing all dashboard data...');
+            
+            // 1. Refresh main dashboard statistics (Total Members, Pending Applications, etc.)
+            loadMemberStatistics();
+            
+            // 2. Refresh dashboard update section current values
+            loadCurrentDashboardStats();
+            
+            // 3. Refresh all charts
+            setTimeout(() => {
+                initGenderDistributionChart();
+                initEventCategoriesChart();
+            }, 200);
+            
+            // 4. Refresh applications if in applications section
+            if (document.getElementById('applications-section').style.display !== 'none') {
+                setTimeout(() => {
+                    loadPendingApplications();
+                    loadPendingApplicationsCount();
+                }, 300);
+            }
+            
+            // 5. Show final confirmation
+            setTimeout(() => {
+                showNotification('Dashboard data refreshed successfully!', 'success');
+            }, 800);
         }
     </script>
 </body>

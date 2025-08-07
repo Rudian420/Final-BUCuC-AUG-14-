@@ -486,6 +486,14 @@ body {
   border-left: 4px solid #ff6b6b;
 }
 
+.notification.info {
+  border-left: 4px solid #17a2b8;
+}
+
+.notification.warning {
+  border-left: 4px solid #ffc107;
+}
+
 /* Ensure chart content doesn't get cut off */
 .chart-card .chart-header {
   position: relative;
@@ -685,6 +693,184 @@ body {
   color: #6c757d !important;
 }
 
+/* Dashboard Update Section */
+.dashboard-update-section {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 40px;
+}
+
+.dashboard-update-section .chart-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.update-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.update-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.8s ease;
+}
+
+.update-card:hover::before {
+  left: 100%;
+}
+
+.update-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border-color: var(--primary-yellow);
+}
+
+.update-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.update-card-header h5 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.current-value {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-yellow);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.update-card-body {
+  text-align: center;
+}
+
+.update-card-body .btn {
+  transition: all 0.3s ease;
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-weight: 600;
+  border: none;
+}
+
+.update-card-body .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.update-card-body .btn-primary {
+  background: var(--primary-orange);
+  color: #fff;
+}
+
+.update-card-body .btn-primary:hover {
+  background: var(--primary-yellow);
+  color: var(--dark-blue);
+}
+
+.update-card-body .btn-info {
+  background: #17a2b8;
+  color: #fff;
+}
+
+.update-card-body .btn-info:hover {
+  background: #138496;
+}
+
+.update-card-body .btn-success {
+  background: #51cf66;
+  color: #fff;
+}
+
+.update-card-body .btn-success:hover {
+  background: #40c057;
+}
+
+.update-card-body .btn-warning {
+  background: var(--primary-yellow);
+  color: var(--dark-blue);
+}
+
+.update-card-body .btn-warning:hover {
+  background: #e6c200;
+}
+
+/* Update Form Sections */
+.update-form-section {
+  padding: 20px 0;
+}
+
+.update-form-section h6 {
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.update-form-section .form-control,
+.update-form-section .form-select {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 10px;
+  padding: 12px 15px;
+  transition: all 0.3s ease;
+}
+
+.update-form-section .form-control:focus,
+.update-form-section .form-select:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--primary-yellow);
+  box-shadow: 0 0 15px rgba(243, 211, 92, 0.3);
+  color: #fff;
+}
+
+.update-form-section .form-control::placeholder {
+  color: #ccc;
+}
+
+.update-form-section .form-label {
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
 /* Responsive adjustments for admin management */
 @media (max-width: 768px) {
   .admin-management-section .chart-header {
@@ -704,5 +890,35 @@ body {
   .btn-sm {
     padding: 3px 8px;
     font-size: 0.7rem;
+  }
+  
+  .update-card {
+    margin-bottom: 20px;
+  }
+  
+  .update-card-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .current-value {
+    align-self: flex-start;
+  }
+  
+  .dashboard-update-section .chart-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .dashboard-update-section .chart-header .d-flex {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  
+  .dashboard-update-section .chart-header .btn {
+    width: 100%;
   }
 }
