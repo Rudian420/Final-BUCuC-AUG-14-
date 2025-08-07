@@ -251,7 +251,6 @@ foreach ($membersData['years'] as $yearData) {
           </div>
         <?php endforeach; ?>
       </div>
-      
       <!-- Secretaries -->
       <h4>Secretaries</h4>
       <div class="panel-row">
