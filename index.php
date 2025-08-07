@@ -1542,7 +1542,7 @@ https://templatemo.com/tm-583-festava-live
                         <!-- Panel Year Selector -->
                         <div class="col-12 text-center mb-4">
                             <div class="panel-year-selector">
-                                <label for="panelYearSelect" class="form-label text-white fw-bold mb-2">View Panel by Year:</label>
+                                <label for="panelYearSelect" class="form-label text-black fw-bold mb-2">View Panel by Year</label>
                                 <select id="panelYearSelect" class="form-select panel-year-dropdown">
                                     <option value="current">Current Panel (2024-2025)</option>
                                     <option value="panel_23_24">2023–2024</option>
