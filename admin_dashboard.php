@@ -66,26 +66,14 @@ if (!isset($_SESSION["admin"])) {
                     <i class="fas fa-calendar-alt"></i>
                     Events
                 </a>
-                <a href="#" class="nav-item" data-section="performances">
-                    <i class="fas fa-music"></i>
-                    Performances
-                </a>
-                <a href="#" class="nav-item" data-section="analytics">
-                    <i class="fas fa-chart-line"></i>
-                    Analytics
-                </a>
+             
+              
             </div>
             
             <div class="nav-section">
                 <div class="nav-section-title">Settings</div>
-                <a href="#" class="nav-item" data-section="general">
-                    <i class="fas fa-cog"></i>
-                    General
-                </a>
-                <a href="#" class="nav-item" data-section="profile">
-                    <i class="fas fa-user-cog"></i>
-                    Profile
-                </a>
+               
+            
                 <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
                 <a href="#" class="nav-item" data-section="admin-management">
                     <i class="fas fa-users-cog"></i>
