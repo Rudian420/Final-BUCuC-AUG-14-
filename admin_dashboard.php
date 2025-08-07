@@ -150,7 +150,6 @@ if (!isset($_SESSION["admin"])) {
                     <i class="fas fa-music"></i>
                 </div>
                 <div class="stat-number">5</div>
-                <div class="stat-label">Event Categories</div>
                 <div class="stat-change positive">
                     <i class="fas fa-palette"></i>
                     Music, Dance, Drama, Art, Poetry
@@ -205,7 +204,6 @@ if (!isset($_SESSION["admin"])) {
             </div>
         </div>
 
-        <!-- Admin Management Section (Only visible to Main Admin) -->
         <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
         <div class="admin-management-section" id="admin-management-section" style="display: none; margin-top: 2rem;">
             <div class="chart-header">
@@ -238,7 +236,6 @@ if (!isset($_SESSION["admin"])) {
         </div>
         <?php endif; ?>
 
-        <!-- Applications Section -->
         <div class="applications-section" id="applications-section" style="display: none; margin-top: 2rem;">
             <div class="chart-header">
                 <h3 class="chart-title">Member Applications</h3>
