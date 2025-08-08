@@ -637,6 +637,9 @@ if (!isset($_SESSION["admin"])) {
     <!-- Bootstrap JS -->
     <script src="js/bootstrap.min.js"></script>
     
+    <!-- Dashboard Fixes - Scrolling and Categories -->
+    <script src="js/dashboard-fixes.js"></script>
+    
     <script>
         let memberChart;
         let eventChart;
