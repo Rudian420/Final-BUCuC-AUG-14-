@@ -1895,23 +1895,15 @@ if (!isset($_SESSION["admin"])) {
             console.log('Opening update modal for type:', type);
             
             try {
+                // Clean up any existing modal instances first
+                cleanupModalState();
+                
                 // Check if modal exists
                 const modalElement = document.getElementById('dashboardUpdateModal');
                 if (!modalElement) {
                     console.error('Dashboard update modal not found');
                     showNotification('Modal not found. Please refresh the page.', 'error');
                     return;
-                }
-                
-                // Reset modal state
-                modalElement.classList.remove('show');
-                modalElement.style.display = 'none';
-                modalElement.setAttribute('aria-hidden', 'true');
-                
-                // Remove any existing backdrop
-                const existingBackdrop = document.getElementById('modal-backdrop-fallback');
-                if (existingBackdrop) {
-                    existingBackdrop.remove();
                 }
                 
                 // Hide all form sections
@@ -1976,86 +1968,184 @@ if (!isset($_SESSION["admin"])) {
                     return;
                 }
                 
+                // Set up close button handlers before showing modal
+                setupModalCloseHandlers(modalElement);
+                
                 // Show modal
                 console.log('Attempting to show modal...');
                 
                 // Check if Bootstrap is available
                 if (typeof bootstrap === 'undefined') {
                     console.error('Bootstrap is not loaded, using fallback');
-                    // Fallback: show modal manually
-                    modalElement.classList.add('show');
-                    modalElement.style.display = 'block';
-                    modalElement.setAttribute('aria-hidden', 'false');
-                    document.body.classList.add('modal-open');
-                    
-                    // Add backdrop
-                    const backdrop = document.createElement('div');
-                    backdrop.className = 'modal-backdrop fade show';
-                    backdrop.id = 'modal-backdrop-fallback';
-                    document.body.appendChild(backdrop);
-                    
-                    // Add close functionality
-                    const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"]');
-                    closeButtons.forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            closeModalFallback();
-                        });
-                    });
-                    
-                    showNotification('Update form opened', 'success');
+                    showModalFallback(modalElement);
                     return;
                 }
                 
                 // Try to create and show the modal with Bootstrap
                 try {
+                    // Create modal with proper options
                     const modal = new bootstrap.Modal(modalElement, {
-                        backdrop: 'static',
-                        keyboard: false
+                        backdrop: true,  // Allow backdrop clicks to close
+                        keyboard: true,  // Allow ESC key to close
+                        focus: true
                     });
+                    
+                    // Store modal instance for later cleanup
+                    window.currentModal = modal;
+                    
+                    // Show the modal
                     modal.show();
-                    showNotification('Update form opened', 'success');
+                    
+                    // Add event listeners
+                    modalElement.addEventListener('shown.bs.modal', function() {
+                        console.log('Modal successfully shown with Bootstrap');
+                        showNotification('Update form opened', 'success');
+                    }, { once: true });
+                    
+                    modalElement.addEventListener('hidden.bs.modal', function() {
+                        console.log('Modal was hidden');
+                        cleanupModalState();
+                    }, { once: true });
+                    
                 } catch (bootstrapError) {
                     console.error('Bootstrap modal error:', bootstrapError);
-                    // Fallback: try to show modal manually
-                    modalElement.classList.add('show');
-                    modalElement.style.display = 'block';
-                    modalElement.setAttribute('aria-hidden', 'false');
-                    document.body.classList.add('modal-open');
-                    
-                    // Add backdrop
-                    const backdrop = document.createElement('div');
-                    backdrop.className = 'modal-backdrop fade show';
-                    backdrop.id = 'modal-backdrop-fallback';
-                    document.body.appendChild(backdrop);
-                    
-                    // Add close functionality
-                    const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"]');
-                    closeButtons.forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            closeModalFallback();
-                        });
-                    });
-                    
-                    showNotification('Update form opened (fallback mode)', 'warning');
+                    showModalFallback(modalElement);
                 }
-                
-                // Add event listener for modal shown event
-                modalElement.addEventListener('shown.bs.modal', function() {
-                    console.log('Modal successfully shown');
-                    showNotification('Update form opened', 'info');
-                }, { once: true });
-                
-                // Add event listener for modal show failed
-                modalElement.addEventListener('hide.bs.modal', function(e) {
-                    if (e.target === modalElement) {
-                        console.log('Modal was hidden');
-                    }
-                }, { once: true });
                 
             } catch (error) {
                 console.error('Error opening modal:', error);
                 showNotification('Error opening update form: ' + error.message, 'error');
             }
+        }
+        
+        function setupModalCloseHandlers(modalElement) {
+            console.log('Setting up modal close handlers');
+            
+            // Remove any existing handlers first
+            const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"]');
+            closeButtons.forEach(btn => {
+                // Clone the button to remove all event listeners
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                
+                // Add new click handler
+                newBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Close button clicked');
+                    closeModal();
+                });
+            });
+            
+            // Add escape key handler
+            const escapeHandler = function(e) {
+                if (e.key === 'Escape' && modalElement.classList.contains('show')) {
+                    console.log('Escape key pressed');
+                    closeModal();
+                }
+            };
+            
+            document.addEventListener('keydown', escapeHandler);
+            
+            // Store handler for cleanup
+            modalElement._escapeHandler = escapeHandler;
+        }
+        
+        function showModalFallback(modalElement) {
+            console.log('Using fallback modal display method');
+            
+            modalElement.classList.add('show');
+            modalElement.style.display = 'block';
+            modalElement.style.paddingRight = '17px'; // Compensate for scrollbar
+            modalElement.setAttribute('aria-hidden', 'false');
+            modalElement.setAttribute('role', 'dialog');
+            modalElement.setAttribute('tabindex', '-1');
+            
+            document.body.classList.add('modal-open');
+            document.body.style.paddingRight = '17px'; // Compensate for scrollbar
+            
+            // Add backdrop
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop fade show';
+            backdrop.id = 'modal-backdrop-fallback';
+            backdrop.style.zIndex = '9998';
+            
+            // Add backdrop click handler
+            backdrop.addEventListener('click', function() {
+                console.log('Backdrop clicked');
+                closeModal();
+            });
+            
+            document.body.appendChild(backdrop);
+            
+            showNotification('Update form opened (fallback mode)', 'warning');
+        }
+        
+        function closeModal() {
+            console.log('Closing modal');
+            
+            const modalElement = document.getElementById('dashboardUpdateModal');
+            if (!modalElement) {
+                console.error('Modal element not found during close');
+                return;
+            }
+            
+            // Try Bootstrap method first
+            if (window.currentModal) {
+                try {
+                    window.currentModal.hide();
+                    return;
+                } catch (error) {
+                    console.warn('Bootstrap modal close failed, using fallback:', error);
+                }
+            }
+            
+            // Fallback method
+            closeModalFallback();
+        }
+        
+        function cleanupModalState() {
+            console.log('Cleaning up modal state');
+            
+            const modalElement = document.getElementById('dashboardUpdateModal');
+            if (modalElement) {
+                // Remove escape key handler
+                if (modalElement._escapeHandler) {
+                    document.removeEventListener('keydown', modalElement._escapeHandler);
+                    delete modalElement._escapeHandler;
+                }
+                
+                // Clean up Bootstrap instance
+                if (window.currentModal) {
+                    try {
+                        window.currentModal.dispose();
+                    } catch (error) {
+                        console.warn('Error disposing modal:', error);
+                    }
+                    delete window.currentModal;
+                }
+                
+                // Reset modal element state
+                modalElement.classList.remove('show');
+                modalElement.style.display = 'none';
+                modalElement.style.paddingRight = '';
+                modalElement.setAttribute('aria-hidden', 'true');
+                modalElement.removeAttribute('role');
+                modalElement.removeAttribute('tabindex');
+            }
+            
+            // Clean up body classes and backdrop
+            document.body.classList.remove('modal-open');
+            document.body.style.paddingRight = '';
+            
+            const existingBackdrop = document.getElementById('modal-backdrop-fallback');
+            if (existingBackdrop) {
+                existingBackdrop.remove();
+            }
+            
+            // Remove any remaining backdrops
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+                backdrop.remove();
+            });
         }
 
         function submitDashboardUpdate() {
@@ -2093,7 +2183,7 @@ if (!isset($_SESSION["admin"])) {
             .then(data => {
                 if (data.success) {
                     showNotification(data.message, 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('dashboardUpdateModal')).hide();
+                    closeModal();
                     
                     // Force refresh all dashboard data with a small delay to ensure database changes are committed
                     setTimeout(() => {
