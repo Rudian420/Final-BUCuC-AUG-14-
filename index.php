@@ -2598,26 +2598,28 @@ class="container d-flex justify-content-center align-items-center">
                         </div>
                         <div class="row mt-3">
                             <div class="col-12 mb-3">
-                                <label class="form-label">Event Category:</label>
-                                <select name="signup-event-category"
-                                    id="signup-event-category"
+                                <label class="form-label">First Department Preference in BUCUC:</label>
+                                <select name="signup-first-dept"
+                                    id="signup-first-dept"
                                     class="form-control"
                                     required>
-                                    <option value="">Select Event Category</option>
-                                    <option value="Music">🎵 Music</option>
-                                    <option value="Dance">💃 Dance</option>
-                                    <option value="Drama">🎭 Drama</option>
-                                    <option value="Art">🎨 Art</option>
-                                    <option value="Poetry">📝 Poetry</option>
+                                    <option value="">Select Department</option>
+                                    <!-- Options will be populated dynamically by JavaScript -->
                                 </select>
                             </div>
                         </div>
-                        <textarea name="signup-motivation"
-                            rows="3"
-                            class="form-control mt-3"
-                            id="signup-motivation"
-                            placeholder="Why do you want to join? (Motivation)"
-                            required></textarea>
+                        <div class="row mt-3">
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Second Department Preference in BUCUC:</label>
+                                <select name="signup-second-dept"
+                                    id="signup-second-dept"
+                                    class="form-control"
+                                    required>
+                                    <option value="">Select Department</option>
+                                    <!-- Options will be populated dynamically by JavaScript -->
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-check mt-3 mb-3">
                             <input class="form-check-input"
                                 type="checkbox" value="1"
@@ -3096,6 +3098,133 @@ showInlineMessage('Invalid email or password', 'danger');
 showInlineMessage('There was an error. Please try again.', 'danger');
 });
 });
+
+// Department preference dropdown functionality - Fixed and Enhanced
+(function() {
+    // Department options array
+    const departmentOptions = [
+        { value: 'Admin', text: 'Admin' },
+        { value: 'PR', text: 'PR - Public Relations and Editorial' },
+        { value: 'HR', text: 'HR - Human Resources' },
+        { value: 'EM', text: 'EM - Event Management and Logistics' },
+        { value: 'Creative', text: 'Creative' },
+        { value: 'Performance', text: 'Performance' },
+        { value: 'RD', text: 'R&D - Research and Development' },
+        { value: 'MIAP', text: 'MIAP - Marketing IT Archive & Photography' },
+        { value: 'Finance', text: 'Finance' }
+    ];
+    
+    // Function to populate dropdown options
+    function populateDropdown(dropdown, excludeValue = null) {
+        if (!dropdown) {
+            console.error('Dropdown element not found!');
+            return;
+        }
+        
+        // Clear existing options except the first one (placeholder)
+        dropdown.innerHTML = '<option value="">Select Department</option>';
+        
+        // Populate with department options
+        departmentOptions.forEach(dept => {
+            if (dept.value !== excludeValue) {
+                const option = document.createElement('option');
+                option.value = dept.value;
+                option.textContent = dept.text;
+                dropdown.appendChild(option);
+            }
+        });
+        
+        console.log('Populated dropdown with', dropdown.options.length - 1, 'options (excluding placeholder)');
+    }
+    
+    // Function to initialize dropdowns
+    function initializeDepartmentDropdowns() {
+        const firstDeptSelect = document.getElementById('signup-first-dept');
+        const secondDeptSelect = document.getElementById('signup-second-dept');
+        
+        console.log('First dropdown found:', firstDeptSelect !== null);
+        console.log('Second dropdown found:', secondDeptSelect !== null);
+        
+        if (!firstDeptSelect || !secondDeptSelect) {
+            console.error('One or both dropdown elements not found! Retrying in 500ms...');
+            setTimeout(initializeDepartmentDropdowns, 500);
+            return;
+        }
+        
+        // Initial population of both dropdowns
+        populateDropdown(firstDeptSelect);
+        populateDropdown(secondDeptSelect);
+        
+        // Handle first dropdown changes
+        firstDeptSelect.addEventListener('change', function() {
+            const selectedValue = this.value;
+            console.log('First dropdown changed to:', selectedValue);
+            
+            // If first dropdown has a value and it matches second dropdown, clear second dropdown
+            if (selectedValue && secondDeptSelect.value === selectedValue) {
+                secondDeptSelect.value = '';
+                console.log('Cleared second dropdown due to duplicate selection');
+            }
+            
+            // Re-populate second dropdown excluding the selected value from first
+            populateDropdown(secondDeptSelect, selectedValue);
+            
+            // If second dropdown had a value that's not the newly selected one, restore it
+            const currentSecondValue = secondDeptSelect.value;
+            if (!currentSecondValue && secondDeptSelect.dataset.previousValue && 
+                secondDeptSelect.dataset.previousValue !== selectedValue) {
+                secondDeptSelect.value = secondDeptSelect.dataset.previousValue;
+                console.log('Restored second dropdown previous value:', secondDeptSelect.dataset.previousValue);
+            }
+            
+            // Store the current value for future reference
+            secondDeptSelect.dataset.previousValue = secondDeptSelect.value;
+        });
+        
+        // Handle second dropdown changes
+        secondDeptSelect.addEventListener('change', function() {
+            const selectedValue = this.value;
+            console.log('Second dropdown changed to:', selectedValue);
+            
+            // If second dropdown has a value and it matches first dropdown, clear first dropdown
+            if (selectedValue && firstDeptSelect.value === selectedValue) {
+                firstDeptSelect.value = '';
+                console.log('Cleared first dropdown due to duplicate selection');
+            }
+            
+            // Re-populate first dropdown excluding the selected value from second
+            populateDropdown(firstDeptSelect, selectedValue);
+            
+            // If first dropdown had a value that's not the newly selected one, restore it
+            const currentFirstValue = firstDeptSelect.value;
+            if (!currentFirstValue && firstDeptSelect.dataset.previousValue && 
+                firstDeptSelect.dataset.previousValue !== selectedValue) {
+                firstDeptSelect.value = firstDeptSelect.dataset.previousValue;
+                console.log('Restored first dropdown previous value:', firstDeptSelect.dataset.previousValue);
+            }
+            
+            // Store the current value for future reference
+            firstDeptSelect.dataset.previousValue = firstDeptSelect.value;
+        });
+        
+        // Store initial values
+        firstDeptSelect.dataset.previousValue = '';
+        secondDeptSelect.dataset.previousValue = '';
+        
+        console.log('Department dropdowns initialized successfully!');
+    }
+    
+    // Initialize when DOM is loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeDepartmentDropdowns);
+    } else {
+        // DOM is already loaded
+        initializeDepartmentDropdowns();
+    }
+    
+    // Also try to initialize after a short delay as backup
+    setTimeout(initializeDepartmentDropdowns, 1000);
+})();
 </script>
 <script>
 // Mobile Sidebar Toggle Script (right sidebar, close button)

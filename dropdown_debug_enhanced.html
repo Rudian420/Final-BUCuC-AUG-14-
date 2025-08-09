@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-control { 
+            padding: 12px; 
+            margin: 10px 0; 
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+        
+        #console-output {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Department Dropdown Debug Test</h1>
+        
+        <label>First Department Preference:</label>
+        <select id="signup-first-dept" class="form-control" required>
+            <option value="">Select Department</option>
+        </select>
+        
+        <label>Second Department Preference:</label>
+        <select id="signup-second-dept" class="form-control" required>
+            <option value="">Select Department</option>
+        </select>
+        
+        <h3>Console Output:</h3>
+        <div id="console-output"></div>
+        
+        <div style="margin-top: 20px;">
+            <button onclick="testDropdowns()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px;">
+                Test Dropdowns
+            </button>
+            <button onclick="clearConsole()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; margin-left: 10px;">
+                Clear Console
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Create custom console output
+        const consoleOutput = document.getElementById('console-output');
+        
+        function addToConsole(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = type;
+            div.innerHTML = `[${timestamp}] ${message}`;
+            consoleOutput.appendChild(div);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        function clearConsole() {
+            consoleOutput.innerHTML = '';
+        }
+        
+        // Override console methods to capture output
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        console.log = function(...args) {
+            addToConsole(args.join(' '), 'info');
+            originalLog.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            addToConsole(args.join(' '), 'error');
+            originalError.apply(console, args);
+        };
+        
+        addToConsole('Console initialized. Testing department dropdown functionality...', 'success');
+        
+        // Department preference dropdown functionality - Enhanced Debug Version
+        (function() {
+            addToConsole('IIFE started - Department dropdown initialization beginning...', 'info');
+            
+            // Department options array
+            const departmentOptions = [
+                { value: 'Admin', text: 'Admin' },
+                { value: 'PR', text: 'PR - Public Relations and Editorial' },
+                { value: 'HR', text: 'HR - Human Resources' },
+                { value: 'EM', text: 'EM - Event Management and Logistics' },
+                { value: 'Creative', text: 'Creative' },
+                { value: 'Performance', text: 'Performance' },
+                { value: 'RD', text: 'R&D - Research and Development' },
+                { value: 'MIAP', text: 'MIAP - Marketing IT Archive & Photography' },
+                { value: 'Finance', text: 'Finance' }
+            ];
+            
+            addToConsole(`Department options loaded: ${departmentOptions.length} departments`, 'success');
+            
+            // Function to populate dropdown options
+            function populateDropdown(dropdown, excludeValue = null) {
+                addToConsole(`Populating dropdown: ${dropdown.id}, excluding: ${excludeValue || 'none'}`, 'info');
+                
+                if (!dropdown) {
+                    addToConsole('ERROR: Dropdown element not found!', 'error');
+                    return;
+                }
+                
+                // Clear existing options except the first one (placeholder)
+                dropdown.innerHTML = '<option value="">Select Department</option>';
+                
+                // Populate with department options
+                let addedCount = 0;
+                departmentOptions.forEach(dept => {
+                    if (dept.value !== excludeValue) {
+                        const option = document.createElement('option');
+                        option.value = dept.value;
+                        option.textContent = dept.text;
+                        dropdown.appendChild(option);
+                        addedCount++;
+                    }
+                });
+                
+                addToConsole(`✓ Populated ${dropdown.id} with ${addedCount} options`, 'success');
+            }
+            
+            // Function to initialize dropdowns
+            function initializeDepartmentDropdowns() {
+                addToConsole('Initializing department dropdowns...', 'info');
+                
+                const firstDeptSelect = document.getElementById('signup-first-dept');
+                const secondDeptSelect = document.getElementById('signup-second-dept');
+                
+                addToConsole(`First dropdown found: ${firstDeptSelect !== null}`, firstDeptSelect ? 'success' : 'error');
+                addToConsole(`Second dropdown found: ${secondDeptSelect !== null}`, secondDeptSelect ? 'success' : 'error');
+                
+                if (!firstDeptSelect || !secondDeptSelect) {
+                    addToConsole('ERROR: One or both dropdown elements not found! Retrying in 500ms...', 'error');
+                    setTimeout(initializeDepartmentDropdowns, 500);
+                    return;
+                }
+                
+                // Initial population of both dropdowns
+                populateDropdown(firstDeptSelect);
+                populateDropdown(secondDeptSelect);
+                
+                // Handle first dropdown changes
+                firstDeptSelect.addEventListener('change', function() {
+                    const selectedValue = this.value;
+                    addToConsole(`First dropdown changed to: "${selectedValue}"`, 'info');
+                    
+                    // If first dropdown has a value and it matches second dropdown, clear second dropdown
+                    if (selectedValue && secondDeptSelect.value === selectedValue) {
+                        secondDeptSelect.value = '';
+                        addToConsole('Cleared second dropdown due to duplicate selection', 'info');
+                    }
+                    
+                    // Re-populate second dropdown excluding the selected value from first
+                    populateDropdown(secondDeptSelect, selectedValue);
+                    
+                    // If second dropdown had a value that's not the newly selected one, restore it
+                    const currentSecondValue = secondDeptSelect.value;
+                    if (!currentSecondValue && secondDeptSelect.dataset.previousValue && 
+                        secondDeptSelect.dataset.previousValue !== selectedValue) {
+                        secondDeptSelect.value = secondDeptSelect.dataset.previousValue;
+                        addToConsole(`Restored second dropdown previous value: "${secondDeptSelect.dataset.previousValue}"`, 'success');
+                    }
+                    
+                    // Store the current value for future reference
+                    secondDeptSelect.dataset.previousValue = secondDeptSelect.value;
+                });
+                
+                // Handle second dropdown changes
+                secondDeptSelect.addEventListener('change', function() {
+                    const selectedValue = this.value;
+                    addToConsole(`Second dropdown changed to: "${selectedValue}"`, 'info');
+                    
+                    // If second dropdown has a value and it matches first dropdown, clear first dropdown
+                    if (selectedValue && firstDeptSelect.value === selectedValue) {
+                        firstDeptSelect.value = '';
+                        addToConsole('Cleared first dropdown due to duplicate selection', 'info');
+                    }
+                    
+                    // Re-populate first dropdown excluding the selected value from second
+                    populateDropdown(firstDeptSelect, selectedValue);
+                    
+                    // If first dropdown had a value that's not the newly selected one, restore it
+                    const currentFirstValue = firstDeptSelect.value;
+                    if (!currentFirstValue && firstDeptSelect.dataset.previousValue && 
+                        firstDeptSelect.dataset.previousValue !== selectedValue) {
+                        firstDeptSelect.value = firstDeptSelect.dataset.previousValue;
+                        addToConsole(`Restored first dropdown previous value: "${firstDeptSelect.dataset.previousValue}"`, 'success');
+                    }
+                    
+                    // Store the current value for future reference
+                    firstDeptSelect.dataset.previousValue = firstDeptSelect.value;
+                });
+                
+                // Store initial values
+                firstDeptSelect.dataset.previousValue = '';
+                secondDeptSelect.dataset.previousValue = '';
+                
+                addToConsole('✓ Department dropdowns initialized successfully!', 'success');
+            }
+            
+            // Initialize when DOM is loaded
+            if (document.readyState === 'loading') {
+                addToConsole('DOM still loading, adding event listener...', 'info');
+                document.addEventListener('DOMContentLoaded', initializeDepartmentDropdowns);
+            } else {
+                addToConsole('DOM already loaded, initializing immediately...', 'info');
+                initializeDepartmentDropdowns();
+            }
+            
+            // Also try to initialize after a short delay as backup
+            setTimeout(() => {
+                addToConsole('Backup initialization attempt after 1000ms...', 'info');
+                initializeDepartmentDropdowns();
+            }, 1000);
+            
+            addToConsole('IIFE completed - Department dropdown setup finished', 'success');
+        })();
+        
+        function testDropdowns() {
+            addToConsole('=== MANUAL TEST STARTED ===', 'success');
+            
+            const first = document.getElementById('signup-first-dept');
+            const second = document.getElementById('signup-second-dept');
+            
+            addToConsole(`First dropdown options: ${first.options.length}`, 'info');
+            addToConsole(`Second dropdown options: ${second.options.length}`, 'info');
+            
+            for (let i = 0; i < first.options.length; i++) {
+                addToConsole(`  First[${i}]: "${first.options[i].value}" - "${first.options[i].text}"`, 'info');
+            }
+            
+            for (let i = 0; i < second.options.length; i++) {
+                addToConsole(`  Second[${i}]: "${second.options[i].value}" - "${second.options[i].text}"`, 'info');
+            }
+            
+            addToConsole('=== MANUAL TEST COMPLETED ===', 'success');
+        }
+    </script>
+</body>
+</html>
