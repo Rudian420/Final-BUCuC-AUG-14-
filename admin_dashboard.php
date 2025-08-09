@@ -108,7 +108,7 @@ $dashboardData = getDashboardStats();
                     <i class="fas fa-users"></i>
                     Members
                 </a>
-                <a href="#" class="nav-item" data-section="applications">
+                <a href="pending_applications.php" class="nav-item">
                     <i class="fas fa-user-plus"></i>
                     Applications
                     <span class="badge bg-warning ms-2" id="pendingApplicationsBadge" style="display: none;">0</span>
@@ -803,6 +803,40 @@ $dashboardData = getDashboardStats();
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             notification.textContent = message;
+            
+            // Set colors based on type
+            let backgroundColor, textColor, borderColor;
+            switch(type) {
+                case 'success':
+                    backgroundColor = '#28a745'; // Green background
+                    textColor = '#ffffff';
+                    borderColor = '#1e7e34';
+                    break;
+                case 'error':
+                case 'danger':
+                    backgroundColor = '#dc3545'; // Red background
+                    textColor = '#ffffff';
+                    borderColor = '#bd2130';
+                    break;
+                case 'warning':
+                    backgroundColor = '#ffc107'; // Yellow background
+                    textColor = '#212529';
+                    borderColor = '#d39e00';
+                    break;
+                case 'info':
+                    backgroundColor = '#17a2b8'; // Blue background
+                    textColor = '#ffffff';
+                    borderColor = '#138496';
+                    break;
+                default:
+                    backgroundColor = '#28a745'; // Default to green
+                    textColor = '#ffffff';
+                    borderColor = '#1e7e34';
+            }
+            
+            notification.style.backgroundColor = backgroundColor;
+            notification.style.color = textColor;
+            notification.style.borderLeft = `4px solid ${borderColor}`;
             notification.className = `notification ${type} show`;
             
             setTimeout(() => {
@@ -810,12 +844,10 @@ $dashboardData = getDashboardStats();
             }, 3000);
         }
         
-        // Mobile Sidebar Toggle
         document.getElementById('sidebarToggle').addEventListener('click', function() {
             document.getElementById('sidebar').classList.toggle('open');
         });
         
-        // Chart Controls
         document.querySelectorAll('.chart-controls button').forEach(button => {
             button.addEventListener('click', function() {
                 const parent = this.closest('.chart-controls');
@@ -854,20 +886,34 @@ $dashboardData = getDashboardStats();
              memberChart.update();
          }
          
-
-        
-        // Navigation items
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function(e) {
+                // Allow logout.php to navigate normally
                 if (this.getAttribute('href') === 'logout.php') return;
+                
+                // Allow member_types.php to navigate normally
+                if (this.getAttribute('href') === 'member_types.php') {
+                    showNotification('Navigating to member types...', 'success');
+                    return;
+                }
+                
+                // Allow pending_applications.php to navigate normally
+                if (this.getAttribute('href') === 'pending_applications.php') {
+                    showNotification('Navigating to pending applications...', 'success');
+                    return;
+                }
                 
                 e.preventDefault();
                 document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                 this.classList.add('active');
                 
                 const section = this.dataset.section;
-                showSection(section);
-                showNotification(`Navigating to ${section} section...`, 'success');
+                if (section) {
+                    showSection(section);
+                    showNotification(`Navigating to ${section} section...`, 'success');
+                } else {
+                    showNotification('Navigation section not found', 'warning');
+                }
             });
         });
 
@@ -938,30 +984,26 @@ $dashboardData = getDashboardStats();
         // Admin Management Functions
         <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
         function initAdminManagement() {
-            // Load admin list when admin management section is shown
+            
             document.querySelector('[data-section="admin-management"]').addEventListener('click', function() {
                 loadAdminList();
             });
             
-            // Add admin button
             document.getElementById('addAdminBtn').addEventListener('click', function() {
                 const modal = new bootstrap.Modal(document.getElementById('addAdminModal'));
                 modal.show();
             });
             
-            // Add admin form submission
             document.getElementById('addAdminForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 createAdmin();
             });
             
-            // Edit admin form submission
             document.getElementById('editAdminForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 updateAdminPassword();
             });
             
-            // Confirm delete button
             document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
                 deleteAdmin();
             });
