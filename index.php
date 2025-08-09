@@ -3076,30 +3076,34 @@ alertDiv.remove();
 }, 5000);
 }
 
-document.getElementById('login-form').addEventListener('submit', function(e) {
-e.preventDefault();
-
-const formData = new FormData(document.getElementById('login-form'));
-formData.append('action', 'login');
-
-fetch('https://script.google.com/macros/s/AKfycbz-FKOQ8Uu32cr4q6DUv2--KtAqJHMdGWUcEknJAV9mJh6TlB-JYrw1mmG2myiTar6C/exec', {
-method: 'POST',
-body: formData
-})
-.then(res => res.json())
-.then(response => {
-if (response.success) {
-showInlineMessage('Logged in as ' + response.name, 'success');
-} else {
-showInlineMessage('Invalid email or password', 'danger');
+// Only add login form listener if the form exists
+const loginForm = document.getElementById('login-form');
+if (loginForm) {
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(document.getElementById('login-form'));
+        formData.append('action', 'login');
+        
+        fetch('https://script.google.com/macros/s/AKfycbz-FKOQ8Uu32cr4q6DUv2--KtAqJHMdGWUcEknJAV9mJh6TlB-JYrw1mmG2myiTar6C/exec', {
+        method: 'POST',
+        body: formData
+        })
+        .then(res => res.json())
+        .then(response => {
+        if (response.success) {
+        showInlineMessage('Logged in as ' + response.name, 'success');
+        } else {
+        showInlineMessage('Invalid email or password', 'danger');
+        }
+        })
+        .catch(err => {
+        showInlineMessage('There was an error. Please try again.', 'danger');
+        });
+    });
 }
-})
-.catch(err => {
-showInlineMessage('There was an error. Please try again.', 'danger');
-});
-});
 
-// Department preference dropdown functionality - Fixed and Enhanced
+// Department preference dropdown functionality - Enhanced Debug Version (Production)
 (function() {
     // Department options array
     const departmentOptions = [
@@ -3125,16 +3129,18 @@ showInlineMessage('There was an error. Please try again.', 'danger');
         dropdown.innerHTML = '<option value="">Select Department</option>';
         
         // Populate with department options
+        let addedCount = 0;
         departmentOptions.forEach(dept => {
             if (dept.value !== excludeValue) {
                 const option = document.createElement('option');
                 option.value = dept.value;
                 option.textContent = dept.text;
                 dropdown.appendChild(option);
+                addedCount++;
             }
         });
         
-        console.log('Populated dropdown with', dropdown.options.length - 1, 'options (excluding placeholder)');
+        console.log(`Populated ${dropdown.id} with ${addedCount} options`);
     }
     
     // Function to initialize dropdowns
@@ -3218,12 +3224,13 @@ showInlineMessage('There was an error. Please try again.', 'danger');
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initializeDepartmentDropdowns);
     } else {
-        // DOM is already loaded
         initializeDepartmentDropdowns();
     }
     
     // Also try to initialize after a short delay as backup
-    setTimeout(initializeDepartmentDropdowns, 1000);
+    setTimeout(() => {
+        initializeDepartmentDropdowns();
+    }, 1000);
 })();
 </script>
 <script>
