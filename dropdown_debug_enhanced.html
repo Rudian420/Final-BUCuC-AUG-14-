@@ -182,21 +182,24 @@
                     const selectedValue = this.value;
                     addToConsole(`First dropdown changed to: "${selectedValue}"`, 'info');
                     
+                    // Store the current second dropdown value before any changes
+                    const currentSecondValue = secondDeptSelect.value;
+                    
                     // If first dropdown has a value and it matches second dropdown, clear second dropdown
-                    if (selectedValue && secondDeptSelect.value === selectedValue) {
+                    if (selectedValue && currentSecondValue === selectedValue) {
                         secondDeptSelect.value = '';
                         addToConsole('Cleared second dropdown due to duplicate selection', 'info');
-                    }
-                    
-                    // Re-populate second dropdown excluding the selected value from first
-                    populateDropdown(secondDeptSelect, selectedValue);
-                    
-                    // If second dropdown had a value that's not the newly selected one, restore it
-                    const currentSecondValue = secondDeptSelect.value;
-                    if (!currentSecondValue && secondDeptSelect.dataset.previousValue && 
-                        secondDeptSelect.dataset.previousValue !== selectedValue) {
-                        secondDeptSelect.value = secondDeptSelect.dataset.previousValue;
-                        addToConsole(`Restored second dropdown previous value: "${secondDeptSelect.dataset.previousValue}"`, 'success');
+                        // Re-populate second dropdown excluding the selected value from first
+                        populateDropdown(secondDeptSelect, selectedValue);
+                    } else {
+                        // Re-populate second dropdown excluding the selected value from first
+                        populateDropdown(secondDeptSelect, selectedValue);
+                        
+                        // Restore the second dropdown's value if it's still valid (not the same as first's selection)
+                        if (currentSecondValue && currentSecondValue !== selectedValue) {
+                            secondDeptSelect.value = currentSecondValue;
+                            addToConsole(`Preserved second dropdown value: "${currentSecondValue}"`, 'success');
+                        }
                     }
                     
                     // Store the current value for future reference
@@ -208,21 +211,32 @@
                     const selectedValue = this.value;
                     addToConsole(`Second dropdown changed to: "${selectedValue}"`, 'info');
                     
+                    // Store the current first dropdown value before any changes
+                    const currentFirstValue = firstDeptSelect.value;
+                    
                     // If second dropdown has a value and it matches first dropdown, clear first dropdown
-                    if (selectedValue && firstDeptSelect.value === selectedValue) {
+                    if (selectedValue && currentFirstValue === selectedValue) {
                         firstDeptSelect.value = '';
                         addToConsole('Cleared first dropdown due to duplicate selection', 'info');
-                    }
-                    
-                    // Re-populate first dropdown excluding the selected value from second
-                    populateDropdown(firstDeptSelect, selectedValue);
-                    
-                    // If first dropdown had a value that's not the newly selected one, restore it
-                    const currentFirstValue = firstDeptSelect.value;
-                    if (!currentFirstValue && firstDeptSelect.dataset.previousValue && 
-                        firstDeptSelect.dataset.previousValue !== selectedValue) {
-                        firstDeptSelect.value = firstDeptSelect.dataset.previousValue;
-                        addToConsole(`Restored first dropdown previous value: "${firstDeptSelect.dataset.previousValue}"`, 'success');
+                        // Re-populate first dropdown excluding the selected value from second
+                        populateDropdown(firstDeptSelect, selectedValue);
+                    } else if (selectedValue) {
+                        // Only re-populate first dropdown if there was a conflict or if it's empty
+                        // Otherwise, just remove the selected option from first dropdown without changing its value
+                        populateDropdown(firstDeptSelect, selectedValue);
+                        
+                        // Restore the first dropdown's value if it's still valid (not the same as second's selection)
+                        if (currentFirstValue && currentFirstValue !== selectedValue) {
+                            firstDeptSelect.value = currentFirstValue;
+                            addToConsole(`Preserved first dropdown value: "${currentFirstValue}"`, 'success');
+                        }
+                    } else {
+                        // Second dropdown was cleared, restore all options to first dropdown
+                        populateDropdown(firstDeptSelect, null);
+                        if (currentFirstValue) {
+                            firstDeptSelect.value = currentFirstValue;
+                            addToConsole(`Restored first dropdown value after second cleared: "${currentFirstValue}"`, 'success');
+                        }
                     }
                     
                     // Store the current value for future reference
