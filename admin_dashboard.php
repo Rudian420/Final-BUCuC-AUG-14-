@@ -4,6 +4,57 @@ if (!isset($_SESSION["admin"])) {
     header("Location: admin-login.php");
     exit(); 
 }
+
+// Database connection to fetch dashboard stats
+require_once 'Database/db.php';
+
+// Function to get latest dashboard data
+function getDashboardStats() {
+    try {
+        $database = new Database();
+        $conn = $database->createConnection();
+        
+        // Get the latest record from dashboardmanagement table
+        $sql = "SELECT totalmembers, pending_applications, completedevents, others
+        FROM dashboardmanagement
+        ORDER BY id DESC
+        LIMIT 1";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result) {
+            return [
+                'total_members' => (int)$result['totalmembers'],
+                'pending_applications' => (int)$result['pending_applications'],
+                'completed_events' => (int)$result['completedevents'],
+                'others' => (int)$result['others']
+            ];
+        } else {
+            // Return default values if no data found
+            return [
+                'total_members' => 0,
+                'pending_applications' => 0,
+                'completed_events' => 0,
+                'others' => 0,
+            ];
+        }
+    } catch (Exception $e) {
+        error_log("Error fetching dashboard stats: " . $e->getMessage());
+        // Return default values on error
+        return [
+            'total_members' => 0,
+            'pending_applications' => 0,
+            'completed_events' => 0,
+            'others' => 0,
+           
+        ];
+    }
+}
+
+// Get the dashboard data
+$dashboardData = getDashboardStats();
 ?>
 
 <!DOCTYPE html>
@@ -62,10 +113,6 @@ if (!isset($_SESSION["admin"])) {
                     Applications
                     <span class="badge bg-warning ms-2" id="pendingApplicationsBadge" style="display: none;">0</span>
                 </a>
-                <a href="#" class="nav-item" data-section="events">
-                    <i class="fas fa-calendar-alt"></i>
-                    Events
-                </a>
                 <a href="#" class="nav-item" data-section="dashboard-update">
                     <i class="fas fa-cogs"></i>
                     Dashboard Updates
@@ -99,6 +146,23 @@ if (!isset($_SESSION["admin"])) {
             <div class="header-left">
                 <h1>Cultural Club Dashboard</h1>
                 <p>Welcome back, <?php echo $_SESSION['username']; ?>! Here's what's happening with your club.</p>
+                
+                <!-- Success/Error Messages -->
+                <?php if (isset($_GET['success'])): ?>
+                    <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <?php echo htmlspecialchars($_GET['success']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if (isset($_GET['error'])): ?>
+                    <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <?php echo htmlspecialchars($_GET['error']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <?php endif; ?>
             </div>
             
             <div class="header-right">
@@ -129,46 +193,48 @@ if (!isset($_SESSION["admin"])) {
                 <div class="stat-icon">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="stat-number" id="totalMembersCount">Loading...</div>
+                <div class="stat-number" id="totalMembersCount"><?php echo $dashboardData['total_members']?></div>
                 <div class="stat-label">Total Members</div>
-                <div class="stat-change positive">
-                    <i class="fas fa-arrow-up"></i>
-                    <span id="activeMembersCount">Active: Loading...</span>
-                </div>
             </div>
             
             <div class="stat-card" data-stat="applications">
                 <div class="stat-icon">
                     <i class="fas fa-user-plus"></i>
                 </div>
-                <div class="stat-number" id="pendingApplicationsCount">Loading...</div>
+                <div class="stat-number" id="pendingApplicationsCount"><?= $dashboardData['pending_applications'] ?></div>
                 <div class="stat-label">Pending Applications</div>
                 <div class="stat-change" id="applicationsChange">
-                    <i class="fas fa-clock"></i>
-                    Awaiting Review
+                    <?php if ($dashboardData['pending_applications'] > 0): ?>
+                        <i class="fas fa-clock"></i>
+                        Needs Attention
+                    <?php else: ?>
+                        <i class="fas fa-check"></i>
+                        All Reviewed
+                    <?php endif; ?>
                 </div>
             </div>
             
-            <div class="stat-card" data-stat="categories">
+            <div class="stat-card" data-stat="completed-events">
                 <div class="stat-icon">
-                    <i class="fas fa-music"></i>
+                    <i class="fas fa-calendar-check"></i>
                 </div>
-                <div class="stat-number">5</div>
+                <div class="stat-number" id="completedEventsCount"><?= htmlspecialchars($dashboardData['completed_events']) ?></div>
+                <div class="stat-label">Completed Events</div>
                 <div class="stat-change positive">
-                    <i class="fas fa-palette"></i>
-                    Music, Dance, Drama, Art, Poetry
+                    <i class="fas fa-trophy"></i>
+                    Successfully Organized
                 </div>
             </div>
             
-            <div class="stat-card" data-stat="gender">
+            <div class="stat-card" data-stat="others">
                 <div class="stat-icon">
-                    <i class="fas fa-balance-scale"></i>
+                    <i class="fas fa-ellipsis-h"></i>
                 </div>
-                <div class="stat-number" id="genderRatio">Loading...</div>
-                <div class="stat-label">Gender Distribution</div>
+                <div class="stat-number" id="othersCount"><?= htmlspecialchars($dashboardData['others']) ?></div>
+                <div class="stat-label">Others</div>
                 <div class="stat-change positive">
-                    <i class="fas fa-chart-pie"></i>
-                    <span id="genderBreakdown">Loading...</span>
+                    <i class="fas fa-plus"></i>
+                    Miscellaneous Data
                 </div>
             </div>
         </div>
@@ -186,15 +252,6 @@ if (!isset($_SESSION["admin"])) {
                 </div>
                                  <div style="position: relative; height: 420px; width: 100%;">
                      <canvas id="memberGrowthChart"></canvas>
-                 </div>
-            </div>
-            
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Event Categories</h3>
-                </div>
-                                 <div style="position: relative; height: 420px; width: 100%;">
-                     <canvas id="eventCategoriesChart"></canvas>
                  </div>
             </div>
             
@@ -285,64 +342,56 @@ if (!isset($_SESSION["admin"])) {
             
             <div class="row mt-4">
                 <!-- Total Members Update -->
-                <div class="col-lg-6 col-md-12 mb-4">
+                <div class="col-lg-12 mb-4">
                     <div class="update-card">
                         <div class="update-card-header">
-                            <h5><i class="fas fa-users me-2 text-warning"></i>Total Members</h5>
-                            <span class="current-value" id="currentMembersValue">Loading...</span>
+                            <h5><i class="fas fa-database me-2 text-warning"></i>Add Dashboard Data</h5>
+                            <span class="current-value">Simple form submission to database</span>
                         </div>
                         <div class="update-card-body">
-                            <button class="btn btn-primary btn-sm" onclick="openUpdateModal('members')">
-                                <i class="fas fa-edit me-1"></i> Update Members
-                            </button>
+                            <!-- Simple PHP Form - No JavaScript -->
+                            <form method="POST" action="Action/form_handler.php" style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px;">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="simple_totalMembers" class="form-label text-light">Total Members</label>
+                                        <input type="number" class="form-control bg-dark text-light border-secondary" 
+                                               name="totalMembers" id="simple_totalMembers" 
+                                               placeholder="0" min="0" value="0" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="simple_pending_applications" class="form-label text-light">Pending Applications</label>
+                                        <input type="number" class="form-control bg-dark text-light border-secondary" 
+                                               name="pending_applications" id="simple_pending_applications" 
+                                               placeholder="0" min="0" value="0" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="simple_completedevents" class="form-label text-light">Completed Events</label>
+                                        <input type="number" class="form-control bg-dark text-light border-secondary" 
+                                               name="completedevents" id="simple_completedevents" 
+                                               placeholder="0" min="0" value="0" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="simple_others" class="form-label text-light">Others</label>
+                                        <input type="number" class="form-control bg-dark text-light border-secondary" 
+                                               name="others" id="simple_others" 
+                                               placeholder="0" min="0" value="0" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-success btn-lg w-100">
+                                            <i class="fas fa-save me-2"></i>Submit to Database (No JavaScript)
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
 
-                <!-- Pending Applications Update -->
-                <div class="col-lg-6 col-md-12 mb-4">
-                    <div class="update-card">
-                        <div class="update-card-header">
-                            <h5><i class="fas fa-user-plus me-2 text-info"></i>Pending Applications</h5>
-                            <span class="current-value" id="currentApplicationsValue">Loading...</span>
-                        </div>
-                        <div class="update-card-body">
-                            <button class="btn btn-info btn-sm" onclick="openUpdateModal('applications')">
-                                <i class="fas fa-edit me-1"></i> Update Applications
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            
 
-                <!-- Performance Data Update -->
-                <div class="col-lg-6 col-md-12 mb-4">
-                    <div class="update-card">
-                        <div class="update-card-header">
-                            <h5><i class="fas fa-chart-line me-2 text-success"></i>Performance Metrics</h5>
-                            <span class="current-value" id="currentPerformanceValue">5 Categories</span>
-                        </div>
-                        <div class="update-card-body">
-                            <button class="btn btn-success btn-sm" onclick="openUpdateModal('performance')">
-                                <i class="fas fa-edit me-1"></i> Update Performance
-                            </button>
-                        </div>
-                    </div>
-                </div>
+    
 
-                <!-- Gender Distribution Update -->
-                <div class="col-lg-6 col-md-12 mb-4">
-                    <div class="update-card">
-                        <div class="update-card-header">
-                            <h5><i class="fas fa-balance-scale me-2 text-warning"></i>Gender Distribution</h5>
-                            <span class="current-value" id="currentGenderValue">Loading...</span>
-                        </div>
-                        <div class="update-card-body">
-                            <button class="btn btn-warning btn-sm" onclick="openUpdateModal('gender')">
-                                <i class="fas fa-edit me-1"></i> Update Distribution
-                            </button>
-                        </div>
-                    </div>
-                </div>
+               
             </div>
         </div>
     </div>
@@ -468,162 +517,42 @@ if (!isset($_SESSION["admin"])) {
 
     <!-- Dashboard Update Modal -->
     <div class="modal fade" id="dashboardUpdateModal" tabindex="-1" aria-labelledby="dashboardUpdateModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-dark text-light">
                 <div class="modal-header border-secondary">
                     <h5 class="modal-title" id="dashboardUpdateModalLabel">
-                        <i class="fas fa-cogs me-2"></i>Update Dashboard Data
+                        <i class="fas fa-plus-circle me-2"></i>Add New Record
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="dashboardUpdateForm">
+                <form id="dashboardUpdateForm" method="POST" action="Action/form_handler.php">
                     <div class="modal-body">
-                        <input type="hidden" id="updateType" name="update_type">
-                        
-                        <!-- Members Update Form -->
-                        <div id="membersUpdateForm" class="update-form-section" style="display: none;">
-                            <h6 class="text-warning mb-3"><i class="fas fa-users me-2"></i>Update Total Members</h6>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="memberOperation" class="form-label">Operation</label>
-                                    <select class="form-select bg-dark text-light border-secondary" id="memberOperation" name="operation">
-                                        <option value="add">Add Members</option>
-                                        <option value="remove">Remove Members</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="memberAmount" class="form-label">Amount</label>
-                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="memberAmount" name="amount" min="1" max="100" value="1">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="memberCategory" class="form-label">Category</label>
-                                    <select class="form-select bg-dark text-light border-secondary" id="memberCategory" name="category">
-                                        <option value="Music">Music</option>
-                                        <option value="Dance">Dance</option>
-                                        <option value="Drama">Drama</option>
-                                        <option value="Art">Art</option>
-                                        <option value="Poetry">Poetry</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="memberGender" class="form-label">Gender (for new members)</label>
-                                    <select class="form-select bg-dark text-light border-secondary" id="memberGender" name="gender">
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="memberName" class="form-label">Member Name (optional, for add operation)</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="memberName" name="member_name" placeholder="Leave empty for auto-generated name">
-                            </div>
-                            <div class="mb-3">
-                                <label for="memberEmail" class="form-label">Member Email (optional, for add operation)</label>
-                                <input type="email" class="form-control bg-dark text-light border-secondary" id="memberEmail" name="member_email" placeholder="Leave empty for auto-generated email">
-                            </div>
-                        </div>
+                        <div class="mb-3">
 
-                        <!-- Applications Update Form -->
-                        <div id="applicationsUpdateForm" class="update-form-section" style="display: none;">
-                            <h6 class="text-info mb-3"><i class="fas fa-user-plus me-2"></i>Update Pending Applications</h6>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="applicationOperation" class="form-label">Operation</label>
-                                    <select class="form-select bg-dark text-light border-secondary" id="applicationOperation" name="operation">
-                                        <option value="add">Add Applications</option>
-                                        <option value="remove">Remove Applications</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="applicationAmount" class="form-label">Amount</label>
-                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="applicationAmount" name="amount" min="1" max="50" value="1">
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="applicationCategory" class="form-label">Category</label>
-                                <select class="form-select bg-dark text-light border-secondary" id="applicationCategory" name="category">
-                                    <option value="Music">Music</option>
-                                    <option value="Dance">Dance</option>
-                                    <option value="Drama">Drama</option>
-                                    <option value="Art">Art</option>
-                                    <option value="Poetry">Poetry</option>
-                                </select>
-                            </div>
-                        </div>
+                            <label for="totalMembers" class="form-label text-light">Total Members</label>
 
-                        <!-- Performance Update Form -->
-                        <div id="performanceUpdateForm" class="update-form-section" style="display: none;">
-                            <h6 class="text-success mb-3"><i class="fas fa-chart-line me-2"></i>Update Performance Metrics</h6>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="performanceOperation" class="form-label">Operation</label>
-                                    <select class="form-select bg-dark text-light border-secondary" id="performanceOperation" name="operation">
-                                        <option value="add">Add/Increase Metric</option>
-                                        <option value="remove">Decrease Metric</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="performanceValue" class="form-label">Value</label>
-                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="performanceValue" name="value" min="1" max="1000" value="1">
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="performanceType" class="form-label">Metric Type</label>
-                                <select class="form-select bg-dark text-light border-secondary" id="performanceType" name="metric_type">
-                                    <option value="events">Events</option>
-                                    <option value="participation">Participation</option>
-                                    <option value="achievements">Achievements</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="performanceDescription" class="form-label">Description</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="performanceDescription" name="description" placeholder="e.g., Annual Cultural Show, Monthly Workshop" required>
-                            </div>
+                            <input type="number" class="form-control bg-dark text-light border-secondary" name="totalMembers" id="totalMembers" placeholder="0" min="0" value="0" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="pending_applications" class="form-label text-light">Pending Applications</label>
 
-                        <!-- Gender Distribution Update Form -->
-                        <div id="genderUpdateForm" class="update-form-section" style="display: none;">
-                            <h6 class="text-warning mb-3"><i class="fas fa-balance-scale me-2"></i>Update Gender Distribution</h6>
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label for="genderOperation" class="form-label">Operation</label>
-                                    <select class="form-select bg-dark text-light border-secondary" id="genderOperation" name="operation">
-                                        <option value="add">Add Members</option>
-                                        <option value="remove">Remove Members</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label for="genderType" class="form-label">Gender</label>
-                                    <select class="form-select bg-dark text-light border-secondary" id="genderType" name="gender">
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label for="genderAmount" class="form-label">Amount</label>
-                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="genderAmount" name="amount" min="1" max="100" value="1">
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="genderCategory" class="form-label">Category</label>
-                                <select class="form-select bg-dark text-light border-secondary" id="genderCategory" name="category">
-                                    <option value="Music">Music</option>
-                                    <option value="Dance">Dance</option>
-                                    <option value="Drama">Drama</option>
-                                    <option value="Art">Art</option>
-                                    <option value="Poetry">Poetry</option>
-                                </select>
-                            </div>
+                            <input type="number" class="form-control bg-dark text-light border-secondary" name="pending_applications" id="pending_applications" placeholder="0" min="0" value="0" required>
+
                         </div>
-                    </div>
-                    <div class="modal-footer border-secondary">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-2"></i>Apply Changes
+                        <div class="mb-3">
+
+                            <label for="completedevents" class="form-label text-light">Completed Events</label>
+
+                            <input type="number" class="form-control bg-dark text-light border-secondary" name="completedevents" id="completedevents" placeholder="0" min="0" value="0" required>
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="others" class="form-label text-light">Others</label>
+                            
+                            <input type="number" class="form-control bg-dark text-light border-secondary" name="others" id="others" placeholder="0" min="0" value="0" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-save me-2"></i>Submit Dashboard Data
                         </button>
                     </div>
                 </form>
@@ -741,9 +670,7 @@ if (!isset($_SESSION["admin"])) {
                  }
              });
             
-            // Event Categories Chart - Load real data
-            const eventCtx = document.getElementById('eventCategoriesChart').getContext('2d');
-            initEventCategoriesChart(eventCtx);
+            // Event Categories Chart removed - only keeping Gender Distribution
         }
         
         // Initialize Gender Distribution Chart
@@ -875,141 +802,7 @@ if (!isset($_SESSION["admin"])) {
             createGenderChart(ctx, fallbackData);
         }
 
-        // Initialize Event Categories Chart with real data
-        function initEventCategoriesChart() {
-            const chartContainer = document.getElementById('eventCategoriesChart');
-            if (!chartContainer) {
-                console.error('Event categories chart container not found');
-                return;
-            }
-            
-            const eventCtx = chartContainer.getContext('2d');
-            
-            // Fetch data from new API
-            fetch('Action/event_statistics_api.php', {
-                method: 'GET',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Event categories API response:', data);
-                    if (data.success && data.data && data.data.length > 0) {
-                        createEventCategoriesChart(eventCtx, data.data);
-                        showNotification(data.message || 'Event categories loaded successfully', 'success');
-                    } else {
-                        console.warn('No event category data available, using fallback');
-                        createFallbackEventChart(eventCtx);
-                        showNotification('Using sample data - no category data available', 'warning');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading event categories data:', error);
-                    createFallbackEventChart(eventCtx);
-                    showNotification('Failed to load category data, using sample data', 'warning');
-                });
-        }
-
-        // Create Event Categories Chart
-        function createEventCategoriesChart(ctx, data) {
-            try {
-                const labels = data.map(item => item.category);
-                const counts = data.map(item => item.count);
-                const colors = data.map(item => item.color);
-                
-                if (window.eventChart) {
-                    window.eventChart.destroy();
-                }
-                
-                window.eventChart = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            data: counts,
-                            backgroundColor: colors,
-                            borderWidth: 0,
-                            borderColor: '#fff'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        layout: {
-                            padding: {
-                                top: 10,
-                                bottom: 20,
-                                left: 10,
-                                right: 10
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    color: '#ccc',
-                                    padding: 20,
-                                    usePointStyle: true,
-                                    font: {
-                                        size: 12
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                titleColor: '#fff',
-                                bodyColor: '#fff',
-                                borderColor: '#51cf66',
-                                borderWidth: 1,
-                                cornerRadius: 8,
-                                displayColors: true,
-                                callbacks: {
-                                    label: function(context) {
-                                        const category = context.label;
-                                        const count = context.parsed;
-                                        const dataPoint = data[context.dataIndex];
-                                        let tooltip = `${category}: ${count} members`;
-                                        if (dataPoint.male_count !== undefined) {
-                                            tooltip += `\nMale: ${dataPoint.male_count}, Female: ${dataPoint.female_count}`;
-                                            if (dataPoint.other_count > 0) {
-                                                tooltip += `, Other: ${dataPoint.other_count}`;
-                                            }
-                                        }
-                                        return tooltip;
-                                    }
-                                }
-                            }
-                        },
-                        cutout: '60%'
-                    }
-                });
-                
-                console.log('Event categories chart created successfully');
-            } catch (error) {
-                console.error('Error creating event categories chart:', error);
-                createFallbackEventChart(ctx);
-            }
-        }
-
-        // Create fallback event categories chart with dummy data
-        function createFallbackEventChart(ctx) {
-            const fallbackData = [
-                {category: 'Music', count: 35, color: '#f3d35c'},
-                {category: 'Dance', count: 25, color: '#e76f2c'},
-                {category: 'Drama', count: 20, color: '#28a745'},
-                {category: 'Art', count: 15, color: '#17a2b8'},
-                {category: 'Poetry', count: 5, color: '#6f42c1'}
-            ];
-            
-            createEventCategoriesChart(ctx, fallbackData);
-        }
+        // Event Categories Chart functions removed - only keeping Gender Distribution chart
         
         // Show notification
         function showNotification(message, type = 'success') {
@@ -1098,11 +891,11 @@ if (!isset($_SESSION["admin"])) {
             }
         }
         
-        // Stats cards
+        // Stats cards - no JavaScript interaction, display PHP values only
         document.querySelectorAll('.stat-card').forEach(card => {
             card.addEventListener('click', function() {
                 const stat = this.dataset.stat;
-                showNotification(`Viewing detailed ${stat} statistics...`, 'success');
+                showNotification(`Viewing ${stat} statistics...`, 'info');
             });
         });
         
@@ -1131,9 +924,11 @@ if (!isset($_SESSION["admin"])) {
         document.addEventListener('DOMContentLoaded', function() {
             initCharts();
             initGenderDistributionChart();
-            initEventCategoriesChart();
             initMemberApplications();
+            
+            // Load additional member statistics (complementary data)
             loadMemberStatistics();
+            
             showNotification('Dashboard loaded successfully!', 'success');
             
             // Initialize admin management if user is main admin
@@ -1147,15 +942,13 @@ if (!isset($_SESSION["admin"])) {
             // Make functions globally available for debugging
             window.debugDashboard = {
                 openUpdateModal: openUpdateModal,
-                loadCurrentDashboardStats: loadCurrentDashboardStats,
-                setupUpdateButtons: setupUpdateButtons,
                 testModal: function() {
                     console.log('Testing modal functionality...');
                     openUpdateModal('members');
                 }
             };
             
-            console.log('Dashboard initialization complete. Use window.debugDashboard.testModal() to test modal.');
+            console.log('Dashboard initialization complete. Stats-grid displays PHP values only.');
         });
 
         // Admin Management Functions
@@ -1549,7 +1342,6 @@ if (!isset($_SESSION["admin"])) {
                     showNotification(data.message, 'success');
                     loadPendingApplications();
                     loadPendingApplicationsCount();
-                    loadMemberStatistics(); // Refresh statistics
                 } else {
                     showNotification(data.message, 'error');
                 }
@@ -1579,7 +1371,6 @@ if (!isset($_SESSION["admin"])) {
                     showNotification(data.message, 'success');
                     loadPendingApplications();
                     loadPendingApplicationsCount();
-                    loadMemberStatistics(); // Refresh statistics
                 } else {
                     showNotification(data.message, 'error');
                 }
@@ -1590,7 +1381,8 @@ if (!isset($_SESSION["admin"])) {
             });
         }
 
-        // Load member statistics from the new database structure
+
+        // Load member statistics from the member database for additional info
         function loadMemberStatistics() {
             fetch('Action/member_management.php', {
                 method: 'POST',
@@ -1602,654 +1394,64 @@ if (!isset($_SESSION["admin"])) {
             .then(response => response.json())
             .then(data => {
                 if (data.success && data.data) {
-                    updateStatisticsDisplay(data.data);
+                    console.log('Member statistics loaded:', data.data);
                 } else {
                     console.warn('Failed to load member statistics, using fallback');
-                    updateStatisticsDisplay({
-                        total_members: 0,
-                        active_members: 0,
-                        pending_applications: 0,
-                        total_males: 0,
-                        total_females: 0,
-                        total_others: 0
-                    });
                 }
             })
             .catch(error => {
                 console.error('Error loading member statistics:', error);
-                showNotification('Failed to load member statistics', 'warning');
             });
         }
 
-        // Update statistics display with real data
-        function updateStatisticsDisplay(stats) {
-            // Update total members
-            document.getElementById('totalMembersCount').textContent = stats.total_members || 0;
-            document.getElementById('activeMembersCount').textContent = `Active: ${stats.active_members || 0}`;
-            
-            // Update pending applications
-            const pendingCount = stats.pending_applications || 0;
-            document.getElementById('pendingApplicationsCount').textContent = pendingCount;
-            
-            // Update applications change indicator
-            const applicationsChange = document.getElementById('applicationsChange');
-            if (pendingCount > 0) {
-                applicationsChange.className = 'stat-change';
-                applicationsChange.innerHTML = '<i class="fas fa-clock"></i> Needs Attention';
-            } else {
-                applicationsChange.className = 'stat-change positive';
-                applicationsChange.innerHTML = '<i class="fas fa-check"></i> All Reviewed';
-            }
-            
-            // Update gender distribution
-            const totalGender = (stats.total_males || 0) + (stats.total_females || 0) + (stats.total_others || 0);
-            if (totalGender > 0) {
-                const malePercent = Math.round((stats.total_males / totalGender) * 100);
-                const femalePercent = Math.round((stats.total_females / totalGender) * 100);
-                const otherPercent = Math.round((stats.total_others / totalGender) * 100);
-                
-                document.getElementById('genderRatio').textContent = `${malePercent}/${femalePercent}/${otherPercent}%`;
-                document.getElementById('genderBreakdown').textContent = `M: ${stats.total_males}, F: ${stats.total_females}, O: ${stats.total_others}`;
-            } else {
-                document.getElementById('genderRatio').textContent = 'No Data';
-                document.getElementById('genderBreakdown').textContent = 'No members yet';
-            }
-        }
-
-        // Dashboard Update Management Functions
+        // Dashboard Update Management Functions (simplified)
         function initDashboardUpdates() {
-            console.log('Initializing dashboard updates...');
-            
-            // Load dashboard update section when selected
-            const dashboardUpdateNav = document.querySelector('[data-section="dashboard-update"]');
-            if (dashboardUpdateNav) {
-                dashboardUpdateNav.addEventListener('click', function() {
-                    console.log('Dashboard update section clicked');
-                    setTimeout(() => {
-                        loadCurrentDashboardStats();
-                        setupUpdateButtons(); // Ensure buttons are set up when section is shown
-                    }, 200);
-                });
-            } else {
-                console.warn('Dashboard update navigation not found');
-            }
-            
-            // Dashboard update form submission
-            const updateForm = document.getElementById('dashboardUpdateForm');
-            if (updateForm) {
-                updateForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    console.log('Form submitted');
-                    submitDashboardUpdate();
-                });
-            } else {
-                console.error('Dashboard update form not found during initialization');
-            }
-            
-            // Refresh button click handler
-            const refreshBtn = document.getElementById('refreshDashboardStatsBtn');
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', function() {
-                    console.log('Refresh button clicked');
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
-                    this.disabled = true;
-                    
-                    setTimeout(() => {
-                        refreshAllDashboardData();
-                        this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
-                        this.disabled = false;
-                    }, 1000);
-                });
-            } else {
-                console.warn('Refresh button not found during initialization');
-            }
-            
-            // Test modal button click handler
-            const testModalBtn = document.getElementById('testModalBtn');
-            if (testModalBtn) {
-                testModalBtn.addEventListener('click', function() {
-                    console.log('Test modal button clicked');
-                    showNotification('Testing modal functionality...', 'info');
-                    openUpdateModal('members');
-                });
-            } else {
-                console.warn('Test modal button not found during initialization');
-            }
-            
-            // Set up update buttons immediately
-            setupUpdateButtons();
-        }
-
-        // Function to set up update button click handlers
-        function setupUpdateButtons() {
-            console.log('Setting up update buttons...');
-            
-            // Wait for DOM to be ready
-            setTimeout(() => {
-                // Update Members button
-                const membersBtn = document.querySelector('.update-card button[onclick*="members"]');
-                if (membersBtn) {
-                    membersBtn.onclick = null; // Remove old onclick
-                    membersBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('Members update button clicked');
-                        openUpdateModal('members');
-                    });
-                    console.log('Members button setup complete');
-                } else {
-                    console.warn('Members update button not found');
-                }
-                
-                // Update Applications button
-                const applicationsBtn = document.querySelector('.update-card button[onclick*="applications"]');
-                if (applicationsBtn) {
-                    applicationsBtn.onclick = null; // Remove old onclick
-                    applicationsBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('Applications update button clicked');
-                        openUpdateModal('applications');
-                    });
-                    console.log('Applications button setup complete');
-                } else {
-                    console.warn('Applications update button not found');
-                }
-                
-                // Update Performance button
-                const performanceBtn = document.querySelector('.update-card button[onclick*="performance"]');
-                if (performanceBtn) {
-                    performanceBtn.onclick = null; // Remove old onclick
-                    performanceBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('Performance update button clicked');
-                        openUpdateModal('performance');
-                    });
-                    console.log('Performance button setup complete');
-                } else {
-                    console.warn('Performance update button not found');
-                }
-                
-                // Update Gender button
-                const genderBtn = document.querySelector('.update-card button[onclick*="gender"]');
-                if (genderBtn) {
-                    genderBtn.onclick = null; // Remove old onclick
-                    genderBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('Gender update button clicked');
-                        openUpdateModal('gender');
-                    });
-                    console.log('Gender button setup complete');
-                } else {
-                    console.warn('Gender update button not found');
-                }
-            }, 100);
-        }
-
-        function loadCurrentDashboardStats() {
-            console.log('Loading current dashboard stats...');
-            
-            fetch('Action/dashboard_update_management.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'action=get_current_stats'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Dashboard stats API response:', data);
-                if (data.success && data.data) {
-                    updateCurrentStatsDisplay(data.data);
-                } else {
-                    console.error('API returned failure:', data);
-                    showNotification(data.message || 'Failed to load current statistics', 'error');
-                    
-                    // Set fallback values
-                    updateCurrentStatsDisplay({
-                        members: {
-                            total_members: 0,
-                            active_members: 0,
-                            pending_applications: 0,
-                            total_males: 0,
-                            total_females: 0,
-                            total_others: 0
-                        },
-                        categories: [],
-                        performance: []
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error loading dashboard stats:', error);
-                showNotification('Failed to load current statistics: ' + error.message, 'error');
-                
-                // Set fallback values
-                updateCurrentStatsDisplay({
-                    members: {
-                        total_members: 0,
-                        active_members: 0,
-                        pending_applications: 0,
-                        total_males: 0,
-                        total_females: 0,
-                        total_others: 0
-                    },
-                    categories: [],
-                    performance: []
-                });
-            });
-        }
-
-        function updateCurrentStatsDisplay(stats) {
-            console.log('Updating current stats display with:', stats);
-            
-            // Update members count
-            if (stats && stats.members) {
-                const members = stats.members;
-                
-                // Update total members display
-                const totalMembers = parseInt(members.total_members) || 0;
-                const activeMembers = parseInt(members.active_members) || 0;
-                document.getElementById('currentMembersValue').textContent = 
-                    `${totalMembers} Total (${activeMembers} Active)`;
-                
-                // Update pending applications display
-                const pendingApps = parseInt(members.pending_applications) || 0;
-                document.getElementById('currentApplicationsValue').textContent = 
-                    `${pendingApps} Pending`;
-                
-                // Update gender distribution display
-                const totalMales = parseInt(members.total_males) || 0;
-                const totalFemales = parseInt(members.total_females) || 0;
-                const totalOthers = parseInt(members.total_others) || 0;
-                const totalGender = totalMales + totalFemales + totalOthers;
-                
-                if (totalGender > 0) {
-                    const malePercent = Math.round((totalMales / totalGender) * 100);
-                    const femalePercent = Math.round((totalFemales / totalGender) * 100);
-                    const otherPercent = Math.round((totalOthers / totalGender) * 100);
-                    document.getElementById('currentGenderValue').textContent = 
-                        `${malePercent}% M, ${femalePercent}% F, ${otherPercent}% O`;
-                } else {
-                    document.getElementById('currentGenderValue').textContent = 'No Data';
-                }
-                
-                // Update performance display based on categories
-                if (stats.categories && stats.categories.length > 0) {
-                    document.getElementById('currentPerformanceValue').textContent = 
-                        `${stats.categories.length} Active Categories`;
-                } else {
-                    document.getElementById('currentPerformanceValue').textContent = '5 Categories';
-                }
-            } else {
-                console.warn('No stats.members data available:', stats);
-                // Set default values
-                document.getElementById('currentMembersValue').textContent = '0 Total (0 Active)';
-                document.getElementById('currentApplicationsValue').textContent = '0 Pending';
-                document.getElementById('currentGenderValue').textContent = 'No Data';
-                document.getElementById('currentPerformanceValue').textContent = '5 Categories';
-            }
+            console.log('Dashboard updates initialized (simplified)');
         }
 
         function openUpdateModal(type) {
-            console.log('Opening update modal for type:', type);
-            
-            try {
-                // Clean up any existing modal instances first
-                cleanupModalState();
-                
-                // Check if modal exists
-                const modalElement = document.getElementById('dashboardUpdateModal');
-                if (!modalElement) {
-                    console.error('Dashboard update modal not found');
-                    showNotification('Modal not found. Please refresh the page.', 'error');
-                    return;
-                }
-                
-                // Hide all form sections
-                const formSections = document.querySelectorAll('.update-form-section');
-                console.log('Found form sections:', formSections.length);
-                formSections.forEach(section => {
-                    section.style.display = 'none';
-                });
-                
-                // Set update type
-                const updateTypeField = document.getElementById('updateType');
-                if (!updateTypeField) {
-                    console.error('Update type field not found');
-                    showNotification('Form configuration error. Please refresh the page.', 'error');
-                    return;
-                }
-                updateTypeField.value = type;
-                
-                // Show relevant form section and update modal title
-                let modalTitle = 'Update Dashboard Data';
-                let sectionId = '';
-                
-                switch(type) {
-                    case 'members':
-                        modalTitle = 'Update Total Members';
-                        sectionId = 'membersUpdateForm';
-                        break;
-                    case 'applications':
-                        modalTitle = 'Update Pending Applications';
-                        sectionId = 'applicationsUpdateForm';
-                        break;
-                    case 'performance':
-                        modalTitle = 'Update Performance Metrics';
-                        sectionId = 'performanceUpdateForm';
-                        break;
-                    case 'gender':
-                        modalTitle = 'Update Gender Distribution';
-                        sectionId = 'genderUpdateForm';
-                        break;
-                    default:
-                        console.error('Unknown modal type:', type);
-                        showNotification('Unknown update type: ' + type, 'error');
-                        return;
-                }
-                
-                // Update modal title
-                const modalLabel = document.getElementById('dashboardUpdateModalLabel');
-                if (modalLabel) {
-                    modalLabel.innerHTML = `<i class="fas fa-cogs me-2"></i>${modalTitle}`;
-                } else {
-                    console.warn('Modal label not found');
-                }
-                
-                // Show the relevant form section
-                const formSection = document.getElementById(sectionId);
-                if (formSection) {
-                    formSection.style.display = 'block';
-                    console.log('Showing form section:', sectionId);
-                } else {
-                    console.error('Form section not found:', sectionId);
-                    showNotification('Form section not found: ' + sectionId, 'error');
-                    return;
-                }
-                
-                // Set up close button handlers before showing modal
-                setupModalCloseHandlers(modalElement);
-                
-                // Show modal
-                console.log('Attempting to show modal...');
-                
-                // Check if Bootstrap is available
-                if (typeof bootstrap === 'undefined') {
-                    console.error('Bootstrap is not loaded, using fallback');
-                    showModalFallback(modalElement);
-                    return;
-                }
-                
-                // Try to create and show the modal with Bootstrap
-                try {
-                    // Create modal with proper options
-                    const modal = new bootstrap.Modal(modalElement, {
-                        backdrop: true,  // Allow backdrop clicks to close
-                        keyboard: true,  // Allow ESC key to close
-                        focus: true
-                    });
-                    
-                    // Store modal instance for later cleanup
-                    window.currentModal = modal;
-                    
-                    // Show the modal
-                    modal.show();
-                    
-                    // Add event listeners
-                    modalElement.addEventListener('shown.bs.modal', function() {
-                        console.log('Modal successfully shown with Bootstrap');
-                        showNotification('Update form opened', 'success');
-                    }, { once: true });
-                    
-                    modalElement.addEventListener('hidden.bs.modal', function() {
-                        console.log('Modal was hidden');
-                        cleanupModalState();
-                    }, { once: true });
-                    
-                } catch (bootstrapError) {
-                    console.error('Bootstrap modal error:', bootstrapError);
-                    showModalFallback(modalElement);
-                }
-                
-            } catch (error) {
-                console.error('Error opening modal:', error);
-                showNotification('Error opening update form: ' + error.message, 'error');
-            }
+            console.log('Opening simple form for type:', type);
+            openSimpleModal();
         }
-        
-        function setupModalCloseHandlers(modalElement) {
-            console.log('Setting up modal close handlers');
-            
-            // Remove any existing handlers first
-            const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"]');
-            closeButtons.forEach(btn => {
-                // Clone the button to remove all event listeners
-                const newBtn = btn.cloneNode(true);
-                btn.parentNode.replaceChild(newBtn, btn);
-                
-                // Add new click handler
-                newBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('Close button clicked');
-                    closeModal();
-                });
-            });
-            
-            // Add escape key handler
-            const escapeHandler = function(e) {
-                if (e.key === 'Escape' && modalElement.classList.contains('show')) {
-                    console.log('Escape key pressed');
-                    closeModal();
-                }
-            };
-            
-            document.addEventListener('keydown', escapeHandler);
-            
-            // Store handler for cleanup
-            modalElement._escapeHandler = escapeHandler;
-        }
-        
-        function showModalFallback(modalElement) {
-            console.log('Using fallback modal display method');
-            
-            modalElement.classList.add('show');
-            modalElement.style.display = 'block';
-            modalElement.style.paddingRight = '17px'; // Compensate for scrollbar
-            modalElement.setAttribute('aria-hidden', 'false');
-            modalElement.setAttribute('role', 'dialog');
-            modalElement.setAttribute('tabindex', '-1');
-            
-            document.body.classList.add('modal-open');
-            document.body.style.paddingRight = '17px'; // Compensate for scrollbar
-            
-            // Add backdrop
-            const backdrop = document.createElement('div');
-            backdrop.className = 'modal-backdrop fade show';
-            backdrop.id = 'modal-backdrop-fallback';
-            backdrop.style.zIndex = '9998';
-            
-            // Add backdrop click handler
-            backdrop.addEventListener('click', function() {
-                console.log('Backdrop clicked');
-                closeModal();
-            });
-            
-            document.body.appendChild(backdrop);
-            
-            showNotification('Update form opened (fallback mode)', 'warning');
-        }
-        
-        function closeModal() {
-            console.log('Closing modal');
+        function openSimpleModal() {
+            console.log('Opening simple modal');
             
             const modalElement = document.getElementById('dashboardUpdateModal');
             if (!modalElement) {
-                console.error('Modal element not found during close');
+                console.error('Modal element not found');
+                showNotification('Modal not found. Please refresh the page.', 'error');
                 return;
             }
             
-            // Try Bootstrap method first
-            if (window.currentModal) {
-                try {
-                    window.currentModal.hide();
-                    return;
-                } catch (error) {
-                    console.warn('Bootstrap modal close failed, using fallback:', error);
-                }
-            }
-            
-            // Fallback method
-            closeModalFallback();
-        }
-        
-        function cleanupModalState() {
-            console.log('Cleaning up modal state');
-            
-            const modalElement = document.getElementById('dashboardUpdateModal');
-            if (modalElement) {
-                // Remove escape key handler
-                if (modalElement._escapeHandler) {
-                    document.removeEventListener('keydown', modalElement._escapeHandler);
-                    delete modalElement._escapeHandler;
-                }
-                
-                // Clean up Bootstrap instance
-                if (window.currentModal) {
-                    try {
-                        window.currentModal.dispose();
-                    } catch (error) {
-                        console.warn('Error disposing modal:', error);
-                    }
-                    delete window.currentModal;
-                }
-                
-                // Reset modal element state
-                modalElement.classList.remove('show');
-                modalElement.style.display = 'none';
-                modalElement.style.paddingRight = '';
-                modalElement.setAttribute('aria-hidden', 'true');
-                modalElement.removeAttribute('role');
-                modalElement.removeAttribute('tabindex');
-            }
-            
-            // Clean up body classes and backdrop
-            document.body.classList.remove('modal-open');
-            document.body.style.paddingRight = '';
-            
-            const existingBackdrop = document.getElementById('modal-backdrop-fallback');
-            if (existingBackdrop) {
-                existingBackdrop.remove();
-            }
-            
-            // Remove any remaining backdrops
-            document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
-                backdrop.remove();
-            });
-        }
-
-        function submitDashboardUpdate() {
+            // Reset form
             const form = document.getElementById('dashboardUpdateForm');
-            const formData = new FormData(form);
-            const updateType = document.getElementById('updateType').value;
-            
-            // Set the appropriate action based on update type
-            let action = '';
-            switch(updateType) {
-                case 'members':
-                    action = 'update_total_members';
-                    break;
-                case 'applications':
-                    action = 'update_pending_applications';
-                    break;
-                case 'performance':
-                    action = 'update_performance_data';
-                    break;
-                case 'gender':
-                    action = 'update_gender_distribution';
-                    break;
+            if (form) {
+                form.reset();
             }
             
-            formData.append('action', action);
-            
-            // Show loading notification
-            showNotification('Processing update...', 'info');
-            
-            fetch('Action/dashboard_update_management.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification(data.message, 'success');
-                    closeModal();
-                    
-                    // Force refresh all dashboard data with a small delay to ensure database changes are committed
-                    setTimeout(() => {
-                        refreshAllDashboardData();
-                    }, 500);
-                } else {
-                    showNotification(data.message, 'error');
+            // Show the modal using Bootstrap
+            if (typeof bootstrap !== 'undefined') {
+                try {
+                    const modal = new bootstrap.Modal(modalElement, {
+                        backdrop: true,
+                        keyboard: true,
+                        focus: true
+                    });
+                    modal.show();
+                    showNotification('Form opened for new record', 'info');
+                } catch (error) {
+                    console.error('Bootstrap modal error:', error);
+                    // Fallback
+                    modalElement.style.display = 'block';
+                    modalElement.classList.add('show');
+                    showNotification('Form opened (fallback mode)', 'warning');
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Failed to update dashboard data', 'error');
-            });
-        }
-
-        // Fallback modal close function
-        function closeModalFallback() {
-            console.log('Closing modal using fallback method');
-            const modalElement = document.getElementById('dashboardUpdateModal');
-            const backdrop = document.getElementById('modal-backdrop-fallback');
-            
-            if (modalElement) {
-                modalElement.classList.remove('show');
-                modalElement.style.display = 'none';
-                modalElement.setAttribute('aria-hidden', 'true');
+            } else {
+                // Fallback if Bootstrap is not available
+                modalElement.style.display = 'block';
+                modalElement.classList.add('show');
+                showNotification('Form opened (fallback mode)', 'warning');
             }
-            
-            if (backdrop) {
-                backdrop.remove();
-            }
-            
-            document.body.classList.remove('modal-open');
-            showNotification('Update form closed', 'info');
-        }
-        
-        // Comprehensive refresh function for all dashboard data
-        function refreshAllDashboardData() {
-            console.log('Refreshing all dashboard data...');
-            
-            // 1. Refresh main dashboard statistics (Total Members, Pending Applications, etc.)
-            loadMemberStatistics();
-            
-            // 2. Refresh dashboard update section current values
-            loadCurrentDashboardStats();
-            
-            // 3. Refresh all charts
-            setTimeout(() => {
-                initGenderDistributionChart();
-                initEventCategoriesChart();
-            }, 200);
-            
-            // 4. Refresh applications if in applications section
-            if (document.getElementById('applications-section').style.display !== 'none') {
-                setTimeout(() => {
-                    loadPendingApplications();
-                    loadPendingApplicationsCount();
-                }, 300);
-            }
-            
-            // 5. Show final confirmation
-            setTimeout(() => {
-                showNotification('Dashboard data refreshed successfully!', 'success');
-            }, 800);
         }
     </script>
 </body>
