@@ -2548,54 +2548,7 @@ class="container d-flex justify-content-center align-items-center">
                                     class="form-control"
                                     placeholder="Facebook Profile URL">
                             </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-12 mb-3">
-                                <label
-                                    class="form-label">Membership
-                                    Status:</label>
-                                <div
-                                    class="form-check form-check-inline">
-                                    <input
-                                        class="form-check-input"
-                                        type="radio"
-                                        name="membership-status"
-                                        id="status-new"
-                                        value="New Member"
-                                        required>
-                                    <label
-                                        class="form-check-label"
-                                        for="status-new">New
-                                        Member</label>
-                                </div>
-                                <div
-                                    class="form-check form-check-inline">
-                                    <input
-                                        class="form-check-input"
-                                        type="radio"
-                                        name="membership-status"
-                                        id="status-current"
-                                        value="Current Member">
-                                    <label
-                                        class="form-check-label"
-                                        for="status-current">Current
-                                        Member</label>
-                                </div>
-                                <div
-                                    class="form-check form-check-inline">
-                                    <input
-                                        class="form-check-input"
-                                        type="radio"
-                                        name="membership-status"
-                                        id="status-previous"
-                                        value="Previous Member">
-                                    <label
-                                        class="form-check-label"
-                                        for="status-previous">Previous
-                                        Member</label>
-                                </div>
-                            </div>
-                        </div>
+                        
                         <div class="row mt-3">
                             <div class="col-12 mb-3">
                                 <label class="form-label">First Department Preference in BUCUC:</label>
@@ -3114,8 +3067,7 @@ if (loginForm) {
         { value: 'Creative', text: 'Creative' },
         { value: 'Performance', text: 'Performance' },
         { value: 'RD', text: 'R&D - Research and Development' },
-        { value: 'MIAP', text: 'MIAP - Marketing IT Archive & Photography' },
-        { value: 'Finance', text: 'Finance' }
+        { value: 'MIAP', text: 'MIAP - Marketing IT Archive & Photography' }
     ];
     
     // Function to populate dropdown options
