@@ -104,7 +104,7 @@ $dashboardData = getDashboardStats();
             
             <div class="nav-section">
                 <div class="nav-section-title">Management</div>
-                <a href="#" class="nav-item" data-section="members">
+                <a href="member_types.php" class="nav-item">
                     <i class="fas fa-users"></i>
                     Members
                 </a>
@@ -872,21 +872,18 @@ $dashboardData = getDashboardStats();
         });
 
         function showSection(sectionName) {
-            // Hide all sections
             document.querySelectorAll('.main-content > div').forEach(div => {
                 if (div.id && div.id.includes('section')) {
                     div.style.display = 'none';
                 }
             });
             
-            // Show the selected section
             const targetSection = document.getElementById(sectionName + '-section');
             if (targetSection) {
                 targetSection.style.display = 'block';
             }
         }
         
-        // Stats cards - no JavaScript interaction, display PHP values only
         document.querySelectorAll('.stat-card').forEach(card => {
             card.addEventListener('click', function() {
                 const stat = this.dataset.stat;
@@ -894,7 +891,6 @@ $dashboardData = getDashboardStats();
             });
         });
         
-        // Activity items
         document.querySelectorAll('.activity-item').forEach(item => {
             item.addEventListener('click', function() {
                 const activity = this.dataset.activity;
@@ -902,7 +898,6 @@ $dashboardData = getDashboardStats();
             });
         });
         
-        // Search functionality
         document.getElementById('searchInput').addEventListener('input', function() {
             const query = this.value.toLowerCase();
             if (query.length > 2) {
@@ -910,31 +905,25 @@ $dashboardData = getDashboardStats();
             }
         });
         
-        // User profile
         document.getElementById('userProfile').addEventListener('click', function() {
             showNotification('Opening user profile...', 'success');
         });
         
-        // Initialize everything when page loads
         document.addEventListener('DOMContentLoaded', function() {
             initCharts();
             initGenderDistributionChart();
             initMemberApplications();
             
-            // Load additional member statistics (complementary data)
             loadMemberStatistics();
             
             showNotification('Dashboard loaded successfully!', 'success');
             
-            // Initialize admin management if user is main admin
             <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
             initAdminManagement();
             <?php endif; ?>
             
-            // Initialize dashboard updates
             initDashboardUpdates();
             
-            // Make functions globally available for debugging
             window.debugDashboard = {
                 openUpdateModal: openUpdateModal,
                 testModal: function() {
