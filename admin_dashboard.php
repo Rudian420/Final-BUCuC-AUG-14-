@@ -685,8 +685,7 @@ $dashboardData = getDashboardStats();
             
             // Show loading state
             showNotification('Loading gender distribution data...', 'info');
-            
-            // Fetch data from API
+     
             fetch('Action/gender_distribution_api.php', {
                 method: 'GET',
                 credentials: 'same-origin',
@@ -718,7 +717,6 @@ $dashboardData = getDashboardStats();
                 });
         }
         
-        // Create Gender Distribution Chart
         function createGenderChart(ctx, data) {
             try {
                 const labels = data.map(item => item.gender);
@@ -791,7 +789,6 @@ $dashboardData = getDashboardStats();
             }
         }
         
-        // Create fallback gender chart with dummy data
         function createFallbackGenderChart(ctx) {
             const fallbackData = [
                 {gender: 'Male', count: 3, color: '#36A2EB'},
@@ -802,8 +799,6 @@ $dashboardData = getDashboardStats();
             createGenderChart(ctx, fallbackData);
         }
 
-        // Event Categories Chart functions removed - only keeping Gender Distribution chart
-        
         // Show notification
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
