@@ -888,16 +888,14 @@ $dashboardData = getDashboardStats();
          
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function(e) {
-                // Allow logout.php to navigate normally
+                
                 if (this.getAttribute('href') === 'logout.php') return;
                 
-                // Allow member_types.php to navigate normally
                 if (this.getAttribute('href') === 'member_types.php') {
                     showNotification('Navigating to member types...', 'success');
                     return;
                 }
                 
-                // Allow pending_applications.php to navigate normally
                 if (this.getAttribute('href') === 'pending_applications.php') {
                     showNotification('Navigating to pending applications...', 'success');
                     return;
