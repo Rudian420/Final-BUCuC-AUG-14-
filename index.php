@@ -962,10 +962,99 @@ margin-bottom: 16px;
 <style>
 /* Admin Check Styles */
 .admin-check-container {
-padding: 40px 20px;
+padding: 60px 40px;
 background: rgba(255, 255, 255, 0.95);
 border-radius: 20px;
 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+text-align: center;
+max-width: 600px;
+margin: 0 auto;
+}
+
+/* New Admin Access Interface Styles */
+.admin-access-wrapper {
+padding: 0;
+}
+
+.admin-icon-container {
+margin-bottom: 30px;
+}
+
+.admin-icon {
+width: 80px;
+height: 80px;
+background: linear-gradient(135deg, #e76f2c, #f3d35c);
+border-radius: 50%;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+font-size: 2rem;
+color: white;
+box-shadow: 0 10px 30px rgba(231, 111, 44, 0.3);
+animation: adminFloat 3s ease-in-out infinite;
+}
+
+@keyframes adminFloat {
+0%, 100% { transform: translateY(0px); }
+50% { transform: translateY(-8px); }
+}
+
+.admin-access-title {
+font-size: 2rem;
+font-weight: 700;
+color: #333;
+margin-bottom: 15px;
+}
+
+.admin-access-subtitle {
+color: #666;
+font-size: 1.1rem;
+margin-bottom: 40px;
+}
+
+.admin-buttons-container {
+display: flex;
+flex-direction: column;
+gap: 15px;
+max-width: 300px;
+margin: 0 auto;
+}
+
+.admin-btn {
+padding: 15px 25px;
+border: none;
+border-radius: 30px;
+font-size: 1rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.admin-yes-btn {
+background: linear-gradient(135deg, #28a745, #20c997);
+color: white;
+}
+
+.admin-yes-btn:hover {
+background: linear-gradient(135deg, #20c997, #28a745);
+transform: translateY(-2px);
+box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+}
+
+.admin-no-btn {
+background: linear-gradient(135deg, #6c757d, #495057);
+color: white;
+}
+
+.admin-no-btn:hover {
+background: linear-gradient(135deg, #495057, #6c757d);
+transform: translateY(-2px);
+box-shadow: 0 8px 20px rgba(108, 117, 125, 0.3);
 }
 
 .admin-check-icon {
@@ -2548,7 +2637,7 @@ class="container d-flex justify-content-center align-items-center">
                                     class="form-control"
                                     placeholder="Facebook Profile URL">
                             </div>
-                        
+                        </div>
                         <div class="row mt-3">
                             <div class="col-12 mb-3">
                                 <label class="form-label">First Department Preference in BUCUC:</label>
@@ -2596,20 +2685,25 @@ class="container d-flex justify-content-center align-items-center">
             <div class="tab-pane fade" id="nav-LoginForm"
                 role="tabpanel"
                 aria-labelledby="nav-LoginForm-tab">
-                <div class="admin-check-container text-center">
-                    <div class="admin-check-icon mb-4">
-                        <i class="fas fa-user-shield" style="font-size: 3.5rem; color: white;"></i>
-                    </div>
-                    <h3 class="admin-check-title mb-4">Admin Access</h3>
-                    <p class="admin-check-description mb-4">Are you an administrator of the Cultural Club?</p>
-                    
-                    <div class="admin-options">
-                        <button type="button" class="btn btn-success btn-lg me-3" onclick="checkAdminStatus(true)">
-                            <i class="fas fa-check me-2"></i>Yes, I am an Admin
-                        </button>
-                        <button type="button" class="btn btn-secondary btn-lg" onclick="checkAdminStatus(false)">
-                            <i class="fas fa-times me-2"></i>No, I'm not
-                        </button>
+                <div class="admin-check-container">
+                    <!-- Admin Access Interface -->
+                    <div class="admin-access-wrapper">
+                        <div class="admin-icon-container">
+                            <span class="admin-icon">
+                                <i class="fas fa-user-shield"></i>
+                            </span>
+                        </div>
+                        <h2 class="admin-access-title">Admin Access</h2>
+                        <p class="admin-access-subtitle">Are you an administrator of the Cultural Club?</p>
+                        
+                        <div class="admin-buttons-container">
+                            <button class="admin-btn admin-yes-btn" onclick="checkAdminStatus(true)">
+                                <i class="fas fa-check"></i> Yes, I am an Admin
+                            </button>
+                            <button class="admin-btn admin-no-btn" onclick="checkAdminStatus(false)">
+                                <i class="fas fa-times"></i> No, I'm not
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
