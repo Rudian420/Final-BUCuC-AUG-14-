@@ -257,7 +257,7 @@ $dashboardData = getDashboardStats();
             
             <div class="chart-card">
                 <div class="chart-header">
-                    <h3 class="chart-title">Gender Distribution by Event Category</h3>
+                    <h3 class="chart-title">Gender Distribution Chart</h3>
                 </div>
                 <div style="position: relative; height: 420px; width: 100%;">
                     <canvas id="genderDistributionChart"></canvas>
