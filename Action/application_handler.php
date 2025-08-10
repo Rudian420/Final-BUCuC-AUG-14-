@@ -60,8 +60,8 @@ try {
             exit();
         }
         
-        // Update member status to Old_member (accepted)
-        $updateStmt = $pdo->prepare("UPDATE members SET membership_status = 'Old_member', updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+        // Update member status to Accepted
+        $updateStmt = $pdo->prepare("UPDATE members SET membership_status = 'Accepted', updated_at = CURRENT_TIMESTAMP WHERE id = ?");
         $updateResult = $updateStmt->execute([$memberId]);
         
         if ($updateResult) {

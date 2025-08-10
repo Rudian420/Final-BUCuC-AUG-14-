@@ -56,9 +56,9 @@ function getPendingMembers($conn) {
     try {
         $sql = "SELECT id, full_name, university_id, email, department, phone, semester, 
                 gender, date_of_birth, membership_status, event_category, motivation,
-                created_at, application_status, facebook_url, gsuite_email, gender_tracking
+                created_at, facebook_url, gsuite_email, gender_tracking
                 FROM members 
-                WHERE application_status = 'pending' 
+                WHERE membership_status = 'New_member' 
                 ORDER BY created_at DESC";
         
         $stmt = $conn->prepare($sql);
@@ -79,7 +79,7 @@ function acceptMember($conn, $memberId) {
     
     try {
         // Get member details for email
-        $getMemberSql = "SELECT full_name, email, event_category FROM members WHERE id = :member_id AND application_status = 'pending'";
+        $getMemberSql = "SELECT full_name, email, event_category, gsuite_email FROM members WHERE id = :member_id AND membership_status = 'New_member'";
         $getMemberStmt = $conn->prepare($getMemberSql);
         $getMemberStmt->bindParam(':member_id', $memberId);
         $getMemberStmt->execute();
@@ -90,13 +90,12 @@ function acceptMember($conn, $memberId) {
             return;
         }
         
-        // Use the stored procedure for consistent handling
-        $sql = "CALL AcceptMemberApplication(:member_id, :admin_id)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':member_id', $memberId);
-        $stmt->bindParam(':admin_id', $_SESSION['admin_id']);
+        // Update membership status to Accepted
+        $updateSql = "UPDATE members SET membership_status = 'Accepted', updated_at = CURRENT_TIMESTAMP WHERE id = :member_id";
+        $updateStmt = $conn->prepare($updateSql);
+        $updateStmt->bindParam(':member_id', $memberId);
         
-        if ($stmt->execute()) {
+        if ($updateStmt->execute()) {
             // Send acceptance email
             $emailSent = sendAcceptanceEmail($member['email'], $member['full_name'], $member['event_category']);
             $message = 'Member accepted successfully';
@@ -122,7 +121,7 @@ function rejectMember($conn, $memberId) {
     
     try {
         // Get member details before deletion (for logging/audit purposes)
-        $getMemberSql = "SELECT full_name, email FROM members WHERE id = :member_id AND application_status = 'pending'";
+        $getMemberSql = "SELECT full_name, email FROM members WHERE id = :member_id AND membership_status = 'New_member'";
         $getMemberStmt = $conn->prepare($getMemberSql);
         $getMemberStmt->bindParam(':member_id', $memberId);
         $getMemberStmt->execute();
@@ -133,13 +132,12 @@ function rejectMember($conn, $memberId) {
             return;
         }
         
-        // Use the stored procedure for consistent handling
-        $sql = "CALL RejectMemberApplication(:member_id, :admin_id)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':member_id', $memberId);
-        $stmt->bindParam(':admin_id', $_SESSION['admin_id']);
+        // Delete the member record
+        $deleteSql = "DELETE FROM members WHERE id = :member_id";
+        $deleteStmt = $conn->prepare($deleteSql);
+        $deleteStmt->bindParam(':member_id', $memberId);
         
-        if ($stmt->execute()) {
+        if ($deleteStmt->execute()) {
             // Optional: Log the rejection for audit purposes
             error_log("Member application rejected: {$member['full_name']} ({$member['email']}) by admin ID: {$_SESSION['admin_id']}");
             echo json_encode(['success' => true, 'message' => 'Member application rejected successfully']);

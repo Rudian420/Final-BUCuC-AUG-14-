@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $firstDept = trim($_POST['signup-first-dept'] ?? '');
         $secondDept = trim($_POST['signup-second-dept'] ?? '');
         
-        $membershipStatus = 'New_member'; 
+        $membershipStatus = 'New_member';
   
         $checkEmailSql = "SELECT id FROM members WHERE gsuite_email = :gsuiteEmail";
         $checkEmailStmt = $conn->prepare($checkEmailSql);

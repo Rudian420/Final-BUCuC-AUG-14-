@@ -30,7 +30,7 @@ try {
     $today = date('Y-m-d');
     foreach ($members as $member) {
         if (date('Y-m-d', strtotime($member['created_at'])) == $today) {
-            if ($member['membership_status'] == 'Old_member') {
+            if ($member['membership_status'] == 'Accepted') {
                 $acceptedToday++;
             }
         }
@@ -228,13 +228,6 @@ function getTimeAgo($date) {
             color: #fff;
         }
         
-        .filters-section {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
         
         .search-box {
             position: relative;
@@ -353,24 +346,7 @@ function getTimeAgo($date) {
                 </div>
             </div>
             
-            <!-- Filters Section -->
-            <div class="filters-section">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" class="form-control" placeholder="Search by name, ID, or email..." id="searchInput">
-                        </div>
-                    </div>
-                    <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-outline-light active" data-filter="all">All</button>
-                            <button type="button" class="btn btn-outline-light" data-filter="pending">Pending</button>
-                            <button type="button" class="btn btn-outline-light" data-filter="today">Today's Applications</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+         
             
             <!-- Applications Table -->
             <div class="applications-table">
@@ -381,7 +357,7 @@ function getTimeAgo($date) {
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>University ID</th>
-                                <th>Email</th>
+                                <th>Gsuite</th>
                                 <th>Department</th>
                                 <th>Phone</th>
                                 <th>Applied Date</th>
@@ -422,7 +398,7 @@ function getTimeAgo($date) {
                                         </div>
                                     </td>
                                     <td><?php echo htmlspecialchars($member['university_id']); ?></td>
-                                    <td><?php echo htmlspecialchars($member['email']); ?></td>
+                                    <td><?php echo htmlspecialchars($member['gsuite_email']); ?></td>
                                     <td><?php echo htmlspecialchars($member['department']); ?></td>
                                     <td><?php echo htmlspecialchars($member['phone']); ?></td>
                                     <td>

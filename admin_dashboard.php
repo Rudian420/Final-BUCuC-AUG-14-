@@ -14,8 +14,8 @@ function getDashboardStats() {
         $database = new Database();
         $conn = $database->createConnection();
         
-        // Get the latest record from dashboardmanagement table
-        $sql = "SELECT totalmembers, pending_applications, completedevents, others
+        // Get the latest record from dashboardmanagement table for most stats
+        $sql = "SELECT totalmembers, completedevents, others
         FROM dashboardmanagement
         ORDER BY id DESC
         LIMIT 1";
@@ -24,10 +24,17 @@ function getDashboardStats() {
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
+        // Get real-time pending applications count from members table
+        $pendingSql = "SELECT COUNT(*) as pending_count FROM members WHERE membership_status = 'New_member'";
+        $pendingStmt = $conn->prepare($pendingSql);
+        $pendingStmt->execute();
+        $pendingResult = $pendingStmt->fetch(PDO::FETCH_ASSOC);
+        $pendingApplications = (int)$pendingResult['pending_count'];
+        
         if ($result) {
             return [
                 'total_members' => (int)$result['totalmembers'],
-                'pending_applications' => (int)$result['pending_applications'],
+                'pending_applications' => $pendingApplications,
                 'completed_events' => (int)$result['completedevents'],
                 'others' => (int)$result['others']
             ];
@@ -35,7 +42,7 @@ function getDashboardStats() {
             // Return default values if no data found
             return [
                 'total_members' => 0,
-                'pending_applications' => 0,
+                'pending_applications' => $pendingApplications,
                 'completed_events' => 0,
                 'others' => 0,
             ];
