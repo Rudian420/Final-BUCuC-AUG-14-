@@ -414,12 +414,8 @@ $dashboardData = getDashboardStats();
                 <h3 class="chart-title">Dashboard Data Management</h3>
                 <div class="d-flex gap-3 align-items-center">
                     <p class="text-muted mb-0">Update dashboard statistics and data for testing and management purposes</p>
-                    <button class="btn btn-secondary btn-sm" id="testModalBtn" style="margin-right: 10px;">
-                        <i class="fas fa-bug"></i> Test Modal
-                    </button>
-                    <button class="btn btn-primary" id="refreshDashboardStatsBtn">
-                        <i class="fas fa-sync-alt"></i> Refresh Data
-                    </button>
+                   
+                   
                 </div>
             </div>
             
@@ -427,10 +423,7 @@ $dashboardData = getDashboardStats();
                 <!-- Total Members Update -->
                 <div class="col-lg-12 mb-4">
                     <div class="update-card">
-                        <div class="update-card-header">
-                            <h5><i class="fas fa-database me-2 text-warning"></i>Add Dashboard Data</h5>
-                            <span class="current-value">Simple form submission to database</span>
-                        </div>
+                    
                         <div class="update-card-body">
                             <!-- Simple PHP Form - No JavaScript -->
                             <form method="POST" action="Action/form_handler.php" style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px;">
@@ -439,12 +432,6 @@ $dashboardData = getDashboardStats();
                                         <label for="simple_totalMembers" class="form-label text-light">Total Members</label>
                                         <input type="number" class="form-control bg-dark text-light border-secondary" 
                                                name="totalMembers" id="simple_totalMembers" 
-                                               placeholder="0" min="0" value="0" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="simple_pending_applications" class="form-label text-light">Pending Applications</label>
-                                        <input type="number" class="form-control bg-dark text-light border-secondary" 
-                                               name="pending_applications" id="simple_pending_applications" 
                                                placeholder="0" min="0" value="0" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
@@ -461,7 +448,7 @@ $dashboardData = getDashboardStats();
                                     </div>
                                     <div class="col-12">
                                         <button type="submit" class="btn btn-success btn-lg w-100">
-                                            <i class="fas fa-save me-2"></i>Submit to Database (No JavaScript)
+                                            <i class="fas fa-save me-2"></i>Submit to Database
                                         </button>
                                     </div>
                                 </div>
