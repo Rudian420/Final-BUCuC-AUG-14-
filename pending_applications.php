@@ -4,6 +4,79 @@ if (!isset($_SESSION["admin"])) {
     header("Location: admin-login.php");
     exit(); 
 }
+
+require_once 'Database/db.php';
+
+// Fetch members data
+try {
+    $database = new Database();
+    $pdo = $database->createConnection();
+    
+    // Get all members (you can add WHERE clause for specific status if needed)
+    $stmt = $pdo->query("SELECT * FROM members ORDER BY created_at DESC");
+    $members = $stmt->fetchAll();
+    
+    // Calculate statistics
+    $totalApplications = count($members);
+    $pendingApplications = count(array_filter($members, function($member) {
+        return $member['membership_status'] == 'New_member';
+    }));
+    
+    // For demo purposes, let's assume some recent statistics
+    $acceptedToday = 0;
+    $rejectedToday = 0;
+    
+    // Get today's applications
+    $today = date('Y-m-d');
+    foreach ($members as $member) {
+        if (date('Y-m-d', strtotime($member['created_at'])) == $today) {
+            if ($member['membership_status'] == 'Old_member') {
+                $acceptedToday++;
+            }
+        }
+    }
+    
+} catch (Exception $e) {
+    $members = [];
+    $totalApplications = 0;
+    $pendingApplications = 0;
+    $acceptedToday = 0;
+    $rejectedToday = 0;
+    $error_message = "Error fetching data: " . $e->getMessage();
+}
+
+// Function to get initials from full name
+function getInitials($name) {
+    $words = explode(' ', trim($name));
+    $initials = '';
+    foreach ($words as $word) {
+        if (!empty($word)) {
+            $initials .= strtoupper(substr($word, 0, 1));
+        }
+    }
+    return substr($initials, 0, 2); // Limit to 2 characters
+}
+
+// Function to format date
+function formatDate($date) {
+    $datetime = new DateTime($date);
+    return $datetime->format('M d, Y');
+}
+
+// Function to get time ago
+function getTimeAgo($date) {
+    $datetime = new DateTime($date);
+    $now = new DateTime();
+    $diff = $now->diff($datetime);
+    
+    if ($diff->days == 0) {
+        return 'Today';
+    } elseif ($diff->days == 1) {
+        return '1 day ago';
+    } else {
+        return $diff->days . ' days ago';
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -150,6 +223,11 @@ if (!isset($_SESSION["admin"])) {
             color: #333;
         }
         
+        .status-accepted {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: #fff;
+        }
+        
         .filters-section {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
@@ -250,25 +328,25 @@ if (!isset($_SESSION["admin"])) {
                 <div class="row">
                     <div class="col-md-3 col-6">
                         <div class="stat-item">
-                            <div class="stat-number" id="totalApplications">12</div>
+                            <div class="stat-number" id="totalApplications"><?php echo $totalApplications; ?></div>
                             <div class="stat-label">Total Applications</div>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="stat-item">
-                            <div class="stat-number" id="pendingApplications">8</div>
+                            <div class="stat-number" id="pendingApplications"><?php echo $pendingApplications; ?></div>
                             <div class="stat-label">Pending Review</div>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="stat-item">
-                            <div class="stat-number" id="acceptedToday">3</div>
+                            <div class="stat-number" id="acceptedToday"><?php echo $acceptedToday; ?></div>
                             <div class="stat-label">Accepted Today</div>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="stat-item">
-                            <div class="stat-number" id="rejectedToday">1</div>
+                            <div class="stat-number" id="rejectedToday"><?php echo $rejectedToday; ?></div>
                             <div class="stat-label">Rejected Today</div>
                         </div>
                     </div>
@@ -312,202 +390,79 @@ if (!isset($_SESSION["admin"])) {
                             </tr>
                         </thead>
                         <tbody id="applicationsTableBody">
-                            <!-- Sample Data - Replace with dynamic data -->
-                            <tr data-status="pending">
-                                <td>1</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-2">
-                                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-                                                <span class="text-white fw-bold">JD</span>
+                            <?php if (!empty($members)): ?>
+                                <?php 
+                                // Array of background colors for avatar circles
+                                $bgColors = ['bg-primary', 'bg-success', 'bg-warning', 'bg-info', 'bg-danger', 'bg-secondary'];
+                                $colorIndex = 0;
+                                
+                                foreach ($members as $member): 
+                                    $bgColor = $bgColors[$colorIndex % count($bgColors)];
+                                    $textColor = ($bgColor == 'bg-warning') ? 'text-dark' : 'text-white';
+                                    $colorIndex++;
+                                    
+                                    $initials = getInitials($member['full_name']);
+                                    $statusClass = ($member['membership_status'] == 'New_member') ? 'pending' : 'accepted';
+                                    $statusText = ($member['membership_status'] == 'New_member') ? 'Pending' : 'Accepted';
+                                    $statusIcon = ($member['membership_status'] == 'New_member') ? 'clock' : 'check-circle';
+                                ?>
+                                <tr data-status="<?php echo htmlspecialchars($statusClass); ?>">
+                                    <td><?php echo htmlspecialchars($member['id']); ?></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-2">
+                                                <div class="<?php echo $bgColor; ?> rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                                    <span class="<?php echo $textColor; ?> fw-bold"><?php echo htmlspecialchars($initials); ?></span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold"><?php echo htmlspecialchars($member['full_name']); ?></div>
+                                                <small class="text-muted"><?php echo htmlspecialchars($member['gender']); ?></small>
                                             </div>
                                         </div>
-                                        <div>
-                                            <div class="fw-bold">John Doe</div>
-                                            <small class="text-muted">Male</small>
+                                    </td>
+                                    <td><?php echo htmlspecialchars($member['university_id']); ?></td>
+                                    <td><?php echo htmlspecialchars($member['email']); ?></td>
+                                    <td><?php echo htmlspecialchars($member['department']); ?></td>
+                                    <td><?php echo htmlspecialchars($member['phone']); ?></td>
+                                    <td>
+                                        <div><?php echo formatDate($member['created_at']); ?></div>
+                                        <small class="text-muted"><?php echo getTimeAgo($member['created_at']); ?></small>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-<?php echo $statusClass; ?>">
+                                            <i class="fas fa-<?php echo $statusIcon; ?> me-1"></i><?php echo $statusText; ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php if ($member['membership_status'] == 'New_member'): ?>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-accept btn-sm" data-member-id="<?php echo $member['id']; ?>" data-member-name="<?php echo htmlspecialchars($member['full_name']); ?>">
+                                                <i class="fas fa-check me-1"></i>Accept
+                                            </button>
+                                            <button class="btn btn-reject btn-sm" data-member-id="<?php echo $member['id']; ?>" data-member-name="<?php echo htmlspecialchars($member['full_name']); ?>">
+                                                <i class="fas fa-times me-1"></i>Reject
+                                            </button>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>20101234</td>
-                                <td>john.doe@g.bracu.ac.bd</td>
-                                <td>CSE</td>
-                                <td>+880 1712 345678</td>
-                                <td>
-                                    <div>Jan 15, 2025</div>
-                                    <small class="text-muted">2 days ago</small>
-                                </td>
-                                <td>
-                                    <span class="status-badge status-pending">
-                                        <i class="fas fa-clock me-1"></i>Pending
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <button class="btn btn-accept btn-sm" onclick="acceptApplication(1, 'John Doe')">
-                                            <i class="fas fa-check me-1"></i>Accept
-                                        </button>
-                                        <button class="btn btn-reject btn-sm" onclick="rejectApplication(1, 'John Doe')">
-                                            <i class="fas fa-times me-1"></i>Reject
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr data-status="pending">
-                                <td>2</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-2">
-                                            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-                                                <span class="text-white fw-bold">JS</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="fw-bold">Jane Smith</div>
-                                            <small class="text-muted">Female</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>20101235</td>
-                                <td>jane.smith@g.bracu.ac.bd</td>
-                                <td>BBA</td>
-                                <td>+880 1812 345679</td>
-                                <td>
-                                    <div>Jan 14, 2025</div>
-                                    <small class="text-muted">3 days ago</small>
-                                </td>
-                                <td>
-                                    <span class="status-badge status-pending">
-                                        <i class="fas fa-clock me-1"></i>Pending
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <button class="btn btn-accept btn-sm" onclick="acceptApplication(2, 'Jane Smith')">
-                                            <i class="fas fa-check me-1"></i>Accept
-                                        </button>
-                                        <button class="btn btn-reject btn-sm" onclick="rejectApplication(2, 'Jane Smith')">
-                                            <i class="fas fa-times me-1"></i>Reject
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr data-status="pending">
-                                <td>3</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-2">
-                                            <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-                                                <span class="text-dark fw-bold">MR</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="fw-bold">Mike Rahman</div>
-                                            <small class="text-muted">Male</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>20101236</td>
-                                <td>mike.rahman@g.bracu.ac.bd</td>
-                                <td>EEE</td>
-                                <td>+880 1912 345680</td>
-                                <td>
-                                    <div>Jan 13, 2025</div>
-                                    <small class="text-muted">4 days ago</small>
-                                </td>
-                                <td>
-                                    <span class="status-badge status-pending">
-                                        <i class="fas fa-clock me-1"></i>Pending
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <button class="btn btn-accept btn-sm" onclick="acceptApplication(3, 'Mike Rahman')">
-                                            <i class="fas fa-check me-1"></i>Accept
-                                        </button>
-                                        <button class="btn btn-reject btn-sm" onclick="rejectApplication(3, 'Mike Rahman')">
-                                            <i class="fas fa-times me-1"></i>Reject
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr data-status="pending">
-                                <td>4</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-2">
-                                            <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-                                                <span class="text-white fw-bold">SA</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="fw-bold">Sarah Ahmed</div>
-                                            <small class="text-muted">Female</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>20101237</td>
-                                <td>sarah.ahmed@g.bracu.ac.bd</td>
-                                <td>ENG</td>
-                                <td>+880 1612 345681</td>
-                                <td>
-                                    <div>Jan 12, 2025</div>
-                                    <small class="text-muted">5 days ago</small>
-                                </td>
-                                <td>
-                                    <span class="status-badge status-pending">
-                                        <i class="fas fa-clock me-1"></i>Pending
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <button class="btn btn-accept btn-sm" onclick="acceptApplication(4, 'Sarah Ahmed')">
-                                            <i class="fas fa-check me-1"></i>Accept
-                                        </button>
-                                        <button class="btn btn-reject btn-sm" onclick="rejectApplication(4, 'Sarah Ahmed')">
-                                            <i class="fas fa-times me-1"></i>Reject
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr data-status="pending">
-                                <td>5</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-2">
-                                            <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-                                                <span class="text-white fw-bold">AH</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="fw-bold">Ali Hassan</div>
-                                            <small class="text-muted">Male</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>20101238</td>
-                                <td>ali.hassan@g.bracu.ac.bd</td>
-                                <td>CSE</td>
-                                <td>+880 1512 345682</td>
-                                <td>
-                                    <div>Jan 11, 2025</div>
-                                    <small class="text-muted">6 days ago</small>
-                                </td>
-                                <td>
-                                    <span class="status-badge status-pending">
-                                        <i class="fas fa-clock me-1"></i>Pending
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <button class="btn btn-accept btn-sm" onclick="acceptApplication(5, 'Ali Hassan')">
-                                            <i class="fas fa-check me-1"></i>Accept
-                                        </button>
-                                        <button class="btn btn-reject btn-sm" onclick="rejectApplication(5, 'Ali Hassan')">
-                                            <i class="fas fa-times me-1"></i>Reject
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                                        <?php else: ?>
+                                        <span class="text-success">
+                                            <i class="fas fa-check-circle me-1"></i>Processed
+                                        </span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted py-4">
+                                        <i class="fas fa-inbox fa-3x mb-3"></i><br>
+                                        No members found in the database.
+                                        <?php if (isset($error_message)): ?>
+                                            <br><small class="text-danger"><?php echo htmlspecialchars($error_message); ?></small>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -526,157 +481,167 @@ if (!isset($_SESSION["admin"])) {
     <script src="js/bootstrap.min.js"></script>
     
     <script>
-        // Application Management Functions
-        function acceptApplication(id, name) {
-            if (confirm(`Are you sure you want to accept ${name}'s application?`)) {
-                // Show loading state
-                const button = event.target.closest('button');
-                const originalText = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Accepting...';
-                button.disabled = true;
+        // Handle Accept Button Click
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-accept') || e.target.closest('.btn-accept')) {
+                const button = e.target.closest('.btn-accept');
+                const memberId = button.getAttribute('data-member-id');
+                const memberName = button.getAttribute('data-member-name');
                 
-                // Simulate API call - replace with actual backend call
-                setTimeout(() => {
-                    // Remove the row from table
-                    const row = button.closest('tr');
-                    row.style.transition = 'all 0.3s ease';
-                    row.style.opacity = '0';
-                    row.style.transform = 'translateX(20px)';
-                    
-                    setTimeout(() => {
-                        row.remove();
-                        updateStatistics();
-                        showNotification(`${name}'s application has been accepted!`, 'success');
-                    }, 300);
-                }, 1000);
+                if (confirm(`Are you sure you want to accept ${memberName}'s application?\n\nThis will:\n- Update their status to 'Accepted'\n- Send a congratulations email to their G-Suite address`)) {
+                    handleAction('accept', memberId, memberName, button);
+                }
             }
+        });
+        
+        // Handle Reject Button Click
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-reject') || e.target.closest('.btn-reject')) {
+                const button = e.target.closest('.btn-reject');
+                const memberId = button.getAttribute('data-member-id');
+                const memberName = button.getAttribute('data-member-name');
+                
+                if (confirm(`Are you sure you want to reject ${memberName}'s application?\n\nWARNING: This will permanently delete their record from the database!\n\nThis action cannot be undone.`)) {
+                    handleAction('reject', memberId, memberName, button);
+                }
+            }
+        });
+        
+        // Handle Accept/Reject Actions
+        function handleAction(action, memberId, memberName, button) {
+            // Show loading state
+            const originalContent = button.innerHTML;
+            const loadingText = action === 'accept' ? 
+                '<i class="fas fa-spinner fa-spin me-1"></i>Accepting...' : 
+                '<i class="fas fa-spinner fa-spin me-1"></i>Rejecting...';
+            
+            button.innerHTML = loadingText;
+            button.disabled = true;
+            
+            // Make AJAX request
+            fetch('Action/application_handler.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: action,
+                    member_id: parseInt(memberId)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success notification
+                    showNotification(data.message, 'success');
+                    
+                    // Remove the row from the table or update it
+                    const row = button.closest('tr');
+                    if (action === 'reject') {
+                        // Animate row removal
+                        row.style.transition = 'all 0.3s ease';
+                        row.style.opacity = '0';
+                        row.style.transform = 'translateX(-20px)';
+                        
+                        setTimeout(() => {
+                            row.remove();
+                            updateStatistics();
+                        }, 300);
+                    } else if (action === 'accept') {
+                        // Update the row to show accepted status
+                        const statusCell = row.querySelector('.status-badge');
+                        const actionCell = row.querySelector('td:last-child');
+                        
+                        statusCell.className = 'status-badge status-accepted';
+                        statusCell.innerHTML = '<i class="fas fa-check-circle me-1"></i>Accepted';
+                        
+                        actionCell.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Processed</span>';
+                        
+                        // Update row data status
+                        row.setAttribute('data-status', 'accepted');
+                        
+                        updateStatistics();
+                    }
+                } else {
+                    // Show error notification
+                    showNotification(data.message, 'error');
+                    
+                    // Restore button
+                    button.innerHTML = originalContent;
+                    button.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('An error occurred while processing the request.', 'error');
+                
+                // Restore button
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            });
         }
         
-        function rejectApplication(id, name) {
-            if (confirm(`Are you sure you want to reject ${name}'s application? This action cannot be undone.`)) {
-                // Show loading state
-                const button = event.target.closest('button');
-                const originalText = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Rejecting...';
-                button.disabled = true;
-                
-                // Simulate API call - replace with actual backend call
-                setTimeout(() => {
-                    // Remove the row from table
-                    const row = button.closest('tr');
-                    row.style.transition = 'all 0.3s ease';
-                    row.style.opacity = '0';
-                    row.style.transform = 'translateX(-20px)';
-                    
-                    setTimeout(() => {
-                        row.remove();
-                        updateStatistics();
-                        showNotification(`${name}'s application has been rejected.`, 'warning');
-                    }, 300);
-                }, 1000);
-            }
-        }
-        
-        // Update statistics
+        // Update Statistics
         function updateStatistics() {
-            const rows = document.querySelectorAll('#applicationsTableBody tr');
+            const rows = document.querySelectorAll('#applicationsTableBody tr[data-status]');
             const totalApplications = rows.length;
+            const pendingApplications = document.querySelectorAll('#applicationsTableBody tr[data-status="pending"]').length;
             
             document.getElementById('totalApplications').textContent = totalApplications;
-            document.getElementById('pendingApplications').textContent = totalApplications;
+            document.getElementById('pendingApplications').textContent = pendingApplications;
             
-            // Show no applications message if table is empty
+            // Show no applications message if no rows left
             if (totalApplications === 0) {
-                document.querySelector('.applications-table').classList.add('d-none');
+                document.querySelector('.applications-table').style.display = 'none';
                 document.getElementById('noApplicationsMessage').classList.remove('d-none');
             }
         }
         
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#applicationsTableBody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                if (text.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-        
-        // Filter functionality
-        document.querySelectorAll('[data-filter]').forEach(button => {
-            button.addEventListener('click', function() {
-                // Update active button
-                document.querySelectorAll('[data-filter]').forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-                
-                const filter = this.dataset.filter;
-                const rows = document.querySelectorAll('#applicationsTableBody tr');
-                
-                rows.forEach(row => {
-                    if (filter === 'all') {
-                        row.style.display = '';
-                    } else if (filter === 'pending') {
-                        const status = row.dataset.status;
-                        row.style.display = status === 'pending' ? '' : 'none';
-                    } else if (filter === 'today') {
-                        // For demo purposes, show all. In real implementation, filter by date
-                        row.style.display = '';
-                    }
-                });
-            });
-        });
-        
-        // Show notification
+        // Show Notification
         function showNotification(message, type = 'success') {
+            // Remove any existing notifications
+            const existingNotifications = document.querySelectorAll('.notification-toast');
+            existingNotifications.forEach(notif => notif.remove());
+            
             // Create notification element
             const notification = document.createElement('div');
+            notification.className = 'notification-toast alert alert-dismissible fade show position-fixed';
             
-            // Set colors based on type
-            let alertClass, backgroundColor, textColor, borderColor, iconClass;
+            // Set colors and icon based on type
+            let backgroundColor, textColor, borderColor, iconClass;
             switch(type) {
                 case 'success':
-                    alertClass = 'alert-success';
-                    backgroundColor = '#28a745'; // Green background
+                    backgroundColor = '#28a745';
                     textColor = '#ffffff';
                     borderColor = '#1e7e34';
                     iconClass = 'check-circle';
                     break;
                 case 'error':
                 case 'danger':
-                    alertClass = 'alert-danger';
-                    backgroundColor = '#dc3545'; // Red background
+                    backgroundColor = '#dc3545';
                     textColor = '#ffffff';
                     borderColor = '#bd2130';
                     iconClass = 'times-circle';
                     break;
                 case 'warning':
-                    alertClass = 'alert-warning';
-                    backgroundColor = '#ffc107'; // Yellow background
+                    backgroundColor = '#ffc107';
                     textColor = '#212529';
                     borderColor = '#d39e00';
                     iconClass = 'exclamation-triangle';
                     break;
                 case 'info':
-                    alertClass = 'alert-info';
-                    backgroundColor = '#17a2b8'; // Blue background
+                    backgroundColor = '#17a2b8';
                     textColor = '#ffffff';
                     borderColor = '#138496';
                     iconClass = 'info-circle';
                     break;
                 default:
-                    alertClass = 'alert-success';
-                    backgroundColor = '#28a745'; // Default to green
+                    backgroundColor = '#28a745';
                     textColor = '#ffffff';
                     borderColor = '#1e7e34';
                     iconClass = 'check-circle';
             }
             
-            notification.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
             notification.style.cssText = `
                 top: 20px;
                 right: 20px;
@@ -689,6 +654,7 @@ if (!isset($_SESSION["admin"])) {
                 border-radius: 8px;
                 padding: 12px 16px;
             `;
+            
             notification.innerHTML = `
                 <i class="fas fa-${iconClass} me-2"></i>
                 ${message}
@@ -704,36 +670,7 @@ if (!isset($_SESSION["admin"])) {
                 }
             }, 5000);
         }
-        
-        // Add smooth animations on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const rows = document.querySelectorAll('#applicationsTableBody tr');
-            rows.forEach((row, index) => {
-                row.style.opacity = '0';
-                row.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    row.style.transition = 'all 0.6s ease';
-                    row.style.opacity = '1';
-                    row.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-            
-            showNotification('Applications loaded successfully!', 'success');
-        });
-        
-        // Add hover effects to action buttons
-        document.addEventListener('mouseover', function(e) {
-            if (e.target.classList.contains('btn-accept') || e.target.classList.contains('btn-reject')) {
-                e.target.style.transform = 'translateY(-2px)';
-            }
-        });
-        
-        document.addEventListener('mouseout', function(e) {
-            if (e.target.classList.contains('btn-accept') || e.target.classList.contains('btn-reject')) {
-                e.target.style.transform = 'translateY(0)';
-            }
-        });
     </script>
+    
 </body>
 </html>
