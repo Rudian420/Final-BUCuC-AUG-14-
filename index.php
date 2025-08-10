@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+// Get success or error messages from session
+$signupSuccess = isset($_SESSION['signup_success']) ? $_SESSION['signup_success'] : null;
+$signupError = isset($_SESSION['signup_error']) ? $_SESSION['signup_error'] : null;
+
+unset($_SESSION['signup_success'], $_SESSION['signup_error']);
+
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -2502,11 +2512,27 @@ class="container d-flex justify-content-center align-items-center">
             <div class="tab-pane fade show active"
                 id="nav-ContactForm" role="tabpanel"
                 aria-labelledby="nav-ContactForm-tab">
-                <form onsubmit="handleSubmit(event)"
-                    id="signup-form"
+                
+                <?php if ($signupSuccess): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <?php echo htmlspecialchars($signupSuccess); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if ($signupError): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <?php echo htmlspecialchars($signupError); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+                
+                <form id="signup-form"
                     name="signupForm"
                     class="custom-form contact-form mb-5 mb-lg-0"
-                    action="#"
+                    action="Action/signup_handler.php"
                     method="POST" role="form">
                     <div class="contact-form-body">
                         <div class="row">
@@ -2658,19 +2684,8 @@ class="container d-flex justify-content-center align-items-center">
                                     class="form-control"
                                     required>
                                     <option value="">Select Department</option>
-                                    <!-- Options will be populated dynamically by JavaScript -->
                                 </select>
                             </div>
-                        </div>
-                        <div class="form-check mt-3 mb-3">
-                            <input class="form-check-input"
-                                type="checkbox" value="1"
-                                id="signup-terms" required>
-                            <label class="form-check-label"
-                                for="signup-terms">
-                                I agree to the terms and
-                                conditions
-                            </label>
                         </div>
                         <div
                             class="col-lg-4 col-md-10 col-8 mx-auto">
@@ -3013,55 +3028,6 @@ history.replaceState(null, null, window.location.pathname + window.location.sear
 });
 </script>
 
-<script>
-
-function handleSubmit(e) {
-e.preventDefault();
-
-// Get form data
-const formData = new FormData(document.forms["signupForm"]);
-
-// Validate password length
-const password = formData.get('signup-password');
-if (password.length < 6) {
-showCustomNotification('Password must be at least 6 characters long', 'error');
-return;
-}
-
-// Validate email format
-const email = formData.get('signup-main-email');
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-if (!emailRegex.test(email)) {
-showCustomNotification('Please enter a valid email address', 'error');
-return;
-}
-
-// Submit to our PHP handler
-fetch('Action/signup_handler.php', {
-method: 'POST',
-body: formData
-})
-.then(response => response.json())
-.then(data => {
-if (data.success) {
-    showCustomNotification(data.message, 'success');
-    // Reset form
-    document.forms["signupForm"].reset();
-    // Redirect to login after 2 seconds
-    setTimeout(() => {
-        window.location.href = 'login.php';
-    }, 2000);
-} else {
-    showCustomNotification(data.message, 'error');
-}
-})
-.catch(error => {
-console.error('Error:', error);
-showCustomNotification('Registration failed. Please try again.', 'error');
-});
-}
-
-</script>
 
 <script>
 // Admin Check Function
@@ -3453,150 +3419,15 @@ padding: 10px 2px 6px 2px;
 </style>
 
 <script>
-// Enhanced Signup Form Interactions and Floating Particles
+// Other functionality
 document.addEventListener('DOMContentLoaded', function() {
-// Create floating particles for signup section
-function createSignupParticles() {
-const particlesContainer = document.getElementById('signupParticles');
-if (!particlesContainer) return;
 
-const particleCount = 25;
 
-for (let i = 0; i < particleCount; i++) {
-const particle = document.createElement('div');
-particle.className = 'signup-particle';
 
-// Random size between 3px and 8px
-const size = Math.random() * 5 + 3;
-particle.style.width = size + 'px';
-particle.style.height = size + 'px';
 
-particle.style.left = Math.random() * 100 + '%';
-particle.style.animationDelay = Math.random() * 8 + 's';
-particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
 
-particlesContainer.appendChild(particle);
-}
-}
 
-// Enhanced form field interactions
-function enhanceFormFields() {
-const formFields = document.querySelectorAll('.form-control');
 
-formFields.forEach(field => {
-// Add focus effects
-field.addEventListener('focus', function() {
-    this.parentElement.style.transform = 'translateY(-2px)';
-    this.parentElement.style.boxShadow = '0 5px 20px rgba(231, 111, 44, 0.2)';
-});
-
-field.addEventListener('blur', function() {
-    this.parentElement.style.transform = 'translateY(0)';
-    this.parentElement.style.boxShadow = 'none';
-});
-
-// Add typing animation
-field.addEventListener('input', function() {
-    if (this.value.length > 0) {
-        this.style.borderColor = '#e76f2c';
-    } else {
-        this.style.borderColor = 'rgba(231, 111, 44, 0.1)';
-    }
-});
-});
-}
-
-// Enhanced tab switching with animations
-function enhanceTabSwitching() {
-const tabs = document.querySelectorAll('.nav-link');
-
-tabs.forEach(tab => {
-tab.addEventListener('click', function() {
-    // Add click animation
-    this.style.transform = 'scale(0.95)';
-    setTimeout(() => {
-        this.style.transform = 'scale(1)';
-    }, 150);
-});
-});
-}
-
-// Enhanced submit button
-function enhanceSubmitButton() {
-const submitBtn = document.querySelector('button[type="submit"]');
-if (submitBtn) {
-submitBtn.addEventListener('click', function(e) {
-    // Add loading state
-    const originalText = this.innerHTML;
-    this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing Up...';
-    this.disabled = true;
-    
-    // Simulate loading (remove this in production)
-    setTimeout(() => {
-        this.innerHTML = originalText;
-        this.disabled = false;
-    }, 2000);
-});
-}
-}
-
-// Enhanced radio button interactions
-function enhanceRadioButtons() {
-const radioButtons = document.querySelectorAll('.form-check-input[type="radio"]');
-
-radioButtons.forEach(radio => {
-radio.addEventListener('change', function() {
-    // Add selection animation
-    this.parentElement.style.transform = 'scale(1.05)';
-    setTimeout(() => {
-        this.parentElement.style.transform = 'scale(1)';
-    }, 200);
-});
-});
-}
-
-// Enhanced checkbox interactions
-function enhanceCheckbox() {
-const checkbox = document.querySelector('#signup-terms');
-if (checkbox) {
-checkbox.addEventListener('change', function() {
-    if (this.checked) {
-        this.parentElement.style.color = '#e76f2c';
-        this.parentElement.style.fontWeight = '600';
-    } else {
-        this.parentElement.style.color = '#333';
-        this.parentElement.style.fontWeight = '400';
-    }
-});
-}
-}
-
-// Initialize all enhancements
-createSignupParticles();
-enhanceFormFields();
-enhanceTabSwitching();
-enhanceSubmitButton();
-enhanceRadioButtons();
-enhanceCheckbox();
-
-// Add scroll animation for signup section
-const signupSection = document.querySelector('.contact-section');
-if (signupSection) {
-const observer = new IntersectionObserver((entries) => {
-entries.forEach(entry => {
-    if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-    }
-});
-});
-
-signupSection.style.opacity = '0';
-signupSection.style.transform = 'translateY(30px)';
-signupSection.style.transition = 'all 0.8s ease';
-
-observer.observe(signupSection);
-}
 });
 </script>
 

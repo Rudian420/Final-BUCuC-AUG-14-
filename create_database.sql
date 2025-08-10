@@ -1,0 +1,20 @@
+
+
+CREATE TABLE `members` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `full_name` VARCHAR(255) NOT NULL ,
+    `university_id` VARCHAR(50) NOT NULL UNIQUE,
+    `email` VARCHAR(100) NOT NULL UNIQUE,
+    `gsuite_email` VARCHAR(100) NULL,
+    `department` VARCHAR(100) NOT NULL,
+    `phone` VARCHAR(20) NOT NULL,
+    `semester` VARCHAR(20) NOT NULL,
+    `gender` ENUM('Male', 'Female', 'Other') NOT NULL,
+    `date_of_birth` DATE NOT NULL,
+    `facebook_url` VARCHAR(255) NULL,
+    `firstPriority` VARCHAR(255) NOT NULL DEFAULT '1st Not Selected',
+    `secondPriority` VARCHAR(255) NOT NULL DEFAULT '2nd Not Selected',
+    `membership_status` ENUM('Old_member', 'New_member') NOT NULL DEFAULT 'New_member',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)
