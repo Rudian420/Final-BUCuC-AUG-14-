@@ -273,12 +273,32 @@ $dashboardData = getDashboardStats();
         </div>
 
         <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
+        <!-- Get admin data directly from PHP -->
+        <?php
+        try {
+            $database = new Database();
+            $conn = $database->createConnection();
+            $sql = "SELECT id, username, email, role, status, created_at FROM adminpanel ORDER BY created_at DESC";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $admins = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            $admins = [];
+            error_log("Error fetching admins: " . $e->getMessage());
+        }
+        ?>
+        
         <div class="admin-management-section" id="admin-management-section" style="display: none; margin-top: 2rem;">
             <div class="chart-header">
                 <h3 class="chart-title">Admin Account Management</h3>
-                <button class="btn btn-primary" id="addAdminBtn">
-                    <i class="fas fa-plus"></i> Add New Admin
-                </button>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-secondary btn-sm" onclick="location.reload()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <a href="add_admin.php" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add New Admin
+                    </a>
+                </div>
             </div>
             
             <div class="admin-list-container">
@@ -296,10 +316,66 @@ $dashboardData = getDashboardStats();
                             </tr>
                         </thead>
                         <tbody id="adminTableBody">
-                            <!-- Admin data will be loaded here -->
+                            <?php if (empty($admins)): ?>
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">
+                                        <i class="fas fa-users-slash me-2"></i>
+                                        No admin accounts found in database
+                                        <br><small>Use "Add New Admin" to create the first admin account</small>
+                                    </td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach ($admins as $admin): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($admin['id']) ?></td>
+                                        <td><?= htmlspecialchars($admin['username']) ?></td>
+                                        <td><?= htmlspecialchars($admin['email']) ?></td>
+                                        <td>
+                                            <span class="badge <?= $admin['role'] === 'main_admin' ? 'bg-danger' : 'bg-primary' ?>">
+                                                <?= $admin['role'] === 'main_admin' ? 'Main Admin' : 'Admin' ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge <?= $admin['status'] === 'active' ? 'bg-success' : 'bg-secondary' ?>">
+                                                <?= htmlspecialchars(ucfirst($admin['status'])) ?>
+                                            </span>
+                                        </td>
+                                        <td><?= date('Y-m-d', strtotime($admin['created_at'])) ?></td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-warning" 
+                                                        onclick="editAdmin(<?= $admin['id'] ?>, '<?= htmlspecialchars($admin['username'], ENT_QUOTES) ?>', '<?= htmlspecialchars($admin['email'], ENT_QUOTES) ?>')" 
+                                                        title="Change Password">
+                                                    <i class="fas fa-key"></i>
+                                                </button>
+                                                <?php if ($admin['id'] != $_SESSION['admin_id']): ?>
+                                                    <a href="Action/delete_admin.php?admin_id=<?= $admin['id'] ?>&username=<?= urlencode($admin['username']) ?>&email=<?= urlencode($admin['email']) ?>" 
+                                                       class="btn btn-sm btn-danger" 
+                                                       title="Delete Admin: <?= htmlspecialchars($admin['username']) ?>"
+                                                       onclick="return confirm('Are you sure you want to delete admin account:\n\nUsername: <?= htmlspecialchars($admin['username']) ?>\nEmail: <?= htmlspecialchars($admin['email']) ?>\n\nThis action cannot be undone!')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                <?php else: ?>
+                                                    <span class="text-muted small">Current User</span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
+                
+                <?php if (count($admins) > 0): ?>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Total admin accounts: <?= count($admins) ?> | 
+                            Active accounts: <?= count(array_filter($admins, function($a) { return $a['status'] === 'active'; })) ?>
+                        </small>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
         <?php endif; ?>
@@ -405,29 +481,29 @@ $dashboardData = getDashboardStats();
     
     <!-- Admin Management Modals -->
     <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
-    <!-- Add Admin Modal -->
+    <!-- Add Admin Form (PHP Only) -->
     <div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-dark text-light">
                 <div class="modal-header border-secondary">
                     <h5 class="modal-title" id="addAdminModalLabel">
-                        <i class="fas fa-user-plus me-2"></i>Add New Admin
+                        <i class="fas fa-user-plus me-2"></i>Add New Admin (PHP Only)
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="addAdminForm">
+                <form method="POST" action="Action/add_admin_handler.php">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="newAdminName" class="form-label">Admin Name</label>
                             <input type="text" class="form-control bg-dark text-light border-secondary" id="newAdminName" name="username" required>
                         </div>
                         <div class="mb-3">
-                            <label for="newAdminEmail" class="form-label">Gmail Address</label>
+                            <label for="newAdminEmail" class="form-label">Email Address</label>
                             <input type="email" class="form-control bg-dark text-light border-secondary" id="newAdminEmail" name="email" required>
                         </div>
                         <div class="mb-3">
-                            <label for="newAdminPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control bg-dark text-light border-secondary" id="newAdminPassword" name="password" required>
+                            <label for="newAdminPassword" class="form-label">Password (min 6 chars)</label>
+                            <input type="password" class="form-control bg-dark text-light border-secondary" id="newAdminPassword" name="password" minlength="6" required>
                         </div>
                         <div class="mb-3">
                             <label for="newAdminRole" class="form-label">Role</label>
@@ -440,7 +516,7 @@ $dashboardData = getDashboardStats();
                     <div class="modal-footer border-secondary">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-2"></i>Create Admin
+                            <i class="fas fa-save me-2"></i>Create Admin (PHP)
                         </button>
                     </div>
                 </form>
@@ -489,37 +565,7 @@ $dashboardData = getDashboardStats();
         </div>
     </div>
 
-    <!-- Delete Admin Modal -->
-    <div class="modal fade" id="deleteAdminModal" tabindex="-1" aria-labelledby="deleteAdminModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-dark text-light">
-                <div class="modal-header border-danger">
-                    <h5 class="modal-title" id="deleteAdminModalLabel">
-                        <i class="fas fa-user-times me-2"></i>Delete Admin
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="deleteAdminId" name="admin_id">
-                    <p>Are you sure you want to delete the admin account for:</p>
-                    <div class="alert alert-danger">
-                        <strong id="deleteAdminName"></strong><br>
-                        <small id="deleteAdminEmail"></small>
-                    </div>
-                    <p class="text-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        This action cannot be undone!
-                    </p>
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
-                        <i class="fas fa-trash me-2"></i>Delete Admin
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Delete Admin Modal removed - using PHP-only delete confirmation -->
     <?php endif; ?>
 
     <!-- Dashboard Update Modal -->
@@ -1140,40 +1186,8 @@ $dashboardData = getDashboardStats();
             });
         }
 
-        function deleteAdminPrompt(adminId, username, email) {
-            document.getElementById('deleteAdminId').value = adminId;
-            document.getElementById('deleteAdminName').textContent = username;
-            document.getElementById('deleteAdminEmail').textContent = email;
-            
-            const modal = new bootstrap.Modal(document.getElementById('deleteAdminModal'));
-            modal.show();
-        }
-
-        function deleteAdmin() {
-            const adminId = document.getElementById('deleteAdminId').value;
-            const formData = new FormData();
-            formData.append('action', 'delete_admin');
-            formData.append('admin_id', adminId);
-            
-            fetch('Action/admin_management.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification(data.message, 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('deleteAdminModal')).hide();
-                    loadAdminList();
-                } else {
-                    showNotification(data.message, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Failed to delete admin', 'error');
-            });
-        }
+        // Delete admin functionality now handled by PHP-only Action/delete_admin.php
+        // No JavaScript functions needed for deletion
         <?php endif; ?>
 
         // Member Applications Management Functions
