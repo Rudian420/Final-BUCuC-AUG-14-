@@ -962,10 +962,99 @@ margin-bottom: 16px;
 <style>
 /* Admin Check Styles */
 .admin-check-container {
-padding: 40px 20px;
+padding: 60px 40px;
 background: rgba(255, 255, 255, 0.95);
 border-radius: 20px;
 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+text-align: center;
+max-width: 600px;
+margin: 0 auto;
+}
+
+/* New Admin Access Interface Styles */
+.admin-access-wrapper {
+padding: 0;
+}
+
+.admin-icon-container {
+margin-bottom: 30px;
+}
+
+.admin-icon {
+width: 80px;
+height: 80px;
+background: linear-gradient(135deg, #e76f2c, #f3d35c);
+border-radius: 50%;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+font-size: 2rem;
+color: white;
+box-shadow: 0 10px 30px rgba(231, 111, 44, 0.3);
+animation: adminFloat 3s ease-in-out infinite;
+}
+
+@keyframes adminFloat {
+0%, 100% { transform: translateY(0px); }
+50% { transform: translateY(-8px); }
+}
+
+.admin-access-title {
+font-size: 2rem;
+font-weight: 700;
+color: #333;
+margin-bottom: 15px;
+}
+
+.admin-access-subtitle {
+color: #666;
+font-size: 1.1rem;
+margin-bottom: 40px;
+}
+
+.admin-buttons-container {
+display: flex;
+flex-direction: column;
+gap: 15px;
+max-width: 300px;
+margin: 0 auto;
+}
+
+.admin-btn {
+padding: 15px 25px;
+border: none;
+border-radius: 30px;
+font-size: 1rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.admin-yes-btn {
+background: linear-gradient(135deg, #28a745, #20c997);
+color: white;
+}
+
+.admin-yes-btn:hover {
+background: linear-gradient(135deg, #20c997, #28a745);
+transform: translateY(-2px);
+box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+}
+
+.admin-no-btn {
+background: linear-gradient(135deg, #6c757d, #495057);
+color: white;
+}
+
+.admin-no-btn:hover {
+background: linear-gradient(135deg, #495057, #6c757d);
+transform: translateY(-2px);
+box-shadow: 0 8px 20px rgba(108, 117, 125, 0.3);
 }
 
 .admin-check-icon {
@@ -2551,53 +2640,6 @@ class="container d-flex justify-content-center align-items-center">
                         </div>
                         <div class="row mt-3">
                             <div class="col-12 mb-3">
-                                <label
-                                    class="form-label">Membership
-                                    Status:</label>
-                                <div
-                                    class="form-check form-check-inline">
-                                    <input
-                                        class="form-check-input"
-                                        type="radio"
-                                        name="membership-status"
-                                        id="status-new"
-                                        value="New Member"
-                                        required>
-                                    <label
-                                        class="form-check-label"
-                                        for="status-new">New
-                                        Member</label>
-                                </div>
-                                <div
-                                    class="form-check form-check-inline">
-                                    <input
-                                        class="form-check-input"
-                                        type="radio"
-                                        name="membership-status"
-                                        id="status-current"
-                                        value="Current Member">
-                                    <label
-                                        class="form-check-label"
-                                        for="status-current">Current
-                                        Member</label>
-                                </div>
-                                <div
-                                    class="form-check form-check-inline">
-                                    <input
-                                        class="form-check-input"
-                                        type="radio"
-                                        name="membership-status"
-                                        id="status-previous"
-                                        value="Previous Member">
-                                    <label
-                                        class="form-check-label"
-                                        for="status-previous">Previous
-                                        Member</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-12 mb-3">
                                 <label class="form-label">First Department Preference in BUCUC:</label>
                                 <select name="signup-first-dept"
                                     id="signup-first-dept"
@@ -2643,20 +2685,25 @@ class="container d-flex justify-content-center align-items-center">
             <div class="tab-pane fade" id="nav-LoginForm"
                 role="tabpanel"
                 aria-labelledby="nav-LoginForm-tab">
-                <div class="admin-check-container text-center">
-                    <div class="admin-check-icon mb-4">
-                        <i class="fas fa-user-shield" style="font-size: 3.5rem; color: white;"></i>
-                    </div>
-                    <h3 class="admin-check-title mb-4">Admin Access</h3>
-                    <p class="admin-check-description mb-4">Are you an administrator of the Cultural Club?</p>
-                    
-                    <div class="admin-options">
-                        <button type="button" class="btn btn-success btn-lg me-3" onclick="checkAdminStatus(true)">
-                            <i class="fas fa-check me-2"></i>Yes, I am an Admin
-                        </button>
-                        <button type="button" class="btn btn-secondary btn-lg" onclick="checkAdminStatus(false)">
-                            <i class="fas fa-times me-2"></i>No, I'm not
-                        </button>
+                <div class="admin-check-container">
+                    <!-- Admin Access Interface -->
+                    <div class="admin-access-wrapper">
+                        <div class="admin-icon-container">
+                            <span class="admin-icon">
+                                <i class="fas fa-user-shield"></i>
+                            </span>
+                        </div>
+                        <h2 class="admin-access-title">Admin Access</h2>
+                        <p class="admin-access-subtitle">Are you an administrator of the Cultural Club?</p>
+                        
+                        <div class="admin-buttons-container">
+                            <button class="admin-btn admin-yes-btn" onclick="checkAdminStatus(true)">
+                                <i class="fas fa-check"></i> Yes, I am an Admin
+                            </button>
+                            <button class="admin-btn admin-no-btn" onclick="checkAdminStatus(false)">
+                                <i class="fas fa-times"></i> No, I'm not
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3076,30 +3123,34 @@ alertDiv.remove();
 }, 5000);
 }
 
-document.getElementById('login-form').addEventListener('submit', function(e) {
-e.preventDefault();
-
-const formData = new FormData(document.getElementById('login-form'));
-formData.append('action', 'login');
-
-fetch('https://script.google.com/macros/s/AKfycbz-FKOQ8Uu32cr4q6DUv2--KtAqJHMdGWUcEknJAV9mJh6TlB-JYrw1mmG2myiTar6C/exec', {
-method: 'POST',
-body: formData
-})
-.then(res => res.json())
-.then(response => {
-if (response.success) {
-showInlineMessage('Logged in as ' + response.name, 'success');
-} else {
-showInlineMessage('Invalid email or password', 'danger');
+// Only add login form listener if the form exists
+const loginForm = document.getElementById('login-form');
+if (loginForm) {
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(document.getElementById('login-form'));
+        formData.append('action', 'login');
+        
+        fetch('https://script.google.com/macros/s/AKfycbz-FKOQ8Uu32cr4q6DUv2--KtAqJHMdGWUcEknJAV9mJh6TlB-JYrw1mmG2myiTar6C/exec', {
+        method: 'POST',
+        body: formData
+        })
+        .then(res => res.json())
+        .then(response => {
+        if (response.success) {
+        showInlineMessage('Logged in as ' + response.name, 'success');
+        } else {
+        showInlineMessage('Invalid email or password', 'danger');
+        }
+        })
+        .catch(err => {
+        showInlineMessage('There was an error. Please try again.', 'danger');
+        });
+    });
 }
-})
-.catch(err => {
-showInlineMessage('There was an error. Please try again.', 'danger');
-});
-});
 
-// Department preference dropdown functionality - Fixed and Enhanced
+// Department preference dropdown functionality - Enhanced Debug Version (Production)
 (function() {
     // Department options array
     const departmentOptions = [
@@ -3110,8 +3161,7 @@ showInlineMessage('There was an error. Please try again.', 'danger');
         { value: 'Creative', text: 'Creative' },
         { value: 'Performance', text: 'Performance' },
         { value: 'RD', text: 'R&D - Research and Development' },
-        { value: 'MIAP', text: 'MIAP - Marketing IT Archive & Photography' },
-        { value: 'Finance', text: 'Finance' }
+        { value: 'MIAP', text: 'MIAP - Marketing IT Archive & Photography' }
     ];
     
     // Function to populate dropdown options
@@ -3125,16 +3175,18 @@ showInlineMessage('There was an error. Please try again.', 'danger');
         dropdown.innerHTML = '<option value="">Select Department</option>';
         
         // Populate with department options
+        let addedCount = 0;
         departmentOptions.forEach(dept => {
             if (dept.value !== excludeValue) {
                 const option = document.createElement('option');
                 option.value = dept.value;
                 option.textContent = dept.text;
                 dropdown.appendChild(option);
+                addedCount++;
             }
         });
         
-        console.log('Populated dropdown with', dropdown.options.length - 1, 'options (excluding placeholder)');
+        console.log(`Populated ${dropdown.id} with ${addedCount} options`);
     }
     
     // Function to initialize dropdowns
@@ -3160,21 +3212,24 @@ showInlineMessage('There was an error. Please try again.', 'danger');
             const selectedValue = this.value;
             console.log('First dropdown changed to:', selectedValue);
             
+            // Store the current second dropdown value before any changes
+            const currentSecondValue = secondDeptSelect.value;
+            
             // If first dropdown has a value and it matches second dropdown, clear second dropdown
-            if (selectedValue && secondDeptSelect.value === selectedValue) {
+            if (selectedValue && currentSecondValue === selectedValue) {
                 secondDeptSelect.value = '';
                 console.log('Cleared second dropdown due to duplicate selection');
-            }
-            
-            // Re-populate second dropdown excluding the selected value from first
-            populateDropdown(secondDeptSelect, selectedValue);
-            
-            // If second dropdown had a value that's not the newly selected one, restore it
-            const currentSecondValue = secondDeptSelect.value;
-            if (!currentSecondValue && secondDeptSelect.dataset.previousValue && 
-                secondDeptSelect.dataset.previousValue !== selectedValue) {
-                secondDeptSelect.value = secondDeptSelect.dataset.previousValue;
-                console.log('Restored second dropdown previous value:', secondDeptSelect.dataset.previousValue);
+                // Re-populate second dropdown excluding the selected value from first
+                populateDropdown(secondDeptSelect, selectedValue);
+            } else {
+                // Re-populate second dropdown excluding the selected value from first
+                populateDropdown(secondDeptSelect, selectedValue);
+                
+                // Restore the second dropdown's value if it's still valid (not the same as first's selection)
+                if (currentSecondValue && currentSecondValue !== selectedValue) {
+                    secondDeptSelect.value = currentSecondValue;
+                    console.log('Preserved second dropdown value:', currentSecondValue);
+                }
             }
             
             // Store the current value for future reference
@@ -3186,21 +3241,31 @@ showInlineMessage('There was an error. Please try again.', 'danger');
             const selectedValue = this.value;
             console.log('Second dropdown changed to:', selectedValue);
             
+            // Store the current first dropdown value before any changes
+            const currentFirstValue = firstDeptSelect.value;
+            
             // If second dropdown has a value and it matches first dropdown, clear first dropdown
-            if (selectedValue && firstDeptSelect.value === selectedValue) {
+            if (selectedValue && currentFirstValue === selectedValue) {
                 firstDeptSelect.value = '';
                 console.log('Cleared first dropdown due to duplicate selection');
-            }
-            
-            // Re-populate first dropdown excluding the selected value from second
-            populateDropdown(firstDeptSelect, selectedValue);
-            
-            // If first dropdown had a value that's not the newly selected one, restore it
-            const currentFirstValue = firstDeptSelect.value;
-            if (!currentFirstValue && firstDeptSelect.dataset.previousValue && 
-                firstDeptSelect.dataset.previousValue !== selectedValue) {
-                firstDeptSelect.value = firstDeptSelect.dataset.previousValue;
-                console.log('Restored first dropdown previous value:', firstDeptSelect.dataset.previousValue);
+                // Re-populate first dropdown excluding the selected value from second
+                populateDropdown(firstDeptSelect, selectedValue);
+            } else if (selectedValue) {
+                // Re-populate first dropdown excluding the selected value from second
+                populateDropdown(firstDeptSelect, selectedValue);
+                
+                // Restore the first dropdown's value if it's still valid (not the same as second's selection)
+                if (currentFirstValue && currentFirstValue !== selectedValue) {
+                    firstDeptSelect.value = currentFirstValue;
+                    console.log('Preserved first dropdown value:', currentFirstValue);
+                }
+            } else {
+                // Second dropdown was cleared, restore all options to first dropdown
+                populateDropdown(firstDeptSelect, null);
+                if (currentFirstValue) {
+                    firstDeptSelect.value = currentFirstValue;
+                    console.log('Restored first dropdown value after second cleared:', currentFirstValue);
+                }
             }
             
             // Store the current value for future reference
@@ -3218,12 +3283,13 @@ showInlineMessage('There was an error. Please try again.', 'danger');
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initializeDepartmentDropdowns);
     } else {
-        // DOM is already loaded
         initializeDepartmentDropdowns();
     }
     
     // Also try to initialize after a short delay as backup
-    setTimeout(initializeDepartmentDropdowns, 1000);
+    setTimeout(() => {
+        initializeDepartmentDropdowns();
+    }, 1000);
 })();
 </script>
 <script>
