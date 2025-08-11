@@ -188,7 +188,7 @@ if (!isset($_SESSION["admin"])) {
                     SB Members
                 </a>
                 
-                <a href="asb_panel.html" class="member-type-btn btn-asb">
+                <a href="asb_panel.php" class="member-type-btn btn-asb">
                     <i class="fas fa-user-graduate"></i>
                     ASB Members
                 </a>
