@@ -324,34 +324,7 @@ function getTimeAgo($date) {
             </p>
             
             <!-- Statistics Row -->
-            <div class="stats-row">
-                <div class="row">
-                    <div class="col-md-3 col-6">
-                        <div class="stat-item">
-                            <div class="stat-number" id="totalApplications"><?php echo $totalApplications; ?></div>
-                            <div class="stat-label">Total Applications</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="stat-item">
-                            <div class="stat-number" id="pendingApplications"><?php echo $pendingApplications; ?></div>
-                            <div class="stat-label">Pending Review</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="stat-item">
-                            <div class="stat-number" id="acceptedToday"><?php echo $acceptedToday; ?></div>
-                            <div class="stat-label">Accepted Today</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="stat-item">
-                            <div class="stat-number" id="rejectedToday"><?php echo $rejectedToday; ?></div>
-                            <div class="stat-label">Rejected Today</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
             
          
             
