@@ -115,7 +115,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GB Members - Styled</title>
+    <title>SB Members - Styled</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
@@ -414,10 +414,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
         <div class="applications-card">
             <h1 class="applications-title">
                 <i class="fas fa-users mb-3"></i><br>
-                GB Members Only
+                SB Members Only
             </h1>
             <p class="applications-subtitle">
-                General Board (GB) Member Directory
+                Student Board (SB) Member Directory
             </p>
 
             <!-- Ready for Production Alert -->
@@ -432,13 +432,13 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                     <div class="col-md-4 col-12">
                         <div class="stat-item">
                             <div class="stat-number" id="totalMembers">0</div>
-                            <div class="stat-label">Total GB Members</div>
+                            <div class="stat-label">Total SB Members</div>
                         </div>
                     </div>
                     <div class="col-md-4 col-12">
                         <div class="stat-item">
                             <div class="stat-number" id="activePanels">1</div>
-                            <div class="stat-label">Active Panel (GB)</div>
+                            <div class="stat-label">Active Panel (SB)</div>
                         </div>
                     </div>
                     <div class="col-md-4 col-12">
@@ -453,7 +453,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
             <!-- Loading State -->
             <div class="text-center mb-4" id="loadingState">
                 <div class="loading-spinner me-2"></div>
-                <span class="text-light">Loading GB member data...</span>
+                <span class="text-light">Loading SB member data...</span>
             </div>
             
             <!-- Members Table -->
@@ -478,8 +478,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
             <!-- Empty State -->
             <div class="empty-state d-none" id="emptyState">
                 <i class="fas fa-users-slash"></i>
-                <h4>No GB Members Found</h4>
-                <p>No members with GB position found in the database.</p>
+                <h4>No SB Members Found</h4>
+                <p>No members with SB position found in the database.</p>
             </div>
         </div>
     </div>
@@ -489,7 +489,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
     
     <script>
         // Google Apps Script Web App URL - REPLACE WITH YOUR ACTUAL DEPLOYMENT URL
-        const webAppUrl = 'gb_members.php?action=gas_proxy';
+        const webAppUrl = 'sb_members.php?action=gas_proxy';
         
         // Function to escape HTML to prevent XSS attacks
         function escapeHtml(unsafe) {
@@ -531,7 +531,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                 case 'SB':
                     return 'status-sb';
                 default:
-                    return 'status-gb'; // Default to GB since we're filtering for GB only
+                    return 'status-sb'; // Default to SB since we're filtering for SB only
             }
         }
         
@@ -845,7 +845,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
             }, 5000);
         }
         
-        // Main data loading function with GB filtering
+        // Main data loading function with SB filtering
         const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTeWd8iZFzbbD7S9VJR6mrPCmQar0guSJ2QMMS9HnSq8pzZeN609XDf9Y1LEPGJCnbAAYNtrAPmM9iL/pub?output=csv&cachebust=" + Date.now();
 
         fetch(sheetUrl)
@@ -903,26 +903,26 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                     return { name, student_id, gsuite, currentPosition, positionRaw };
                 });
 
-                // FILTER FOR GB MEMBERS ONLY
-                const gbMembers = processedData.filter(member => 
-                    member.currentPosition === 'GB' || 
-                    member.positionRaw.includes('~ GB')
+                // FILTER FOR SB MEMBERS ONLY
+                const sbMembers = processedData.filter(member => 
+                    member.currentPosition === 'SB' || 
+                    member.positionRaw.includes('~ SB')
                 );
 
-                console.log(`Total members: ${processedData.length}, GB members: ${gbMembers.length}`);
+                console.log(`Total members: ${processedData.length}, SB members: ${sbMembers.length}`);
 
-                // Check if we have GB members
-                if (gbMembers.length === 0) {
+                // Check if we have SB members
+                if (sbMembers.length === 0) {
                     document.getElementById('loadingState').style.display = 'none';
                     document.getElementById('emptyState').classList.remove('d-none');
                     return;
                 }
 
-                // Populate table with GB members only
+                // Populate table with SB members only
                 const tbody = document.querySelector("#membersTable tbody");
                 tbody.innerHTML = ''; // Clear existing content
                 
-                gbMembers.forEach((member, index) => {
+                sbMembers.forEach((member, index) => {
                     const initials = getInitials(member.name);
                     const avatarColor = getAvatarColor(index);
                     const statusClass = getStatusBadgeClass(member.currentPosition);
@@ -964,7 +964,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                 });
                 
                 // Update statistics
-                updateStatistics(gbMembers);
+                updateStatistics(sbMembers);
                 
                 // Hide loading, show table
                 document.getElementById('loadingState').style.display = 'none';

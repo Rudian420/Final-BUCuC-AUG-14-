@@ -83,6 +83,45 @@ $dashboardData = getDashboardStats();
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link rel="stylesheet" href="AdminCss/Dashboard.css">
+    <style>
+        .signup-toggle-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-width: 250px;
+        }
+        
+        .signup-toggle-container .form-check-input {
+            width: 3rem;
+            height: 1.5rem;
+            background-color: #dc3545;
+            border-color: #dc3545;
+            border-radius: 2rem;
+        }
+        
+        .signup-toggle-container .form-check-input:checked {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        
+        .signup-toggle-container .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+        }
+        
+        .signup-toggle-container .form-check-label {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .signup-toggle-container {
+                min-width: 200px;
+                margin-top: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Mobile Toggle Button -->
@@ -112,17 +151,14 @@ $dashboardData = getDashboardStats();
             <div class="nav-section">
                 <div class="nav-section-title">Management</div>
                 <a href="member_types.php" class="nav-item">
-                    <i class="fas fa-users"></i>
-                    Members
+                    <i class="fas fa-users"></i> Members
                 </a>
                 <a href="pending_applications.php" class="nav-item">
-                    <i class="fas fa-user-plus"></i>
-                    Applications
+                    <i class="fas fa-user-plus"></i> Applications
                     <span class="badge bg-warning ms-2" id="pendingApplicationsBadge" style="display: none;">0</span>
                 </a>
                 <a href="#" class="nav-item" data-section="dashboard-update">
-                    <i class="fas fa-cogs"></i>
-                    Dashboard Updates
+                    <i class="fas fa-cogs"></i> Dashboard Updates
                 </a>
              
               
@@ -131,6 +167,10 @@ $dashboardData = getDashboardStats();
             <div class="nav-section">
                 <div class="nav-section-title">Settings</div>
                
+                <a href="admin-signup-control.php" class="nav-item">
+                    <i class="fas fa-user-cog"></i>
+                    Signup Control
+                </a>
             
                 <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
                 <a href="#" class="nav-item" data-section="admin-management">
@@ -151,8 +191,13 @@ $dashboardData = getDashboardStats();
         <!-- Header -->
         <div class="dashboard-header">
             <div class="header-left">
-                <h1>Cultural Club Dashboard</h1>
-                <p>Welcome back, <?php echo $_SESSION['username']; ?>! Here's what's happening with your club.</p>
+                <div class="d-flex align-items-center justify-content-between flex-wrap">
+                    <div>
+                        <h1>Cultural Club Dashboard</h1>
+                        <p>Welcome back, <?php echo $_SESSION['username']; ?>! Here's what's happening with your club.</p>
+                    </div>
+                
+                </div>
                 
                 <!-- Success/Error Messages -->
                 <?php if (isset($_GET['success'])): ?>
@@ -929,6 +974,7 @@ $dashboardData = getDashboardStats();
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function(e) {
                 
+                // Allow normal navigation for external links
                 if (this.getAttribute('href') === 'logout.php') return;
                 
                 if (this.getAttribute('href') === 'member_types.php') {
@@ -941,15 +987,25 @@ $dashboardData = getDashboardStats();
                     return;
                 }
                 
-                e.preventDefault();
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                this.classList.add('active');
+                if (this.getAttribute('href') === 'admin-signup-control.php') {
+                    showNotification('Navigating to signup control...', 'success');
+                    return;
+                }
                 
+                // Only prevent default and handle as section if it has data-section attribute
                 const section = this.dataset.section;
                 if (section) {
+                    e.preventDefault();
+                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
                     showSection(section);
                     showNotification(`Navigating to ${section} section...`, 'success');
+                } else if (this.getAttribute('href') && this.getAttribute('href') !== '#') {
+                    // Let external links navigate normally
+                    return;
                 } else {
+                    e.preventDefault();
                     showNotification('Navigation section not found', 'warning');
                 }
             });
@@ -1007,6 +1063,7 @@ $dashboardData = getDashboardStats();
             <?php endif; ?>
             
             initDashboardUpdates();
+            initSignupToggle();
             
             window.debugDashboard = {
                 openUpdateModal: openUpdateModal,
@@ -1439,6 +1496,116 @@ $dashboardData = getDashboardStats();
         // Dashboard Update Management Functions (simplified)
         function initDashboardUpdates() {
             console.log('Dashboard updates initialized (simplified)');
+        }
+
+        // Signup Toggle Management Functions
+        function initSignupToggle() {
+            // Load current signup status on page load
+            loadSignupStatus();
+            
+            // Add event listener for signup toggle
+            document.getElementById('signupToggle').addEventListener('change', function() {
+                toggleSignupStatus(this.checked);
+            });
+            
+            console.log('Signup toggle initialized');
+        }
+
+        function loadSignupStatus() {
+            console.log('Loading signup status...');
+            fetch('Action/signup_status_handler.php', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'action=get_status'
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Signup status response:', data);
+                if (data.success) {
+                    updateSignupToggleUI(data.enabled);
+                    console.log('Signup status loaded successfully:', data.enabled);
+                } else {
+                    console.error('Failed to load signup status:', data.message);
+                    showNotification(data.message || 'Failed to load signup status', 'warning');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading signup status:', error);
+                showNotification('Error loading signup status: ' + error.message, 'error');
+            });
+        }
+
+        function toggleSignupStatus(enabled) {
+            console.log('Toggling signup status to:', enabled);
+            const formData = new FormData();
+            formData.append('action', 'toggle_status');
+            formData.append('enabled', enabled ? 'true' : 'false');
+            
+            // Show loading state
+            showNotification('Updating signup status...', 'info');
+            
+            fetch('Action/signup_status_handler.php', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                console.log('Toggle response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Toggle response data:', data);
+                if (data.success) {
+                    updateSignupToggleUI(data.enabled);
+                    showNotification(data.message, 'success');
+                    console.log('Signup status updated successfully to:', data.enabled);
+                } else {
+                    console.error('Failed to toggle signup status:', data.message);
+                    showNotification(data.message || 'Failed to update signup status', 'error');
+                    // Revert toggle on failure
+                    document.getElementById('signupToggle').checked = !enabled;
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling signup status:', error);
+                showNotification('Error updating signup status: ' + error.message, 'error');
+                // Revert toggle on failure
+                document.getElementById('signupToggle').checked = !enabled;
+            });
+        }
+
+        function updateSignupToggleUI(enabled) {
+            const toggle = document.getElementById('signupToggle');
+            const label = document.getElementById('signupToggleLabel');
+            const description = document.getElementById('signupToggleDescription');
+            
+            if (toggle) {
+                toggle.checked = enabled;
+            }
+            
+            if (label) {
+                label.textContent = enabled ? 'Signup Enabled' : 'Signup Disabled';
+            }
+            
+            if (description) {
+                description.textContent = enabled ? 
+                    'Applications are currently being accepted' : 
+                    'New applications are temporarily disabled';
+            }
+            
+            console.log('Signup toggle UI updated:', enabled ? 'enabled' : 'disabled');
         }
 
         function openUpdateModal(type) {

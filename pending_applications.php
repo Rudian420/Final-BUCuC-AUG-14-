@@ -179,6 +179,13 @@ function getTimeAgo($date) {
             background: rgba(255, 255, 255, 0.1);
         }
         
+        .truncate {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
         .btn-accept {
             background: linear-gradient(45deg, #28a745, #20c997);
             border: none;
@@ -212,10 +219,11 @@ function getTimeAgo($date) {
         }
         
         .status-badge {
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
             font-weight: 500;
+            white-space: nowrap;
         }
         
         .status-pending {
@@ -227,7 +235,6 @@ function getTimeAgo($date) {
             background: linear-gradient(45deg, #28a745, #20c997);
             color: #fff;
         }
-        
         
         .search-box {
             position: relative;
@@ -354,13 +361,16 @@ function getTimeAgo($date) {
                     <table class="table table-dark table-hover mb-0" id="applicationsTable">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Name</th>
+                                <th>Full Name</th>
                                 <th>University ID</th>
-                                <th>Gsuite</th>
+                                <th>Email</th>
+                                <th>G-Suite Email</th>
                                 <th>Department</th>
                                 <th>Phone</th>
-                                <th>Applied Date</th>
+                                <th>Semester</th>
+                                <th>Gender</th>
+                                <th>Facebook</th>
+                                <th>Priorities</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -383,28 +393,16 @@ function getTimeAgo($date) {
                                     $statusIcon = ($member['membership_status'] == 'New_member') ? 'clock' : 'check-circle';
                                 ?>
                                 <tr data-status="<?php echo htmlspecialchars($statusClass); ?>">
-                                    <td><?php echo htmlspecialchars($member['id']); ?></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="me-2">
-                                                <div class="<?php echo $bgColor; ?> rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-                                                    <span class="<?php echo $textColor; ?> fw-bold"><?php echo htmlspecialchars($initials); ?></span>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div class="fw-bold"><?php echo htmlspecialchars($member['full_name']); ?></div>
-                                                <small class="text-muted"><?php echo htmlspecialchars($member['gender']); ?></small>
-                                            </div>
-                                        </div>
-                                    </td>
+                                    <td class="truncate"><?php echo htmlspecialchars($member['full_name']); ?></td>
                                     <td><?php echo htmlspecialchars($member['university_id']); ?></td>
+                                    <td><?php echo htmlspecialchars($member['email']); ?></td>
                                     <td><?php echo htmlspecialchars($member['gsuite_email']); ?></td>
                                     <td><?php echo htmlspecialchars($member['department']); ?></td>
                                     <td><?php echo htmlspecialchars($member['phone']); ?></td>
-                                    <td>
-                                        <div><?php echo formatDate($member['created_at']); ?></div>
-                                        <small class="text-muted"><?php echo getTimeAgo($member['created_at']); ?></small>
-                                    </td>
+                                    <td><?php echo htmlspecialchars($member['semester']); ?></td>
+                                    <td><?php echo htmlspecialchars($member['gender']); ?></td>
+                                    <td><a href="<?php echo htmlspecialchars($member['facebook_url']); ?>" target="_blank">Facebook</a></td>
+                                    <td><?php echo htmlspecialchars($member['firstPriority'] . ', ' . $member['secondPriority']); ?></td>
                                     <td>
                                         <span class="status-badge status-<?php echo $statusClass; ?>">
                                             <i class="fas fa-<?php echo $statusIcon; ?> me-1"></i><?php echo $statusText; ?>
@@ -430,7 +428,7 @@ function getTimeAgo($date) {
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="9" class="text-center text-muted py-4">
+                                    <td colspan="12" class="text-center text-muted py-4">
                                         <i class="fas fa-inbox fa-3x mb-3"></i><br>
                                         No members found in the database.
                                         <?php if (isset($error_message)): ?>
