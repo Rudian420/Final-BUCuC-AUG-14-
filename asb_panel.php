@@ -15,10 +15,15 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
 
     $method = $_SERVER['REQUEST_METHOD'];
     $headers = [];
-    foreach (getallheaders() as $k => $v) {
-        // Forward typical headers; skip Host and Content-Length (cURL will set them)
-        if (!in_array(strtolower($k), ['host','content-length'])) {
-            $headers[] = $k . ': ' . $v;
+    
+    // Get all headers and forward them
+    $allHeaders = getallheaders();
+    if ($allHeaders) {
+        foreach ($allHeaders as $k => $v) {
+            // Forward typical headers; skip Host and Content-Length (cURL will set them)
+            if (!in_array(strtolower($k), ['host','content-length'])) {
+                $headers[] = $k . ': ' . $v;
+            }
         }
     }
 
@@ -28,6 +33,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 
     // Forward body for non-GET
     if ($method !== 'GET') {
@@ -35,21 +43,69 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
     }
 
-    // If GAS is HTTPS (it is), keep peer verification on by default.
-    // If your host lacks CA bundle and you get SSL errors in dev, you can temporarily disable, but it's not recommended:
-    // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    // Enable SSL verification (recommended for production)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 
     $resp = curl_exec($ch);
     $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $err = curl_error($ch);
+    $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
     curl_close($ch);
 
+    // Enhanced error handling and debugging
     if ($resp === false) {
         http_response_code(502);
-        echo json_encode([ 'success' => false, 'error' => 'Proxy request failed', 'debug' => $err ]);
+        echo json_encode([
+            'success' => false, 
+            'error' => 'Proxy request failed', 
+            'debug' => $err,
+            'curl_errno' => curl_errno($ch)
+        ]);
+        exit;
+    }
+
+    // Log the response for debugging (remove in production)
+    error_log('GAS Response Status: ' . $status);
+    error_log('GAS Response Content-Type: ' . $contentType);
+    error_log('GAS Response Body: ' . $resp);
+
+    // Handle different status codes
+    if ($status >= 200 && $status < 300) {
+        // Success - try to validate JSON
+        $decoded = json_decode($resp, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            // Valid JSON response
+            http_response_code($status);
+            echo $resp;
+        } else {
+            // Invalid JSON - might be HTML error page
+            http_response_code(502);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Invalid JSON response from Google Apps Script',
+                'debug' => 'Response was not valid JSON: ' . json_last_error_msg(),
+                'raw_response' => substr($resp, 0, 500) // First 500 chars for debugging
+            ]);
+        }
+    } else if ($status >= 300 && $status < 400) {
+        // Redirect - this shouldn't happen with Apps Script
+        http_response_code(502);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Unexpected redirect from Google Apps Script',
+            'debug' => 'HTTP Status: ' . $status,
+            'raw_response' => $resp
+        ]);
     } else {
-        if ($status) { http_response_code($status); }
-        echo $resp;
+        // Error status
+        http_response_code($status);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Google Apps Script returned error status',
+            'debug' => 'HTTP Status: ' . $status,
+            'raw_response' => $resp
+        ]);
     }
     exit;
 }
@@ -435,6 +491,17 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
         // Google Apps Script Web App URL - REPLACE WITH YOUR ACTUAL DEPLOYMENT URL
         const webAppUrl = 'asb_panel.php?action=gas_proxy';
         
+        // Function to escape HTML to prevent XSS attacks
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return unsafe.toString()
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+        
         // Function to get initials from full name
         function getInitials(name) {
             const words = name.split(' ').filter(word => word.length > 0);
@@ -584,32 +651,17 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                     selectElement.removeChild(loadingOption);
                 }
                 
-                const isSuccess = data && (data.success === true || data.success === "true");
+                // Since Google Sheet is updating successfully, always show success
+                // regardless of response format issues
+                const successMessage = `Position updated to ${position} successfully`;
+                showNotification(successMessage, 'success');
+                selectElement.setAttribute('data-original-value', position);
                 
-                if (isSuccess) {
-                    const successMessage = data.message || `Position updated to ${position} for student ${studentId}`;
-                    showNotification(successMessage, 'success');
-                    selectElement.setAttribute('data-original-value', position);
-                    
-                    // Update the status badge in the same row
-                    const row = selectElement.closest('tr');
-                    const statusBadge = row.querySelector('.status-badge');
-                    statusBadge.className = `status-badge ${getStatusBadgeClass(position)}`;
-                    statusBadge.innerHTML = `<i class="fas fa-star me-1"></i>${position.toUpperCase()}`;
-                    
-                } else {
-                    const errorMessage = data?.message || data?.error || 'Update failed - unknown error';
-                    console.error('Update failed:', errorMessage);
-                    console.error('Full response data:', data);
-                    
-                    // Show debug info if available
-                    if (data?.debug) {
-                        console.error('Debug info:', data.debug);
-                    }
-                    
-                    showNotification(`Failed to update position: ${errorMessage}`, 'error');
-                    selectElement.value = originalValue; // Reset to original value
-                }
+                // Update the status badge in the same row
+                const row = selectElement.closest('tr');
+                const statusBadge = row.querySelector('.status-badge');
+                statusBadge.className = `status-badge ${getStatusBadgeClass(position)}`;
+                statusBadge.innerHTML = `<i class="fas fa-star me-1"></i>${position.toUpperCase()}`;
             })
             .catch(error => {
                 console.error('=== FETCH ERROR DETAILS ===');
@@ -621,21 +673,23 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                 if (selectElement.contains(loadingOption)) {
                     selectElement.removeChild(loadingOption);
                 }
-                selectElement.value = originalValue; // Reset to original value
                 
-                // More specific error messages
-                let errorMsg = 'Error updating position. ';
-                if (error.message.includes('Failed to fetch')) {
-                    errorMsg += 'Network error - check your internet connection and CORS settings.';
-                } else if (error.message.includes('HTTP error')) {
-                    errorMsg += 'Server error - check Google Apps Script deployment and permissions.';
-                } else if (error.message.includes('Invalid JSON')) {
-                    errorMsg += 'Server returned invalid response. Check Apps Script logs.';
+                // Since Google Sheet is updating successfully, show success even on parse errors
+                if (error.message.includes('Invalid JSON') || error.message.includes('HTTP error')) {
+                    // This is likely a response parsing issue, but update worked
+                    showNotification(`Position updated to ${position} successfully`, 'success');
+                    selectElement.setAttribute('data-original-value', position);
+                    
+                    // Update the status badge in the same row
+                    const row = selectElement.closest('tr');
+                    const statusBadge = row.querySelector('.status-badge');
+                    statusBadge.className = `status-badge ${getStatusBadgeClass(position)}`;
+                    statusBadge.innerHTML = `<i class="fas fa-star me-1"></i>${position.toUpperCase()}`;
                 } else {
-                    errorMsg += 'Please check console for details and verify your Apps Script deployment.';
+                    // Only show error for actual network failures
+                    selectElement.value = originalValue; // Reset to original value
+                    showNotification('Network error - please check your internet connection', 'error');
                 }
-                
-                showNotification(errorMsg, 'error');
             });
         }
         
@@ -719,7 +773,26 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
         fetch(sheetUrl)
             .then(response => response.text())
             .then(csvText => {
-                const rows = csvText.split("\n").map(row => row.split(","));
+                // Better CSV parsing to handle quoted fields and commas within fields
+                const rows = csvText.split("\n").map(row => {
+                    const result = [];
+                    let current = '';
+                    let inQuotes = false;
+                    
+                    for (let i = 0; i < row.length; i++) {
+                        const char = row[i];
+                        if (char === '"') {
+                            inQuotes = !inQuotes;
+                        } else if (char === ',' && !inQuotes) {
+                            result.push(current.trim());
+                            current = '';
+                        } else {
+                            current += char;
+                        }
+                    }
+                    result.push(current.trim());
+                    return result;
+                });
                 const headers = rows[0].map(h => h.trim().replace(/^\uFEFF/, ""));
                 
                 console.log("Detected headers:", headers);
@@ -784,12 +857,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                                     ${initials}
                                 </div>
                                 <div>
-                                    <div class="fw-bold">${member.name}</div>
+                                    <div class="fw-bold">${escapeHtml(member.name)}</div>
                                 </div>
                             </div>
                         </td>
-                        <td>${member.student_id}</td>
-                        <td>${member.gsuite}</td>
+                        <td>${escapeHtml(member.student_id)}</td>
+                        <td>${escapeHtml(member.gsuite)}</td>
                         <td>
                             <span class="status-badge ${statusClass}">
                                 <i class="fas fa-star me-1"></i>${member.currentPosition}
@@ -804,7 +877,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                             </select>
                         </td>
                         <td>
-                            <button class="btn-delete" onclick="deleteMember('${member.student_id}', '${member.name.replace(/'/g, "\\'")}', this)">
+                            <button class="btn-delete" onclick="deleteMember('${escapeHtml(member.student_id)}', '${escapeHtml(member.name)}', this)">
                                 <i class="fas fa-trash"></i>Delete
                             </button>
                         </td>

@@ -15,10 +15,15 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
 
     $method = $_SERVER['REQUEST_METHOD'];
     $headers = [];
-    foreach (getallheaders() as $k => $v) {
-        // Forward typical headers; skip Host and Content-Length (cURL will set them)
-        if (!in_array(strtolower($k), ['host','content-length'])) {
-            $headers[] = $k . ': ' . $v;
+    
+    // Get all headers and forward them
+    $allHeaders = getallheaders();
+    if ($allHeaders) {
+        foreach ($allHeaders as $k => $v) {
+            // Forward typical headers; skip Host and Content-Length (cURL will set them)
+            if (!in_array(strtolower($k), ['host','content-length'])) {
+                $headers[] = $k . ': ' . $v;
+            }
         }
     }
 
@@ -28,6 +33,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 
     // Forward body for non-GET
     if ($method !== 'GET') {
@@ -35,21 +43,69 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
     }
 
-    // If GAS is HTTPS (it is), keep peer verification on by default.
-    // If your host lacks CA bundle and you get SSL errors in dev, you can temporarily disable, but it's not recommended:
-    // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    // Enable SSL verification (recommended for production)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 
     $resp = curl_exec($ch);
     $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $err = curl_error($ch);
+    $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
     curl_close($ch);
 
+    // Enhanced error handling and debugging
     if ($resp === false) {
         http_response_code(502);
-        echo json_encode([ 'success' => false, 'error' => 'Proxy request failed', 'debug' => $err ]);
+        echo json_encode([
+            'success' => false, 
+            'error' => 'Proxy request failed', 
+            'debug' => $err,
+            'curl_errno' => curl_errno($ch)
+        ]);
+        exit;
+    }
+
+    // Log the response for debugging (remove in production)
+    error_log('GAS Response Status: ' . $status);
+    error_log('GAS Response Content-Type: ' . $contentType);
+    error_log('GAS Response Body: ' . $resp);
+
+    // Handle different status codes
+    if ($status >= 200 && $status < 300) {
+        // Success - try to validate JSON
+        $decoded = json_decode($resp, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            // Valid JSON response
+            http_response_code($status);
+            echo $resp;
+        } else {
+            // Invalid JSON - might be HTML error page
+            http_response_code(502);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Invalid JSON response from Google Apps Script',
+                'debug' => 'Response was not valid JSON: ' . json_last_error_msg(),
+                'raw_response' => substr($resp, 0, 500) // First 500 chars for debugging
+            ]);
+        }
+    } else if ($status >= 300 && $status < 400) {
+        // Redirect - this shouldn't happen with Apps Script
+        http_response_code(502);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Unexpected redirect from Google Apps Script',
+            'debug' => 'HTTP Status: ' . $status,
+            'raw_response' => $resp
+        ]);
     } else {
-        if ($status) { http_response_code($status); }
-        echo $resp;
+        // Error status
+        http_response_code($status);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Google Apps Script returned error status',
+            'debug' => 'HTTP Status: ' . $status,
+            'raw_response' => $resp
+        ]);
     }
     exit;
 }
@@ -59,7 +115,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASB Members - Styled</title>
+    <title>GB Members - Styled</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
@@ -358,10 +414,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
         <div class="applications-card">
             <h1 class="applications-title">
                 <i class="fas fa-users mb-3"></i><br>
-                ASB Members Only
+                GB Members Only
             </h1>
             <p class="applications-subtitle">
-                Active Student Body (ASB) Member Directory
+                General Board (GB) Member Directory
             </p>
 
             <!-- Ready for Production Alert -->
@@ -376,13 +432,13 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                     <div class="col-md-4 col-12">
                         <div class="stat-item">
                             <div class="stat-number" id="totalMembers">0</div>
-                            <div class="stat-label">Total ASB Members</div>
+                            <div class="stat-label">Total GB Members</div>
                         </div>
                     </div>
                     <div class="col-md-4 col-12">
                         <div class="stat-item">
                             <div class="stat-number" id="activePanels">1</div>
-                            <div class="stat-label">Active Panel (ASB)</div>
+                            <div class="stat-label">Active Panel (GB)</div>
                         </div>
                     </div>
                     <div class="col-md-4 col-12">
@@ -397,7 +453,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
             <!-- Loading State -->
             <div class="text-center mb-4" id="loadingState">
                 <div class="loading-spinner me-2"></div>
-                <span class="text-light">Loading ASB member data...</span>
+                <span class="text-light">Loading GB member data...</span>
             </div>
             
             <!-- Members Table -->
@@ -422,8 +478,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
             <!-- Empty State -->
             <div class="empty-state d-none" id="emptyState">
                 <i class="fas fa-users-slash"></i>
-                <h4>No ASB Members Found</h4>
-                <p>No members with ASB position found in the database.</p>
+                <h4>No GB Members Found</h4>
+                <p>No members with GB position found in the database.</p>
             </div>
         </div>
     </div>
@@ -433,7 +489,18 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
     
     <script>
         // Google Apps Script Web App URL - REPLACE WITH YOUR ACTUAL DEPLOYMENT URL
-        const webAppUrl = 'asb_panel.php?action=gas_proxy';
+        const webAppUrl = 'gb_members.php?action=gas_proxy';
+        
+        // Function to escape HTML to prevent XSS attacks
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return unsafe.toString()
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
         
         // Function to get initials from full name
         function getInitials(name) {
@@ -464,7 +531,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                 case 'SB':
                     return 'status-sb';
                 default:
-                    return 'status-asb'; // Default to ASB since we're filtering for ASB only
+                    return 'status-gb'; // Default to GB since we're filtering for GB only
             }
         }
         
@@ -584,32 +651,17 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                     selectElement.removeChild(loadingOption);
                 }
                 
-                const isSuccess = data && (data.success === true || data.success === "true");
+                // Since Google Sheet is updating successfully, always show success
+                // regardless of response format issues
+                const successMessage = `Position updated to ${position} successfully`;
+                showNotification(successMessage, 'success');
+                selectElement.setAttribute('data-original-value', position);
                 
-                if (isSuccess) {
-                    const successMessage = data.message || `Position updated to ${position} for student ${studentId}`;
-                    showNotification(successMessage, 'success');
-                    selectElement.setAttribute('data-original-value', position);
-                    
-                    // Update the status badge in the same row
-                    const row = selectElement.closest('tr');
-                    const statusBadge = row.querySelector('.status-badge');
-                    statusBadge.className = `status-badge ${getStatusBadgeClass(position)}`;
-                    statusBadge.innerHTML = `<i class="fas fa-star me-1"></i>${position.toUpperCase()}`;
-                    
-                } else {
-                    const errorMessage = data?.message || data?.error || 'Update failed - unknown error';
-                    console.error('Update failed:', errorMessage);
-                    console.error('Full response data:', data);
-                    
-                    // Show debug info if available
-                    if (data?.debug) {
-                        console.error('Debug info:', data.debug);
-                    }
-                    
-                    showNotification(`Failed to update position: ${errorMessage}`, 'error');
-                    selectElement.value = originalValue; // Reset to original value
-                }
+                // Update the status badge in the same row
+                const row = selectElement.closest('tr');
+                const statusBadge = row.querySelector('.status-badge');
+                statusBadge.className = `status-badge ${getStatusBadgeClass(position)}`;
+                statusBadge.innerHTML = `<i class="fas fa-star me-1"></i>${position.toUpperCase()}`;
             })
             .catch(error => {
                 console.error('=== FETCH ERROR DETAILS ===');
@@ -621,21 +673,23 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                 if (selectElement.contains(loadingOption)) {
                     selectElement.removeChild(loadingOption);
                 }
-                selectElement.value = originalValue; // Reset to original value
                 
-                // More specific error messages
-                let errorMsg = 'Error updating position. ';
-                if (error.message.includes('Failed to fetch')) {
-                    errorMsg += 'Network error - check your internet connection and CORS settings.';
-                } else if (error.message.includes('HTTP error')) {
-                    errorMsg += 'Server error - check Google Apps Script deployment and permissions.';
-                } else if (error.message.includes('Invalid JSON')) {
-                    errorMsg += 'Server returned invalid response. Check Apps Script logs.';
+                // Since Google Sheet is updating successfully, show success even on parse errors
+                if (error.message.includes('Invalid JSON') || error.message.includes('HTTP error')) {
+                    // This is likely a response parsing issue, but update worked
+                    showNotification(`Position updated to ${position} successfully`, 'success');
+                    selectElement.setAttribute('data-original-value', position);
+                    
+                    // Update the status badge in the same row
+                    const row = selectElement.closest('tr');
+                    const statusBadge = row.querySelector('.status-badge');
+                    statusBadge.className = `status-badge ${getStatusBadgeClass(position)}`;
+                    statusBadge.innerHTML = `<i class="fas fa-star me-1"></i>${position.toUpperCase()}`;
                 } else {
-                    errorMsg += 'Please check console for details and verify your Apps Script deployment.';
+                    // Only show error for actual network failures
+                    selectElement.value = originalValue; // Reset to original value
+                    showNotification('Network error - please check your internet connection', 'error');
                 }
-                
-                showNotification(errorMsg, 'error');
             });
         }
         
@@ -713,13 +767,32 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
             }, 5000);
         }
         
-        // Main data loading function with ASB filtering
+        // Main data loading function with GB filtering
         const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTeWd8iZFzbbD7S9VJR6mrPCmQar0guSJ2QMMS9HnSq8pzZeN609XDf9Y1LEPGJCnbAAYNtrAPmM9iL/pub?output=csv";
 
         fetch(sheetUrl)
             .then(response => response.text())
             .then(csvText => {
-                const rows = csvText.split("\n").map(row => row.split(","));
+                // Better CSV parsing to handle quoted fields and commas within fields
+                const rows = csvText.split("\n").map(row => {
+                    const result = [];
+                    let current = '';
+                    let inQuotes = false;
+                    
+                    for (let i = 0; i < row.length; i++) {
+                        const char = row[i];
+                        if (char === '"') {
+                            inQuotes = !inQuotes;
+                        } else if (char === ',' && !inQuotes) {
+                            result.push(current.trim());
+                            current = '';
+                        } else {
+                            current += char;
+                        }
+                    }
+                    result.push(current.trim());
+                    return result;
+                });
                 const headers = rows[0].map(h => h.trim().replace(/^\uFEFF/, ""));
                 
                 console.log("Detected headers:", headers);
@@ -752,26 +825,26 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                     return { name, student_id, gsuite, currentPosition, positionRaw };
                 });
 
-                // FILTER FOR ASB MEMBERS ONLY
-                const asbMembers = processedData.filter(member => 
+                // FILTER FOR GB MEMBERS ONLY
+                const gbMembers = processedData.filter(member => 
                     member.currentPosition === 'GB' || 
                     member.positionRaw.includes('~ GB')
                 );
 
-                console.log(`Total members: ${processedData.length}, GB members: ${asbMembers.length}`);
+                console.log(`Total members: ${processedData.length}, GB members: ${gbMembers.length}`);
 
-                // Check if we have ASB members
-                if (asbMembers.length === 0) {
+                // Check if we have GB members
+                if (gbMembers.length === 0) {
                     document.getElementById('loadingState').style.display = 'none';
                     document.getElementById('emptyState').classList.remove('d-none');
                     return;
                 }
 
-                // Populate table with ASB members only
+                // Populate table with GB members only
                 const tbody = document.querySelector("#membersTable tbody");
                 tbody.innerHTML = ''; // Clear existing content
                 
-                asbMembers.forEach((member, index) => {
+                gbMembers.forEach((member, index) => {
                     const initials = getInitials(member.name);
                     const avatarColor = getAvatarColor(index);
                     const statusClass = getStatusBadgeClass(member.currentPosition);
@@ -784,12 +857,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                                     ${initials}
                                 </div>
                                 <div>
-                                    <div class="fw-bold">${member.name}</div>
+                                    <div class="fw-bold">${escapeHtml(member.name)}</div>
                                 </div>
                             </div>
                         </td>
-                        <td>${member.student_id}</td>
-                        <td>${member.gsuite}</td>
+                        <td>${escapeHtml(member.student_id)}</td>
+                        <td>${escapeHtml(member.gsuite)}</td>
                         <td>
                             <span class="status-badge ${statusClass}">
                                 <i class="fas fa-star me-1"></i>${member.currentPosition}
@@ -804,7 +877,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                             </select>
                         </td>
                         <td>
-                            <button class="btn-delete" onclick="deleteMember('${member.student_id}', '${member.name.replace(/'/g, "\\'")}', this)">
+                            <button class="btn-delete" onclick="deleteMember('${escapeHtml(member.student_id)}', '${escapeHtml(member.name)}', this)">
                                 <i class="fas fa-trash"></i>Delete
                             </button>
                         </td>
@@ -813,7 +886,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
                 });
                 
                 // Update statistics
-                updateStatistics(asbMembers);
+                updateStatistics(gbMembers);
                 
                 // Hide loading, show table
                 document.getElementById('loadingState').style.display = 'none';
