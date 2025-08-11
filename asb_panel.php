@@ -286,6 +286,7 @@
                                 <th>G-Suite Email</th>
                                 <th>Panel</th>
                                 <th>Update Position</th>
+                                <th>Delete Member</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -335,17 +336,118 @@
             document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
         }
         
+        // Function to delete member
+        function deleteMember(studentId, memberName, buttonElement) {
+            // Show confirmation dialog
+            const confirmed = confirm(`⚠️ DELETE MEMBER CONFIRMATION\n\nAre you sure you want to delete "${memberName}"?\n\nStudent ID: ${studentId}\n\n❌ This action will:\n• Permanently remove the member from Google Sheet\n• Cannot be undone\n\nClick OK to proceed or Cancel to abort.`);
+            
+            if (!confirmed) return;
+            
+            // Show loading state
+            const originalContent = buttonElement.innerHTML;
+            buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Deleting...';
+            buttonElement.disabled = true;
+            
+            // Replace with your Google Apps Script Web App URL
+            const webAppUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+            
+            // Make request to Google Apps Script
+            fetch(webAppUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'delete',
+                    studentId: studentId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(`${memberName} has been deleted successfully`, 'success');
+                    
+                    // Remove the row from table with animation
+                    const row = buttonElement.closest('tr');
+                    row.style.transition = 'all 0.3s ease';
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateX(-20px)';
+                    
+                    setTimeout(() => {
+                        row.remove();
+                        updateStatisticsAfterDelete();
+                    }, 300);
+                    
+                } else {
+                    showNotification(`Failed to delete member: ${data.message}`, 'error');
+                    buttonElement.innerHTML = originalContent;
+                    buttonElement.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting member:', error);
+                buttonElement.innerHTML = originalContent;
+                buttonElement.disabled = false;
+                showNotification('Error deleting member. Please try again.', 'error');
+            });
+        }
+        
+        // Function to update statistics after deletion
+        function updateStatisticsAfterDelete() {
+            const tbody = document.querySelector("#membersTable tbody");
+            const remainingRows = tbody.querySelectorAll('tr');
+            const totalMembers = remainingRows.length;
+            
+            document.getElementById('totalMembers').textContent = totalMembers;
+            
+            // If no members left, show empty state
+            if (totalMembers === 0) {
+                document.getElementById('membersTableContainer').style.display = 'none';
+                document.getElementById('emptyState').classList.remove('d-none');
+            }
+        }
+        
         // Function to handle position updates
         function updatePosition(studentId, position) {
             if (!position) return;
             
-            console.log(`Updating position for student ${studentId} to ${position}`);
+            // Show loading state
+            const selectElement = event.target;
+            const originalValue = selectElement.value;
+            selectElement.disabled = true;
             
-            // You can add your update logic here
-            // For example, make an AJAX call to update the database
+            // Replace with your Google Apps Script Web App URL
+            const webAppUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
             
-            // Show notification
-            showNotification(`Position updated to ${position} for student ${studentId}`, 'success');
+            // Make request to Google Apps Script
+            fetch(webAppUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    studentId: studentId,
+                    position: position
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                selectElement.disabled = false;
+                
+                if (data.success) {
+                    showNotification(`Position updated to ${position} for student ${studentId}`, 'success');
+                    console.log('Position updated successfully in Google Sheet');
+                } else {
+                    showNotification(`Failed to update position: ${data.message}`, 'error');
+                    selectElement.value = ''; // Reset to original value
+                }
+            })
+            .catch(error => {
+                console.error('Error updating position:', error);
+                selectElement.disabled = false;
+                selectElement.value = ''; // Reset to original value
+                showNotification('Error updating position. Please try again.', 'error');
+            });
         }
         
         // Show Notification Function
@@ -448,6 +550,7 @@
                     const student_id = student[headers[1]] || 'N/A';
                     const gsuite = student[headers[2]] || 'N/A';
                     let panel = student[headers[3]] || 'N/A';
+                    const currentPosition = student[headers[4]] || ''; // Get current position from sheet
 
                     if (panel.includes("~")) {
                         const parts = panel.split("~");
@@ -456,7 +559,7 @@
                         panel = panel.trim().toUpperCase();
                     }
 
-                    return { name, student_id, gsuite, panel };
+                    return { name, student_id, gsuite, panel, currentPosition };
                 });
 
                 // Populate table
@@ -489,10 +592,15 @@
                         <td>
                             <select class="custom-select" onchange="updatePosition('${member.student_id}', this.value)">
                                 <option value="">Select Position</option>
-                                <option value="GB">GB</option>
-                                <option value="ASB">ASB</option>
-                                <option value="SB">SB</option>
+                                <option value="GB" ${member.currentPosition === 'GB' ? 'selected' : ''}>GB</option>
+                                <option value="ASB" ${member.currentPosition === 'ASB' ? 'selected' : ''}>ASB</option>
+                                <option value="SB" ${member.currentPosition === 'SB' ? 'selected' : ''}>SB</option>
                             </select>
+                        </td>
+                        <td>
+                            <button class="btn-delete" onclick="deleteMember('${member.student_id}', '${member.name.replace(/'/g, "\\'")}', this)">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </button>
                         </td>
                     `;
                     tbody.appendChild(row);
