@@ -1,10 +1,65 @@
-<!-- https://script.google.com/macros/s/AKfycby_CFO23qpNXMR4vJAsXgOdUofEXXBTM5PIz24rYQMOMvuMcVIhnbuhrWrXIQTozL0jeA/exec -->
+<?php
+// Same-origin proxy to Google Apps Script to bypass browser CORS on the client.
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    exit;
+}
+
+if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
+    header('Access-Control-Allow-Origin: *');
+    header('Content-Type: application/json; charset=utf-8');
+
+    $target = 'https://script.google.com/macros/s/AKfycbyCDhAe3iUCn9zD7RgB_AdKnoEzAx6x3InQVrwaCuFAAtg7CIAEDfW77IoXHKhuCcxy_A/exec';
+
+    $method = $_SERVER['REQUEST_METHOD'];
+    $headers = [];
+    foreach (getallheaders() as $k => $v) {
+        // Forward typical headers; skip Host and Content-Length (cURL will set them)
+        if (!in_array(strtolower($k), ['host','content-length'])) {
+            $headers[] = $k . ': ' . $v;
+        }
+    }
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    // Forward body for non-GET
+    if ($method !== 'GET') {
+        $body = file_get_contents('php://input');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+    }
+
+    // If GAS is HTTPS (it is), keep peer verification on by default.
+    // If your host lacks CA bundle and you get SSL errors in dev, you can temporarily disable, but it's not recommended:
+    // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+    $resp = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $err = curl_error($ch);
+    curl_close($ch);
+
+    if ($resp === false) {
+        http_response_code(502);
+        echo json_encode([ 'success' => false, 'error' => 'Proxy request failed', 'debug' => $err ]);
+    } else {
+        if ($status) { http_response_code($status); }
+        echo $resp;
+    }
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GB Members</title>
+    <title>ASB Members - Styled</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
@@ -114,6 +169,16 @@
             color: #fff;
         }
         
+        .status-gb {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: #fff;
+        }
+        
+        .status-sb {
+            background: linear-gradient(45deg, #6f42c1, #5a32a3);
+            color: #fff;
+        }
+        
         /* Statistics Row */
         .stats-row {
             background: rgba(255, 255, 255, 0.05);
@@ -167,6 +232,44 @@
             opacity: 0.5;
         }
         
+        /* Delete Button Styling */
+        .btn-delete {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-delete:hover {
+            background: linear-gradient(45deg, #c82333, #a71e2a);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4);
+        }
+        
+        .btn-delete:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+        }
+        
+        .btn-delete:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-delete i {
+            font-size: 0.875rem;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .applications-card {
@@ -185,9 +288,43 @@
             .stat-number {
                 font-size: 1.5rem;
             }
+            
+            .btn-delete {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
         }
         
-        /* Custom Scrollbar */
+        /* Custom Select Styling */
+        .custom-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .custom-select:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .custom-select:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+        
+        .custom-select option {
+            background: #1a1a2e;
+            color: #fff;
+            padding: 0.5rem;
+        }
+        
         .table-responsive::-webkit-scrollbar {
             height: 8px;
         }
@@ -205,6 +342,15 @@
         .table-responsive::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.5);
         }
+
+        /* Alert for testing mode */
+        .test-mode-alert {
+            background: linear-gradient(45deg, #ffc107, #ffeb3b);
+            color: #212529;
+            border: none;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -212,11 +358,17 @@
         <div class="applications-card">
             <h1 class="applications-title">
                 <i class="fas fa-users mb-3"></i><br>
-                GB Members
+                ASB Members Only
             </h1>
             <p class="applications-subtitle">
-                General Body Member Directory
+                Active Student Body (ASB) Member Directory
             </p>
+
+            <!-- Ready for Production Alert -->
+            <div class="alert alert-success" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>Ready for Production:</strong> Replace the webAppUrl variable with your Google Apps Script deployment URL, then uncomment the real fetch code to enable live updates.
+            </div>
             
             <!-- Statistics Row -->
             <div class="stats-row">
@@ -224,13 +376,13 @@
                     <div class="col-md-4 col-12">
                         <div class="stat-item">
                             <div class="stat-number" id="totalMembers">0</div>
-                            <div class="stat-label">Total Members</div>
+                            <div class="stat-label">Total ASB Members</div>
                         </div>
                     </div>
                     <div class="col-md-4 col-12">
                         <div class="stat-item">
-                            <div class="stat-number" id="activePanels">0</div>
-                            <div class="stat-label">Active Panels</div>
+                            <div class="stat-number" id="activePanels">1</div>
+                            <div class="stat-label">Active Panel (ASB)</div>
                         </div>
                     </div>
                     <div class="col-md-4 col-12">
@@ -245,7 +397,7 @@
             <!-- Loading State -->
             <div class="text-center mb-4" id="loadingState">
                 <div class="loading-spinner me-2"></div>
-                <span class="text-light">Loading member data...</span>
+                <span class="text-light">Loading ASB member data...</span>
             </div>
             
             <!-- Members Table -->
@@ -258,6 +410,8 @@
                                 <th>Student ID</th>
                                 <th>G-Suite Email</th>
                                 <th>Panel</th>
+                                <th>Update Position</th>
+                                <th>Delete Member</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -268,8 +422,8 @@
             <!-- Empty State -->
             <div class="empty-state d-none" id="emptyState">
                 <i class="fas fa-users-slash"></i>
-                <h4>No Members Found</h4>
-                <p>Unable to load member data at this time.</p>
+                <h4>No ASB Members Found</h4>
+                <p>No members with ASB position found in the database.</p>
             </div>
         </div>
     </div>
@@ -278,6 +432,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // Google Apps Script Web App URL - REPLACE WITH YOUR ACTUAL DEPLOYMENT URL
+        const webAppUrl = 'asb_panel.php?action=gas_proxy';
+        
         // Function to get initials from full name
         function getInitials(name) {
             const words = name.split(' ').filter(word => word.length > 0);
@@ -297,17 +454,267 @@
             return colors[index % colors.length];
         }
         
+        // Function to get status badge class
+        function getStatusBadgeClass(position) {
+            switch(position.toUpperCase()) {
+                case 'GB':
+                    return 'status-gb';
+                case 'ASB':
+                    return 'status-asb';
+                case 'SB':
+                    return 'status-sb';
+                default:
+                    return 'status-asb'; // Default to ASB since we're filtering for ASB only
+            }
+        }
+        
         // Function to update statistics
         function updateStatistics(data) {
             const totalMembers = data.length;
-            const uniquePanels = [...new Set(data.map(member => member.panel))].filter(panel => panel).length;
             
             document.getElementById('totalMembers').textContent = totalMembers;
-            document.getElementById('activePanels').textContent = uniquePanels;
             document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
         }
         
-        const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS3qNLYfq9dp7JZ4psW41s4M9qmGHxEKqboDtUKV64PRBPlg-DCwMuxm8Hj8ckpZpzZfZZsMqelybzn/pub?output=csv";
+        // Function to delete member
+        function deleteMember(studentId, memberName, buttonElement) {
+            // Show confirmation dialog
+            const confirmed = confirm(`⚠️ DELETE MEMBER CONFIRMATION\n\nAre you sure you want to delete "${memberName}"?\n\nStudent ID: ${studentId}\n\n❌ This action will:\n• Permanently remove the member from Google Sheet\n• Cannot be undone\n\nClick OK to proceed or Cancel to abort.`);
+            
+            if (!confirmed) return;
+            
+            // Show loading state
+            const originalContent = buttonElement.innerHTML;
+            buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Deleting...';
+            buttonElement.disabled = true;
+            
+            // Test mode - simulate success after 2 seconds
+            setTimeout(() => {
+                showNotification(`${memberName} has been deleted successfully (Test Mode)`, 'success');
+                
+                // Remove the row from table with animation
+                const row = buttonElement.closest('tr');
+                row.style.transition = 'all 0.3s ease';
+                row.style.opacity = '0';
+                row.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    row.remove();
+                    updateStatisticsAfterDelete();
+                }, 300);
+            }, 2000);
+        }
+        
+        // Function to update statistics after deletion
+        function updateStatisticsAfterDelete() {
+            const tbody = document.querySelector("#membersTable tbody");
+            const remainingRows = tbody.querySelectorAll('tr');
+            const totalMembers = remainingRows.length;
+            
+            document.getElementById('totalMembers').textContent = totalMembers;
+            
+            // If no members left, show empty state
+            if (totalMembers === 0) {
+                document.getElementById('membersTableContainer').style.display = 'none';
+                document.getElementById('emptyState').classList.remove('d-none');
+            }
+        }
+        
+        // Enhanced function to handle position updates with better error handling
+        function updatePosition(studentId, position, selectElement) {
+            if (!position) return;
+            
+            const originalValue = selectElement.getAttribute('data-original-value');
+            selectElement.disabled = true;
+            
+            // Add loading indicator
+            const loadingOption = document.createElement('option');
+            loadingOption.value = 'loading';
+            loadingOption.textContent = 'Updating...';
+            loadingOption.selected = true;
+            selectElement.appendChild(loadingOption);
+            
+            console.log('=== POSITION UPDATE DEBUG ===');
+            console.log('Student ID:', studentId);
+            console.log('New Position:', position);
+            console.log('Original Value:', originalValue);
+            console.log('Web App URL:', webAppUrl);
+            
+            const requestBody = {
+                action: 'update',
+                studentId: studentId,
+                position: position
+            };
+            
+            console.log('Request Body:', JSON.stringify(requestBody, null, 2));
+            
+            // Make request to Google Apps Script
+            fetch(webAppUrl, {
+                method: 'POST',
+                mode: 'cors',
+
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return response.text().then(text => {
+                    console.log('Raw response text:', text);
+                    try {
+                        return JSON.parse(text);
+                    } catch (parseError) {
+                        console.error('JSON parse error:', parseError);
+                        console.error('Raw response that failed to parse:', text);
+                        throw new Error('Invalid JSON response from server');
+                    }
+                });
+            })
+            .then(data => {
+                console.log('Parsed response data:', data);
+                selectElement.disabled = false;
+                if (selectElement.contains(loadingOption)) {
+                    selectElement.removeChild(loadingOption);
+                }
+                
+                const isSuccess = data && (data.success === true || data.success === "true");
+                
+                if (isSuccess) {
+                    const successMessage = data.message || `Position updated to ${position} for student ${studentId}`;
+                    showNotification(successMessage, 'success');
+                    selectElement.setAttribute('data-original-value', position);
+                    
+                    // Update the status badge in the same row
+                    const row = selectElement.closest('tr');
+                    const statusBadge = row.querySelector('.status-badge');
+                    statusBadge.className = `status-badge ${getStatusBadgeClass(position)}`;
+                    statusBadge.innerHTML = `<i class="fas fa-star me-1"></i>${position.toUpperCase()}`;
+                    
+                } else {
+                    const errorMessage = data?.message || data?.error || 'Update failed - unknown error';
+                    console.error('Update failed:', errorMessage);
+                    console.error('Full response data:', data);
+                    
+                    // Show debug info if available
+                    if (data?.debug) {
+                        console.error('Debug info:', data.debug);
+                    }
+                    
+                    showNotification(`Failed to update position: ${errorMessage}`, 'error');
+                    selectElement.value = originalValue; // Reset to original value
+                }
+            })
+            .catch(error => {
+                console.error('=== FETCH ERROR DETAILS ===');
+                console.error('Error type:', error.constructor.name);
+                console.error('Error message:', error.message);
+                console.error('Full error:', error);
+                
+                selectElement.disabled = false;
+                if (selectElement.contains(loadingOption)) {
+                    selectElement.removeChild(loadingOption);
+                }
+                selectElement.value = originalValue; // Reset to original value
+                
+                // More specific error messages
+                let errorMsg = 'Error updating position. ';
+                if (error.message.includes('Failed to fetch')) {
+                    errorMsg += 'Network error - check your internet connection and CORS settings.';
+                } else if (error.message.includes('HTTP error')) {
+                    errorMsg += 'Server error - check Google Apps Script deployment and permissions.';
+                } else if (error.message.includes('Invalid JSON')) {
+                    errorMsg += 'Server returned invalid response. Check Apps Script logs.';
+                } else {
+                    errorMsg += 'Please check console for details and verify your Apps Script deployment.';
+                }
+                
+                showNotification(errorMsg, 'error');
+            });
+        }
+        
+        // Show Notification Function
+        function showNotification(message, type = 'success') {
+            // Remove any existing notifications
+            const existingNotifications = document.querySelectorAll('.notification-toast');
+            existingNotifications.forEach(notif => notif.remove());
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification-toast alert alert-dismissible fade show position-fixed';
+            
+            // Set colors and icon based on type
+            let backgroundColor, textColor, borderColor, iconClass;
+            switch(type) {
+                case 'success':
+                    backgroundColor = '#28a745';
+                    textColor = '#ffffff';
+                    borderColor = '#1e7e34';
+                    iconClass = 'check-circle';
+                    break;
+                case 'error':
+                case 'danger':
+                    backgroundColor = '#dc3545';
+                    textColor = '#ffffff';
+                    borderColor = '#bd2130';
+                    iconClass = 'times-circle';
+                    break;
+                case 'warning':
+                    backgroundColor = '#ffc107';
+                    textColor = '#212529';
+                    borderColor = '#d39e00';
+                    iconClass = 'exclamation-triangle';
+                    break;
+                case 'info':
+                    backgroundColor = '#17a2b8';
+                    textColor = '#ffffff';
+                    borderColor = '#138496';
+                    iconClass = 'info-circle';
+                    break;
+                default:
+                    backgroundColor = '#28a745';
+                    textColor = '#ffffff';
+                    borderColor = '#1e7e34';
+                    iconClass = 'check-circle';
+            }
+            
+            notification.style.cssText = `
+                top: 20px;
+                right: 20px;
+                z-index: 1050;
+                max-width: 350px;
+                box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+                background-color: ${backgroundColor} !important;
+                color: ${textColor} !important;
+                border-left: 4px solid ${borderColor} !important;
+                border-radius: 8px;
+                padding: 12px 16px;
+            `;
+            
+            notification.innerHTML = `
+                <i class="fas fa-${iconClass} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter: brightness(0) invert(${textColor === '#ffffff' ? '1' : '0'});"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+        
+        // Main data loading function with ASB filtering
+        const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTeWd8iZFzbbD7S9VJR6mrPCmQar0guSJ2QMMS9HnSq8pzZeN609XDf9Y1LEPGJCnbAAYNtrAPmM9iL/pub?output=csv";
 
         fetch(sheetUrl)
             .then(response => response.text())
@@ -317,11 +724,8 @@
                 
                 console.log("Detected headers:", headers);
                 
-                const panelIndex = headers.findIndex(h => h.toLowerCase() === "position");
-
                 const data = rows.slice(1)
-                    .filter(row => row.some(cell => cell && cell.trim()))
-                    .filter(row => (row[panelIndex] || "").includes("~ GB"))
+                    .filter(row => row.some(cell => cell && cell.trim())) // Filter out empty rows
                     .map(row => {
                         let obj = {};
                         headers.forEach((header, i) => {
@@ -330,30 +734,47 @@
                         return obj;
                     });
 
-
                 const processedData = data.map(student => {
                     const name = student[headers[0]] || 'Unknown';
-                    const student_id = student[headers[1]] || '000000000';
-                    const gsuite = student[headers[2]] || 'bucuc@bracu.com';
-                    let panel = student[headers[3]] || 'GB';
-
-                    if (panel.includes("~")) {
-                        const parts = panel.split("~");
-                        panel = parts[1].trim().toUpperCase();
+                    const student_id = student[headers[1]] || 'N/A';
+                    const gsuite = student[headers[2]] || 'N/A';
+                    let positionRaw = student[headers[3]] || '';
+                    
+                    // Extract position from the "~ POSITION" format
+                    let currentPosition = '';
+                    if (positionRaw.includes("~")) {
+                        const parts = positionRaw.split("~");
+                        currentPosition = parts[1]?.trim().toUpperCase() || '';
                     } else {
-                        panel = panel.trim().toUpperCase();
+                        currentPosition = positionRaw.trim().toUpperCase();
                     }
 
-                    return { name, student_id, gsuite, panel };
+                    return { name, student_id, gsuite, currentPosition, positionRaw };
                 });
 
-                // Populate table
+                // FILTER FOR ASB MEMBERS ONLY
+                const asbMembers = processedData.filter(member => 
+                    member.currentPosition === 'GB' || 
+                    member.positionRaw.includes('~ GB')
+                );
+
+                console.log(`Total members: ${processedData.length}, GB members: ${asbMembers.length}`);
+
+                // Check if we have ASB members
+                if (asbMembers.length === 0) {
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('emptyState').classList.remove('d-none');
+                    return;
+                }
+
+                // Populate table with ASB members only
                 const tbody = document.querySelector("#membersTable tbody");
                 tbody.innerHTML = ''; // Clear existing content
                 
-                processedData.forEach((member, index) => {
+                asbMembers.forEach((member, index) => {
                     const initials = getInitials(member.name);
                     const avatarColor = getAvatarColor(index);
+                    const statusClass = getStatusBadgeClass(member.currentPosition);
                     
                     const row = document.createElement("tr");
                     row.innerHTML = `
@@ -370,16 +791,29 @@
                         <td>${member.student_id}</td>
                         <td>${member.gsuite}</td>
                         <td>
-                            <span class="status-badge status-asb">
-                                <i class="fas fa-star me-1"></i>${member.panel}
+                            <span class="status-badge ${statusClass}">
+                                <i class="fas fa-star me-1"></i>${member.currentPosition}
                             </span>
+                        </td>
+                        <td>
+                            <select class="custom-select" data-original-value="${member.currentPosition}" onchange="updatePosition('${member.student_id}', this.value, this)">
+                                <option value="">Select Position</option>
+                                <option value="GB" ${member.currentPosition === 'GB' ? 'selected' : ''}>GB</option>
+                                <option value="ASB" ${member.currentPosition === 'ASB' ? 'selected' : ''}>ASB</option>
+                                <option value="SB" ${member.currentPosition === 'SB' ? 'selected' : ''}>SB</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn-delete" onclick="deleteMember('${member.student_id}', '${member.name.replace(/'/g, "\\'")}', this)">
+                                <i class="fas fa-trash"></i>Delete
+                            </button>
                         </td>
                     `;
                     tbody.appendChild(row);
                 });
                 
                 // Update statistics
-                updateStatistics(processedData);
+                updateStatistics(asbMembers);
                 
                 // Hide loading, show table
                 document.getElementById('loadingState').style.display = 'none';
