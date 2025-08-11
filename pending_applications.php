@@ -285,6 +285,99 @@ function getTimeAgo($date) {
             margin-top: 0.5rem;
         }
         
+        /* Clear All Applications Button Styling */
+        .btn-clear-all {
+            background: linear-gradient(45deg, #dc3545, #b52d3c);
+            border: none;
+            border-radius: 30px;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-clear-all:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+            color: white;
+            background: linear-gradient(45deg, #c82333, #a02834);
+        }
+        
+        .btn-clear-all:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn-clear-all::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-clear-all:hover::before {
+            left: 100%;
+        }
+        
+        .clear-all-warning {
+            color: #ffc107;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+        
+        .clear-all-section {
+            background: rgba(220, 53, 69, 0.1);
+            border: 2px dashed rgba(220, 53, 69, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Modal Styling */
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        
+        .modal-body {
+            color: #ccc;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #dc3545;
+            color: #fff;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+        
+        .form-control::placeholder {
+            color: #999;
+        }
+        
         @media (max-width: 768px) {
             .applications-card {
                 margin: 0 0.5rem;
@@ -302,6 +395,11 @@ function getTimeAgo($date) {
             .btn-accept, .btn-reject {
                 padding: 0.4rem 0.8rem;
                 font-size: 0.8rem;
+            }
+            
+            .btn-clear-all {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
             }
         }
     </style>
@@ -324,9 +422,18 @@ function getTimeAgo($date) {
             </p>
             
             <!-- Statistics Row -->
+        
             
-            
-         
+            <!-- Clear All Applications Button -->
+            <div class="clear-all-section text-center mb-4">
+                <button class="btn btn-clear-all" id="clearAllBtn" onclick="showClearAllModal()">
+                    <i class="fas fa-trash-alt me-2"></i>Clear
+                </button>
+                <p class="clear-all-warning mt-2">
+                    <i class="fas fa-exclamation-triangle me-1"></i>
+                    <strong>Warning:</strong> This will permanently delete ALL applications from the database!
+                </p>
+            </div>
             
             <!-- Applications Table -->
             <div class="applications-table">
@@ -420,6 +527,61 @@ function getTimeAgo($date) {
                 <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
                 <h4 class="text-muted">No Applications Found</h4>
                 <p class="text-muted">There are no pending applications matching your criteria.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Clear All Applications Modal -->
+    <div class="modal fade" id="clearAllModal" tabindex="-1" aria-labelledby="clearAllModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title" id="clearAllModalLabel">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        Confirm Clear All Applications
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger d-flex align-items-center mb-3" role="alert">
+                        <i class="fas fa-skull-crossbones fa-2x me-3"></i>
+                        <div>
+                            <strong>DANGER ZONE!</strong><br>
+                            This action will permanently delete ALL applications from the database.
+                        </div>
+                    </div>
+                    
+                    <p><strong>What will be deleted:</strong></p>
+                    <ul class="text-warning">
+                        <li>All pending applications</li>
+                        <li>All accepted applications</li>
+                        <li>All member data including names, emails, phone numbers</li>
+                        <li>All application history</li>
+                    </ul>
+                    
+                    <p><strong class="text-danger">This action CANNOT be undone!</strong></p>
+                    
+                    <p>To confirm this destructive action, please type exactly:<br>
+                    <code class="text-warning">CLEAR ALL APPLICATIONS</code></p>
+                    
+                    <input type="text" class="form-control mt-2" id="confirmationInput" 
+                           placeholder="Type: CLEAR ALL APPLICATIONS">
+                    
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            This operation will be logged for audit purposes.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmClearAllBtn" disabled>
+                        <i class="fas fa-trash-alt me-1"></i>Clear All Applications
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -617,6 +779,113 @@ function getTimeAgo($date) {
                 }
             }, 5000);
         }
+        
+        // Show Clear All Modal
+        function showClearAllModal() {
+            const modal = new bootstrap.Modal(document.getElementById('clearAllModal'));
+            modal.show();
+            
+            // Reset modal state
+            document.getElementById('confirmationInput').value = '';
+            document.getElementById('confirmClearAllBtn').disabled = true;
+        }
+        
+        // Handle confirmation input
+        document.getElementById('confirmationInput').addEventListener('input', function(e) {
+            const confirmBtn = document.getElementById('confirmClearAllBtn');
+            const inputValue = e.target.value.trim();
+            
+            if (inputValue === 'CLEAR ALL APPLICATIONS') {
+                confirmBtn.disabled = false;
+                confirmBtn.classList.remove('btn-danger');
+                confirmBtn.classList.add('btn-warning');
+                confirmBtn.innerHTML = '<i class="fas fa-check me-1"></i>Confirmed - Clear All Applications';
+            } else {
+                confirmBtn.disabled = true;
+                confirmBtn.classList.remove('btn-warning');
+                confirmBtn.classList.add('btn-danger');
+                confirmBtn.innerHTML = '<i class="fas fa-trash-alt me-1"></i>Clear';
+            }
+        });
+        
+        // Handle Clear All Confirmation
+        document.getElementById('confirmClearAllBtn').addEventListener('click', function() {
+            const confirmationText = document.getElementById('confirmationInput').value.trim();
+            
+            if (confirmationText !== 'CLEAR ALL APPLICATIONS') {
+                showNotification('Please type "CLEAR ALL APPLICATIONS" exactly to confirm.', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const button = this;
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Clearing All Applications...';
+            button.disabled = true;
+            
+            // Make AJAX request
+            fetch('Action/clear_all_applications.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'clear_all_applications',
+                    confirmation: confirmationText
+                })
+            })
+            .then(response => {
+                // First check if the response is ok
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.text(); // Get as text first
+            })
+            .then(text => {
+                // Try to parse as JSON
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (parseError) {
+                    console.error('Response is not valid JSON:', text);
+                    throw new Error('Server returned invalid response: ' + text.substring(0, 100));
+                }
+                
+                if (data.success) {
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('clearAllModal'));
+                    modal.hide();
+                    
+                    // Show success notification and reload page
+                    showNotification(data.message, 'success');
+                    
+                    // Simply reload the page to show updated state
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                    
+                } else {
+                    // Show error notification with details if available
+                    let errorMessage = data.message;
+                    if (data.error_details) {
+                        errorMessage += ' (Debug: ' + data.error_details + ')';
+                    }
+                    showNotification(errorMessage, 'error');
+                }
+                
+                // Restore button
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            })
+            .catch(error => {
+                console.error('Clear all error:', error);
+                showNotification('Error: ' + error.message, 'error');
+                
+                // Restore button
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            });
+        });
     </script>
     
 </body>
