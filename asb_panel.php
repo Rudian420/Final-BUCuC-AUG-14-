@@ -186,7 +186,35 @@
             }
         }
         
-        /* Custom Scrollbar */
+        /* Custom Select Styling */
+        .custom-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .custom-select:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .custom-select:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+        
+        .custom-select option {
+            background: #1a1a2e;
+            color: #fff;
+            padding: 0.5rem;
+        }
         .table-responsive::-webkit-scrollbar {
             height: 8px;
         }
@@ -257,6 +285,7 @@
                                 <th>Student ID</th>
                                 <th>G-Suite Email</th>
                                 <th>Panel</th>
+                                <th>Update Position</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -304,6 +333,93 @@
             document.getElementById('totalMembers').textContent = totalMembers;
             document.getElementById('activePanels').textContent = uniquePanels;
             document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+        }
+        
+        // Function to handle position updates
+        function updatePosition(studentId, position) {
+            if (!position) return;
+            
+            console.log(`Updating position for student ${studentId} to ${position}`);
+            
+            // You can add your update logic here
+            // For example, make an AJAX call to update the database
+            
+            // Show notification
+            showNotification(`Position updated to ${position} for student ${studentId}`, 'success');
+        }
+        
+        // Show Notification Function
+        function showNotification(message, type = 'success') {
+            // Remove any existing notifications
+            const existingNotifications = document.querySelectorAll('.notification-toast');
+            existingNotifications.forEach(notif => notif.remove());
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification-toast alert alert-dismissible fade show position-fixed';
+            
+            // Set colors and icon based on type
+            let backgroundColor, textColor, borderColor, iconClass;
+            switch(type) {
+                case 'success':
+                    backgroundColor = '#28a745';
+                    textColor = '#ffffff';
+                    borderColor = '#1e7e34';
+                    iconClass = 'check-circle';
+                    break;
+                case 'error':
+                case 'danger':
+                    backgroundColor = '#dc3545';
+                    textColor = '#ffffff';
+                    borderColor = '#bd2130';
+                    iconClass = 'times-circle';
+                    break;
+                case 'warning':
+                    backgroundColor = '#ffc107';
+                    textColor = '#212529';
+                    borderColor = '#d39e00';
+                    iconClass = 'exclamation-triangle';
+                    break;
+                case 'info':
+                    backgroundColor = '#17a2b8';
+                    textColor = '#ffffff';
+                    borderColor = '#138496';
+                    iconClass = 'info-circle';
+                    break;
+                default:
+                    backgroundColor = '#28a745';
+                    textColor = '#ffffff';
+                    borderColor = '#1e7e34';
+                    iconClass = 'check-circle';
+            }
+            
+            notification.style.cssText = `
+                top: 20px;
+                right: 20px;
+                z-index: 1050;
+                max-width: 350px;
+                box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+                background-color: ${backgroundColor} !important;
+                color: ${textColor} !important;
+                border-left: 4px solid ${borderColor} !important;
+                border-radius: 8px;
+                padding: 12px 16px;
+            `;
+            
+            notification.innerHTML = `
+                <i class="fas fa-${iconClass} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter: brightness(0) invert(${textColor === '#ffffff' ? '1' : '0'});"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
         }
         
         // Main data loading function
@@ -369,6 +485,14 @@
                             <span class="status-badge status-asb">
                                 <i class="fas fa-star me-1"></i>${member.panel}
                             </span>
+                        </td>
+                        <td>
+                            <select class="custom-select" onchange="updatePosition('${member.student_id}', this.value)">
+                                <option value="">Select Position</option>
+                                <option value="GB">GB</option>
+                                <option value="ASB">ASB</option>
+                                <option value="SB">SB</option>
+                            </select>
                         </td>
                     `;
                     tbody.appendChild(row);
