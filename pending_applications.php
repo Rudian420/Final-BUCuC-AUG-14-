@@ -7,6 +7,18 @@ if (!isset($_SESSION["admin"])) {
 
 require_once 'Database/db.php';
 
+// Handle success and error messages from URL parameters
+$success_message = '';
+$error_message = '';
+
+if (isset($_GET['success'])) {
+    $success_message = urldecode($_GET['success']);
+}
+
+if (isset($_GET['error'])) {
+    $error_message = urldecode($_GET['error']);
+}
+
 // Fetch members data
 try {
     $database = new Database();
@@ -464,6 +476,21 @@ function getTimeAgo($date) {
                 Review and manage member applications
             </p>
             
+            <!-- Success/Error Messages -->
+            <?php if (!empty($success_message)): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="background: rgba(40, 167, 69, 0.2); border: 1px solid rgba(40, 167, 69, 0.3); color: #51cf66;">
+                    <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($success_message); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter: brightness(0) invert(1);"></button>
+                </div>
+            <?php endif; ?>
+            
+            <?php if (!empty($error_message)): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="background: rgba(220, 53, 69, 0.2); border: 1px solid rgba(220, 53, 69, 0.3); color: #ff6b6b;">
+                    <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error_message); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter: brightness(0) invert(1);"></button>
+                </div>
+            <?php endif; ?>
+            
             <!-- Statistics Row -->
         
             
@@ -539,12 +566,22 @@ function getTimeAgo($date) {
                                     <td>
                                         <?php if ($member['membership_status'] == 'New_member'): ?>
                                         <div class="d-flex gap-2">
-                                            <button class="btn btn-accept btn-sm" data-member-id="<?php echo $member['id']; ?>" data-member-name="<?php echo htmlspecialchars($member['full_name']); ?>">
-                                                <i class="fas fa-check me-1"></i>Accept
-                                            </button>
-                                            <button class="btn btn-reject btn-sm" data-member-id="<?php echo $member['id']; ?>" data-member-name="<?php echo htmlspecialchars($member['full_name']); ?>">
-                                                <i class="fas fa-times me-1"></i>Reject
-                                            </button>
+                                            <form method="POST" action="handle_application.php" style="display:inline;" 
+                                                  onsubmit="return confirm('Are you sure you want to accept <?php echo addslashes($member['full_name']); ?>\'s application?\\n\\nThis will:\\n- Update their status to \\'Accepted\\'\\n- Send a congratulations email to their G-Suite address')">
+                                                <input type="hidden" name="action" value="accept">
+                                                <input type="hidden" name="member_id" value="<?php echo $member['id']; ?>">
+                                                <button type="submit" class="btn btn-accept btn-sm">
+                                                    <i class="fas fa-check me-1"></i>Accept
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="handle_application.php" style="display:inline;" 
+                                                  onsubmit="return confirm('Are you sure you want to reject <?php echo addslashes($member['full_name']); ?>\'s application?\\n\\nWARNING: This will permanently delete their record from the database!\\n\\nThis action cannot be undone.')">
+                                                <input type="hidden" name="action" value="reject">
+                                                <input type="hidden" name="member_id" value="<?php echo $member['id']; ?>">
+                                                <button type="submit" class="btn btn-reject btn-sm">
+                                                    <i class="fas fa-times me-1"></i>Reject
+                                                </button>
+                                            </form>
                                         </div>
                                         <?php else: ?>
                                         <span class="text-success">
@@ -638,119 +675,36 @@ function getTimeAgo($date) {
     <script src="js/bootstrap.min.js"></script>
     
     <script>
-        // Handle Accept Button Click
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('btn-accept') || e.target.closest('.btn-accept')) {
-                const button = e.target.closest('.btn-accept');
-                const memberId = button.getAttribute('data-member-id');
-                const memberName = button.getAttribute('data-member-name');
-                
-                if (confirm(`Are you sure you want to accept ${memberName}'s application?\n\nThis will:\n- Update their status to 'Accepted'\n- Send a congratulations email to their G-Suite address`)) {
-                    handleAction('accept', memberId, memberName, button);
-                }
-            }
-        });
-        
-        // Handle Reject Button Click
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('btn-reject') || e.target.closest('.btn-reject')) {
-                const button = e.target.closest('.btn-reject');
-                const memberId = button.getAttribute('data-member-id');
-                const memberName = button.getAttribute('data-member-name');
-                
-                if (confirm(`Are you sure you want to reject ${memberName}'s application?\n\nWARNING: This will permanently delete their record from the database!\n\nThis action cannot be undone.`)) {
-                    handleAction('reject', memberId, memberName, button);
-                }
-            }
-        });
-        
-        // Handle Accept/Reject Actions
-        function handleAction(action, memberId, memberName, button) {
-            // Show loading state
-            const originalContent = button.innerHTML;
-            const loadingText = action === 'accept' ? 
-                '<i class="fas fa-spinner fa-spin me-1"></i>Accepting...' : 
-                '<i class="fas fa-spinner fa-spin me-1"></i>Rejecting...';
-            
-            button.innerHTML = loadingText;
-            button.disabled = true;
-            
-            // Make AJAX request
-            fetch('Action/application_handler.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    action: action,
-                    member_id: parseInt(memberId)
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Show success notification
-                    showNotification(data.message, 'success');
-                    
-                    // Remove the row from the table or update it
-                    const row = button.closest('tr');
-                    if (action === 'reject') {
-                        // Animate row removal
-                        row.style.transition = 'all 0.3s ease';
-                        row.style.opacity = '0';
-                        row.style.transform = 'translateX(-20px)';
-                        
-                        setTimeout(() => {
-                            row.remove();
-                            updateStatistics();
-                        }, 300);
-                    } else if (action === 'accept') {
-                        // Update the row to show accepted status
-                        const statusCell = row.querySelector('.status-badge');
-                        const actionCell = row.querySelector('td:last-child');
-                        
-                        statusCell.className = 'status-badge status-accepted';
-                        statusCell.innerHTML = '<i class="fas fa-check-circle me-1"></i>Accepted';
-                        
-                        actionCell.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Processed</span>';
-                        
-                        // Update row data status
-                        row.setAttribute('data-status', 'accepted');
-                        
-                        updateStatistics();
-                    }
-                } else {
-                    // Show error notification
-                    showNotification(data.message, 'error');
-                    
-                    // Restore button
-                    button.innerHTML = originalContent;
-                    button.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('An error occurred while processing the request.', 'error');
-                
-                // Restore button
-                button.innerHTML = originalContent;
-                button.disabled = false;
-            });
-        }
         
         // Update Statistics
         function updateStatistics() {
             const rows = document.querySelectorAll('#applicationsTableBody tr[data-status]');
             const totalApplications = rows.length;
-            const pendingApplications = document.querySelectorAll('#applicationsTableBody tr[data-status="pending"]').length;
             
-            document.getElementById('totalApplications').textContent = totalApplications;
-            document.getElementById('pendingApplications').textContent = pendingApplications;
+            // Only update statistics elements if they exist on the page
+            const totalElement = document.getElementById('totalApplications');
+            const pendingElement = document.getElementById('pendingApplications');
+            
+            if (totalElement) {
+                totalElement.textContent = totalApplications;
+            }
+            
+            if (pendingElement) {
+                const pendingApplications = document.querySelectorAll('#applicationsTableBody tr[data-status="pending"]').length;
+                pendingElement.textContent = pendingApplications;
+            }
             
             // Show no applications message if no rows left
             if (totalApplications === 0) {
-                document.querySelector('.applications-table').style.display = 'none';
-                document.getElementById('noApplicationsMessage').classList.remove('d-none');
+                const tableElement = document.querySelector('.applications-table');
+                const noAppsElement = document.getElementById('noApplicationsMessage');
+                
+                if (tableElement) {
+                    tableElement.style.display = 'none';
+                }
+                if (noAppsElement) {
+                    noAppsElement.classList.remove('d-none');
+                }
             }
         }
         

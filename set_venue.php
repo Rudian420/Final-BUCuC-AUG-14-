@@ -25,14 +25,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Combine date and time for datetime field
         $venue_datetime = $venue_date . ' ' . $venue_time;
         
-        // Insert venue information
-        $stmt = $pdo->prepare("INSERT INTO venuInfo (venue_name, venue_location, venue_dateTime, venue_startingTime, venue_endingTime, venu_ampm) VALUES (?, ?, ?, ?, ?, ?)");
-        $result = $stmt->execute([$venue_name, $venue_location, $venue_datetime, $venue_starting_time, $venue_ending_time, $venue_ampm]);
+        // Check if any venue record exists
+        $checkStmt = $pdo->query("SELECT COUNT(*) as count FROM venuInfo");
+        $venueExists = $checkStmt->fetch()['count'] > 0;
         
-        if ($result) {
-            $success_message = "Venue information saved successfully!";
+        if ($venueExists) {
+            // Update the existing venue record (update the latest one)
+            $stmt = $pdo->prepare("UPDATE venuInfo SET venue_name = ?, venue_location = ?, venue_dateTime = ?, venue_startingTime = ?, venue_endingTime = ?, venu_ampm = ? WHERE venue_id = (SELECT venue_id FROM (SELECT venue_id FROM venuInfo ORDER BY venue_id DESC LIMIT 1) as temp)");
+            $result = $stmt->execute([$venue_name, $venue_location, $venue_datetime, $venue_starting_time, $venue_ending_time, $venue_ampm]);
+            
+            if ($result) {
+                $success_message = "Venue information updated successfully!";
+            } else {
+                $error_message = "Failed to update venue information.";
+            }
         } else {
-            $error_message = "Failed to save venue information.";
+            // Insert new venue information (first time only)
+            $stmt = $pdo->prepare("INSERT INTO venuInfo (venue_name, venue_location, venue_dateTime, venue_startingTime, venue_endingTime, venu_ampm) VALUES (?, ?, ?, ?, ?, ?)");
+            $result = $stmt->execute([$venue_name, $venue_location, $venue_datetime, $venue_starting_time, $venue_ending_time, $venue_ampm]);
+            
+            if ($result) {
+                $success_message = "Venue information created successfully!";
+            } else {
+                $error_message = "Failed to create venue information.";
+            }
         }
         
     } catch (Exception $e) {
@@ -48,8 +64,12 @@ try {
     $stmt = $pdo->query("SELECT * FROM venuInfo ORDER BY venue_id DESC");
     $venues = $stmt->fetchAll();
     
+    // Get the latest venue for form pre-filling
+    $latestVenue = !empty($venues) ? $venues[0] : null;
+    
 } catch (Exception $e) {
     $venues = [];
+    $latestVenue = null;
     $fetch_error = "Error fetching venue data: " . $e->getMessage();
 }
 ?>
@@ -409,6 +429,26 @@ try {
     <script>
         // Set minimum date to today
         document.getElementById('venue_date').min = new Date().toISOString().split('T')[0];
+        
+        // Pre-fill form with existing venue data (if any)
+        <?php if ($latestVenue): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('venue_name').value = '<?php echo addslashes($latestVenue['venue_name']); ?>';
+            document.getElementById('venue_location').value = '<?php echo addslashes($latestVenue['venue_location']); ?>';
+            
+            // Format date for input field (YYYY-MM-DD)
+            const venueDate = new Date('<?php echo $latestVenue['venue_dateTime']; ?>');
+            document.getElementById('venue_date').value = venueDate.toISOString().split('T')[0];
+            
+            // Format time for input field (HH:MM)
+            const venueTime = venueDate.toTimeString().substring(0, 5);
+            document.getElementById('venue_time').value = venueTime;
+            
+            document.getElementById('venue_starting_time').value = '<?php echo addslashes($latestVenue['venue_startingTime']); ?>';
+            document.getElementById('venue_ending_time').value = '<?php echo addslashes($latestVenue['venue_endingTime']); ?>';
+            document.getElementById('venue_ampm').value = '<?php echo addslashes($latestVenue['venu_ampm']); ?>';
+        });
+        <?php endif; ?>
         
         // Delete venue function
         function deleteVenue(venueId) {
