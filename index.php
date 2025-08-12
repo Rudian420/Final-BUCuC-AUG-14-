@@ -7,6 +7,55 @@ $signupError = isset($_SESSION['signup_error']) ? $_SESSION['signup_error'] : nu
 
 unset($_SESSION['signup_success'], $_SESSION['signup_error']);
 
+// Check signup status
+function getSignupStatus() {
+    try {
+        require_once 'Database/db.php';
+        $database = new Database();
+        $conn = $database->createConnection();
+        
+        // Create table if it doesn't exist
+        $createTableQuery = "
+            CREATE TABLE IF NOT EXISTS signup_status (
+                id INT PRIMARY KEY DEFAULT 1,
+                is_enabled TINYINT(1) NOT NULL DEFAULT 1,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                updated_by VARCHAR(100) DEFAULT NULL
+            )
+        ";
+        $conn->exec($createTableQuery);
+        
+        // Insert default record if table is empty
+        $checkQuery = "SELECT COUNT(*) FROM signup_status";
+        $stmt = $conn->prepare($checkQuery);
+        $stmt->execute();
+        $count = $stmt->fetchColumn();
+        
+        if ($count == 0) {
+            $insertQuery = "INSERT INTO signup_status (id, is_enabled, updated_by) VALUES (1, 1, 'system')";
+            $stmt = $conn->prepare($insertQuery);
+            $stmt->execute();
+        }
+        
+        $sql = "SELECT is_enabled FROM signup_status WHERE id = 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result) {
+            return (bool)$result['is_enabled'];
+        }
+        
+        return true;
+    } catch (Exception $e) {
+        // Default to enabled on error
+        error_log("Error checking signup status: " . $e->getMessage());
+        return true;
+    }
+}
+
+$signupEnabled = getSignupStatus();
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -1286,9 +1335,8 @@ aria-label="Open navigation menu">
             </li>
             <li class="nav-item">
                 <a class="btn custom-btn ms-4"
-                    href="#footer"
-                    style="background: #e76f2c; color: #fff; font-weight: bold; border-radius: 2em; padding: 8px 24px; font-size: 1em;">Sign
-                    Up</a>
+                    href="<?php echo $signupEnabled ? '#footer' : 'admin-login.php'; ?>"
+                    style="background: #e76f2c; color: #fff; font-weight: bold; border-radius: 2em; padding: 8px 24px; font-size: 1em;"><?php echo $signupEnabled ? 'Apply Now' : 'Login'; ?></a>
             </li>
         </ul>
     </div>
@@ -1305,10 +1353,9 @@ aria-label="Open navigation menu">
     BUCuC
 </a>
 
-<a href="ticket.html"
+<a href="<?php echo $signupEnabled ? 'ticket.html' : 'admin-login.php'; ?>"
     class="btn custom-btn d-lg-none ms-auto me-4"
-    style="background: #e76f2c; color: #fff; font-weight: bold; border-radius: 2em; padding: 8px 24px; font-size: 1em;">Sign
-    Up</a>
+    style="background: #e76f2c; color: #fff; font-weight: bold; border-radius: 2em; padding: 8px 24px; font-size: 1em;"><?php echo $signupEnabled ? 'Apply Now' : 'Login'; ?></a>
 
 <button class="navbar-toggler" type="button"
     data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -1351,10 +1398,9 @@ aria-label="Open navigation menu">
         </li>
     </ul>
 
-    <a href="#footer"
+    <a href="<?php echo $signupEnabled ? '#footer' : 'admin-login.php'; ?>"
         class="btn custom-btn d-lg-block d-none"
-        style="background: #e76f2c; color: #fff; font-weight: bold; border-radius: 2em; padding: 8px 24px; font-size: 1em;">Sign
-        Up</a>
+        style="background: #e76f2c; color: #fff; font-weight: bold; border-radius: 2em; padding: 8px 24px; font-size: 1em;"><?php echo $signupEnabled ? 'Apply Now' : 'Login'; ?></a>
 </div>
 </div>
 </nav>
@@ -2491,172 +2537,190 @@ class="container d-flex justify-content-center align-items-center">
                     </div>
                 <?php endif; ?>
                 
-                <form id="signup-form"
-                    name="signupForm"
-                    class="custom-form contact-form mb-5 mb-lg-0"
-                    action="Action/signup_handler.php"
-                    method="POST" role="form">
-                    <div class="contact-form-body">
-                        <div class="row">
-                            <div
-                                class="col-lg-6 col-md-6 col-12 mb-3">
-                                <input type="text"
-                                    name="signup-name"
-                                    id="signup-name"
-                                    class="form-control"
-                                    placeholder="Full Name"
-                                    required>
+                <?php if ($signupEnabled): ?>
+                    <form id="signup-form"
+                        name="signupForm"
+                        class="custom-form contact-form mb-5 mb-lg-0"
+                        action="Action/signup_handler.php"
+                        method="POST" role="form">
+                        <div class="contact-form-body">
+                            <div class="row">
+                                <div
+                                    class="col-lg-6 col-md-6 col-12 mb-3">
+                                    <input type="text"
+                                        name="signup-name"
+                                        id="signup-name"
+                                        class="form-control"
+                                        placeholder="Full Name"
+                                        required>
+                                </div>
+                                <div
+                                    class="col-lg-6 col-md-6 col-12 mb-3">
+                                    <input type="text"
+                                        name="signup-id"
+                                        id="signup-id"
+                                        class="form-control"
+                                        placeholder="University ID"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div
+                                    class="col-lg-6 col-md-6 col-12 mb-3">
+                                    <input type="email"
+                                        name="signup-main-email"
+                                        id="signup-main-email"
+                                        class="form-control"
+                                        placeholder="Main Email Address"
+                                        required>
+                                </div>
+                                <div
+                                    class="col-lg-6 col-md-6 col-12 mb-3">
+                                    <input type="email"
+                                        name="signup-gsuite-email"
+                                        id="signup-gsuite-email"
+                                        class="form-control"
+                                        placeholder="GSuite Email (if available)">
+                                </div>
+                            </div>
+                
+                            <div class="row">
+                                <div
+                                    class="col-lg-6 col-md-6 col-12 mb-3">
+                                    <input type="text"
+                                        name="signup-department"
+                                        id="signup-department"
+                                        class="form-control"
+                                        placeholder="Department"
+                                        required>
+                                </div>
+                                <div
+                                    class="col-lg-6 col-md-6 col-12 mb-3">
+                                    <input type="tel"
+                                        name="signup-phone"
+                                        id="signup-phone"
+                                        class="form-control"
+                                        placeholder="Phone Number"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div
+                                    class="col-lg-6 col-md-6 col-12 mb-3">
+                                    <select
+                                        name="signup-semester"
+                                        id="signup-semester"
+                                        class="form-control"
+                                        required>
+                                        <option value>Current
+                                            Semester</option>
+                                        <option
+                                            value="1st">1st</option>
+                                        <option
+                                            value="2nd">2nd</option>
+                                        <option
+                                            value="3rd">3rd</option>
+                                        <option
+                                            value="4th">4th</option>
+                                        <option
+                                            value="5th">5th</option>
+                                        <option
+                                            value="6th">6th</option>
+                                        <option
+                                            value="7th">7th</option>
+                                        <option
+                                            value="8th">8th</option>
+                                        <option
+                                            value="9th">9th</option>
+                                        <option
+                                            value="10th+">10th
+                                            or above</option>
+                                    </select>
+                                </div>
+                                <div
+                                    class="col-lg-6 col-md-6 col-12 mb-3">
+                                    <select name="signup-gender"
+                                        id="signup-gender"
+                                        class="form-control"
+                                        required>
+                                        <option
+                                            value>Gender</option>
+                                        <option
+                                            value="Male">Male</option>
+                                        <option
+                                            value="Female">Female</option>
+                                        <option
+                                            value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div
+                                    class="col-lg-6 col-md-6 col-12 mb-3">
+                                    <input type="date"
+                                        name="signup-dob"
+                                        id="signup-dob"
+                                        class="form-control"
+                                        placeholder="Date of Birth"
+                                        required>
+                                </div>
+                                <div
+                                    class="col-lg-6 col-md-6 col-12 mb-3">
+                                    <input type="url"
+                                        name="signup-facebook"
+                                        id="signup-facebook"
+                                        class="form-control"
+                                        placeholder="Facebook Profile URL">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">First Department Preference in BUCUC:</label>
+                                    <select name="signup-first-dept"
+                                        id="signup-first-dept"
+                                        class="form-control"
+                                        required>
+                                        <option value="">Select Department</option>
+                                        <!-- Options will be populated dynamically by JavaScript -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Second Department Preference in BUCUC:</label>
+                                    <select name="signup-second-dept"
+                                        id="signup-second-dept"
+                                        class="form-control"
+                                        required>
+                                        <option value="">Select Department</option>
+                                    </select>
+                                </div>
                             </div>
                             <div
-                                class="col-lg-6 col-md-6 col-12 mb-3">
-                                <input type="text"
-                                    name="signup-id"
-                                    id="signup-id"
-                                    class="form-control"
-                                    placeholder="University ID"
-                                    required>
+                                class="col-lg-4 col-md-10 col-8 mx-auto">
+                                <button type="submit"
+                                    class="form-control"><?php echo $signupEnabled ? 'Apply Now' : 'Login'; ?></button>
                             </div>
                         </div>
-                        <div class="row">
-                            <div
-                                class="col-lg-6 col-md-6 col-12 mb-3">
-                                <input type="email"
-                                    name="signup-main-email"
-                                    id="signup-main-email"
-                                    class="form-control"
-                                    placeholder="Main Email Address"
-                                    required>
+                    </form>
+                <?php else: ?>
+                    <div class="contact-form mb-5 mb-lg-0" style="padding: 60px 40px; text-align: center;">
+                        <div class="signup-disabled-message">
+                            <i class="fas fa-user-slash" style="font-size: 4rem; color: #dc3545; margin-bottom: 2rem; opacity: 0.8;"></i>
+                            <h3 style="color: #dc3545; font-weight: 700; margin-bottom: 1rem;">Sign Up Currently Disabled</h3>
+                            <p style="color: #666; font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">
+                                The membership registration system is temporarily disabled. 
+                                Please check back later or contact the admin team for more information.
+                            </p>
+                            <div style="background: rgba(220, 53, 69, 0.1); border: 2px solid rgba(220, 53, 69, 0.3); border-radius: 15px; padding: 20px; margin-top: 2rem;">
+                                <p style="color: #721c24; margin: 0; font-weight: 600;">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    This is a temporary measure to manage the application process effectively.
+                                </p>
                             </div>
-                            <div
-                                class="col-lg-6 col-md-6 col-12 mb-3">
-                                <input type="email"
-                                    name="signup-gsuite-email"
-                                    id="signup-gsuite-email"
-                                    class="form-control"
-                                    placeholder="GSuite Email (if available)">
-                            </div>
-                        </div>
-            
-                        <div class="row">
-                            <div
-                                class="col-lg-6 col-md-6 col-12 mb-3">
-                                <input type="text"
-                                    name="signup-department"
-                                    id="signup-department"
-                                    class="form-control"
-                                    placeholder="Department"
-                                    required>
-                            </div>
-                            <div
-                                class="col-lg-6 col-md-6 col-12 mb-3">
-                                <input type="tel"
-                                    name="signup-phone"
-                                    id="signup-phone"
-                                    class="form-control"
-                                    placeholder="Phone Number"
-                                    required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div
-                                class="col-lg-6 col-md-6 col-12 mb-3">
-                                <select
-                                    name="signup-semester"
-                                    id="signup-semester"
-                                    class="form-control"
-                                    required>
-                                    <option value>Current
-                                        Semester</option>
-                                    <option
-                                        value="1st">1st</option>
-                                    <option
-                                        value="2nd">2nd</option>
-                                    <option
-                                        value="3rd">3rd</option>
-                                    <option
-                                        value="4th">4th</option>
-                                    <option
-                                        value="5th">5th</option>
-                                    <option
-                                        value="6th">6th</option>
-                                    <option
-                                        value="7th">7th</option>
-                                    <option
-                                        value="8th">8th</option>
-                                    <option
-                                        value="9th">9th</option>
-                                    <option
-                                        value="10th+">10th
-                                        or above</option>
-                                </select>
-                            </div>
-                            <div
-                                class="col-lg-6 col-md-6 col-12 mb-3">
-                                <select name="signup-gender"
-                                    id="signup-gender"
-                                    class="form-control"
-                                    required>
-                                    <option
-                                        value>Gender</option>
-                                    <option
-                                        value="Male">Male</option>
-                                    <option
-                                        value="Female">Female</option>
-                                    <option
-                                        value="Other">Other</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div
-                                class="col-lg-6 col-md-6 col-12 mb-3">
-                                <input type="date"
-                                    name="signup-dob"
-                                    id="signup-dob"
-                                    class="form-control"
-                                    placeholder="Date of Birth"
-                                    required>
-                            </div>
-                            <div
-                                class="col-lg-6 col-md-6 col-12 mb-3">
-                                <input type="url"
-                                    name="signup-facebook"
-                                    id="signup-facebook"
-                                    class="form-control"
-                                    placeholder="Facebook Profile URL">
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-12 mb-3">
-                                <label class="form-label">First Department Preference in BUCUC:</label>
-                                <select name="signup-first-dept"
-                                    id="signup-first-dept"
-                                    class="form-control"
-                                    required>
-                                    <option value="">Select Department</option>
-                                    <!-- Options will be populated dynamically by JavaScript -->
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-12 mb-3">
-                                <label class="form-label">Second Department Preference in BUCUC:</label>
-                                <select name="signup-second-dept"
-                                    id="signup-second-dept"
-                                    class="form-control"
-                                    required>
-                                    <option value="">Select Department</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div
-                            class="col-lg-4 col-md-10 col-8 mx-auto">
-                            <button type="submit"
-                                class="form-control">Sign
-                                Up</button>
                         </div>
                     </div>
-                </form>
+                <?php endif; ?>
             </div>
 
             <div class="tab-pane fade" id="nav-LoginForm"

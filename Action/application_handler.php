@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_once '../Database/db.php';
 require_once '../config/email_config.php';
 require_once '../vendor/autoload.php';
+require_once 'google_sheets_integration.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -68,17 +69,37 @@ try {
             // Send congratulations email
             $emailResult = sendCongratulationsEmail($member);
             
+            // Send data to Google Sheets
+            $sheetsResult = sendToGoogleSheets($member);
+            
+            // Log the Google Sheets operation for debugging
+            logGoogleSheetsOperation('accept_member', $member, $sheetsResult);
+            
+            // Determine response message based on both email and sheets results
+            $messages = [];
             if ($emailResult['success']) {
-                echo json_encode([
-                    'success' => true, 
-                    'message' => 'Member accepted successfully and congratulations email sent!'
-                ]);
+                $messages[] = 'congratulations email sent';
             } else {
-                echo json_encode([
-                    'success' => true, 
-                    'message' => 'Member accepted successfully, but email failed to send: ' . $emailResult['error']
-                ]);
+                $messages[] = 'email failed: ' . $emailResult['error'];
             }
+            
+            if ($sheetsResult['success']) {
+                $messages[] = 'data added to Google Sheets';
+            } else {
+                $messages[] = 'Google Sheets error: ' . $sheetsResult['message'];
+            }
+            
+            $finalMessage = 'Member accepted successfully';
+            if (!empty($messages)) {
+                $finalMessage .= ' (' . implode(', ', $messages) . ')';
+            }
+            
+            echo json_encode([
+                'success' => true, 
+                'message' => $finalMessage,
+                'email_success' => $emailResult['success'],
+                'sheets_success' => $sheetsResult['success']
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to update member status in database']);
         }

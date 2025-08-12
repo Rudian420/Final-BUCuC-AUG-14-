@@ -25,6 +25,8 @@
             $_SESSION['admin_email'] = $admin[0]['email'];
             $_SESSION['admin_role'] = $admin[0]['role'];
             $_SESSION['admin'] = true;
+            $_SESSION['admin_logged_in'] = true; // For signup control compatibility
+            $_SESSION['admin_name'] = $admin[0]['username']; // For signup control compatibility
             header("refresh:1;url=admin_dashboard.php");
         } else {
             $error = "Invalid admin credentials. Contact: bucuc@support.ac.bd";
