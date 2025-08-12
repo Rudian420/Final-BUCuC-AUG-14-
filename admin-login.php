@@ -29,7 +29,7 @@
             $_SESSION['admin_name'] = $admin[0]['username']; // For signup control compatibility
             header("refresh:1;url=admin_dashboard.php");
         } else {
-            $error = "Invalid admin credentials. Contact: bucuc@support.ac.bd";
+            $error = "Invalid admin credentials. Contact: hr.bucuc@gmail.com";
         }
     }
 ?>
@@ -69,14 +69,14 @@
       </div>
 
     <?php if (!empty($error)): ?>
-      <div class="error-message" id="errorMessage" style="display: block;">
+      <div class="error-message" id="errorMessage" style="display: block; margin-bottom: 20px;">
         <i class="fas fa-exclamation-triangle me-2"></i>
         <span id="errorText"><?= htmlspecialchars($error) ?></span>
       </div>
     <?php endif; ?>
 
     <?php if (!empty($success)): ?>
-      <div class="success-message" id="successMessage" style="display: block;">
+      <div class="success-message" id="successMessage" style="display: block; margin-bottom: 20px;">
         <i class="fas fa-check-circle me-2"></i>
         <span id="successText"><?= htmlspecialchars($success) ?></span>
       </div>

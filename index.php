@@ -2476,7 +2476,7 @@ class="container d-flex justify-content-center align-items-center">
 <div class="row">
 
     <div class="col-lg-8 col-12 mx-auto">
-        <h2 class="text-center mb-4 signup-title">Sign Up</h2>
+        <h2 class="text-center mb-4 signup-title">Apply Now</h2>
 
         <nav class="d-flex justify-content-center">
             <div
@@ -2489,7 +2489,7 @@ class="container d-flex justify-content-center align-items-center">
                     type="button" role="tab"
                     aria-controls="nav-ContactForm"
                     aria-selected="true">
-                    <h5>Sign Up Form</h5>
+                    <h5>Application Form</h5>
                 </button>
                 <button class="nav-link login-tab"
                     id="nav-LoginForm-tab"
@@ -2707,10 +2707,10 @@ class="container d-flex justify-content-center align-items-center">
                     <div class="contact-form mb-5 mb-lg-0" style="padding: 60px 40px; text-align: center;">
                         <div class="signup-disabled-message">
                             <i class="fas fa-user-slash" style="font-size: 4rem; color: #dc3545; margin-bottom: 2rem; opacity: 0.8;"></i>
-                            <h3 style="color: #dc3545; font-weight: 700; margin-bottom: 1rem;">Sign Up Currently Disabled</h3>
+                            <h3 style="color: #dc3545; font-weight: 700; margin-bottom: 1rem;">Application Form expired for current Semester</h3>
                             <p style="color: #666; font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">
                                 The membership registration system is temporarily disabled. 
-                                Please check back later or contact the admin team for more information.
+                                Please check back Next Semester or contact the admin team for more information.
                             </p>
                             <div style="background: rgba(220, 53, 69, 0.1); border: 2px solid rgba(220, 53, 69, 0.3); border-radius: 15px; padding: 20px; margin-top: 2rem;">
                                 <p style="color: #721c24; margin: 0; font-weight: 600;">
@@ -4070,8 +4070,8 @@ memberDiv.innerHTML = `
             onerror="this.src='images/placeholder.svg'; console.error('Failed to load image:', '${member.image}');" />
 </div>
 <div class="artists-hover">
-    <p><strong>Name:</strong> ${member.name}</p>
-    <p><strong>Position:</strong> ${member.panel}</p>
+    <p style="color:white"><strong>Name:</strong> ${member.name}</p>
+    <p style="color:white"><strong>Position:</strong> ${member.panel}</p>
     <hr>
     <p class="mb-0"><strong>Facebook:</strong> <a href="#">${member.name}</a></p>
 </div>
