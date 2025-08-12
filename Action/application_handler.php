@@ -147,6 +147,9 @@ function sendCongratulationsEmail($member) {
 }
 
 function generateEmailTemplate($member) {
+    // Get venue information
+    $venueInfo = getLatestVenueInfo();
+    
     $template = '
     <!DOCTYPE html>
     <html lang="en">
@@ -245,7 +248,24 @@ function generateEmailTemplate($member) {
                 </ul>
                 
                 <p>We will contact you soon with more details about upcoming events and orientation sessions.</p>
+                ';
                 
+                // Add venue information if available
+                if ($venueInfo) {
+                    $template .= '
+                <div class="highlight" style="background-color: #fff3cd; border-left: 4px solid #ffc107; margin: 20px 0;">
+                    <h3 style="color: #856404; margin-top: 0;">📍 Upcoming Event/Meeting</h3>
+                    <ul style="margin-bottom: 0;">
+                        <li><strong>Venue:</strong> ' . htmlspecialchars($venueInfo['venue_name']) . '</li>
+                        <li><strong>Location:</strong> ' . htmlspecialchars($venueInfo['venue_location']) . '</li>
+                        <li><strong>Date:</strong> ' . date('F j, Y', strtotime($venueInfo['venue_dateTime'])) . '</li>
+                        <li><strong>Time:</strong> ' . htmlspecialchars($venueInfo['venue_startingTime'] . ' - ' . $venueInfo['venue_endingTime'] . ' ' . $venueInfo['venu_ampm']) . '</li>
+                    </ul>
+                </div>
+                ';
+                }
+                
+                $template .= '
                 <p>Once again, congratulations on becoming part of the BUCUC family!</p>
                 
                 <p>Best regards,<br>
@@ -265,16 +285,54 @@ function generateEmailTemplate($member) {
 }
 
 function generatePlainTextEmail($member) {
-    return "Congratulations " . $member['full_name'] . "!\n\n" .
-           "Your application to join the BRAC University Cultural Club has been ACCEPTED!\n\n" .
-           "Your Details:\n" .
-           "Name: " . $member['full_name'] . "\n" .
-           "University ID: " . $member['university_id'] . "\n" .
-           "Department: " . $member['department'] . "\n" .
-           "First Priority: " . $member['firstPriority'] . "\n" .
-           "Second Priority: " . $member['secondPriority'] . "\n\n" .
-           "Welcome to BUCUC!\n\n" .
-           "Best regards,\n" .
-           "BRAC University Cultural Club";
+    $venueInfo = getLatestVenueInfo();
+    
+    $text = "Congratulations " . $member['full_name'] . "!\n\n" .
+            "Your application to join the BRAC University Cultural Club has been ACCEPTED!\n\n" .
+            "Your Details:\n" .
+            "Name: " . $member['full_name'] . "\n" .
+            "University ID: " . $member['university_id'] . "\n" .
+            "Department: " . $member['department'] . "\n" .
+            "First Priority: " . $member['firstPriority'] . "\n" .
+            "Second Priority: " . $member['secondPriority'] . "\n\n" .
+            "What's Next?\n" .
+            "As a member of BUCUC, you can now:\n" .
+            "- Participate in all cultural events and competitions\n" .
+            "- Join various committees based on your interests\n" .
+            "- Attend exclusive workshops and training sessions\n" .
+            "- Network with fellow cultural enthusiasts\n" .
+            "- Contribute to organizing amazing cultural programs\n\n";
+            
+    // Add venue information if available
+    if ($venueInfo) {
+        $text .= "UPCOMING EVENT/MEETING:\n" .
+                 "Venue: " . $venueInfo['venue_name'] . "\n" .
+                 "Location: " . $venueInfo['venue_location'] . "\n" .
+                 "Date: " . date('F j, Y', strtotime($venueInfo['venue_dateTime'])) . "\n" .
+                 "Time: " . $venueInfo['venue_startingTime'] . ' - ' . $venueInfo['venue_endingTime'] . ' ' . $venueInfo['venu_ampm'] . "\n\n";
+    }
+            
+    $text .= "Welcome to BUCUC!\n\n" .
+             "Best regards,\n" .
+             "BRAC University Cultural Club";
+             
+    return $text;
+}
+
+function getLatestVenueInfo() {
+    try {
+        $database = new Database();
+        $pdo = $database->createConnection();
+        
+        // Get the latest venue information
+        $stmt = $pdo->query("SELECT * FROM venuInfo ORDER BY venue_id DESC LIMIT 1");
+        $venue = $stmt->fetch();
+        
+        return $venue ? $venue : null;
+        
+    } catch (Exception $e) {
+        // Return null if there's an error or no venue info
+        return null;
+    }
 }
 ?>

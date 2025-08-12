@@ -326,6 +326,49 @@ function getTimeAgo($date) {
             left: 100%;
         }
         
+        /* Set Venue Button Styling */
+        .btn-set-venue {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            border-radius: 30px;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+        
+        .btn-set-venue:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+            color: white;
+            background: linear-gradient(45deg, #218838, #1e7e34);
+            text-decoration: none;
+        }
+        
+        .btn-set-venue:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn-set-venue::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-set-venue:hover::before {
+            left: 100%;
+        }
+        
         .clear-all-warning {
             color: #ffc107;
             font-size: 0.9rem;
@@ -424,14 +467,19 @@ function getTimeAgo($date) {
             <!-- Statistics Row -->
         
             
-            <!-- Clear All Applications Button -->
+            <!-- Clear All Applications and Set Venue Section -->
             <div class="clear-all-section text-center mb-4">
-                <button class="btn btn-clear-all" id="clearAllBtn" onclick="showClearAllModal()">
-                    <i class="fas fa-trash-alt me-2"></i>Clear
-                </button>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <button class="btn btn-clear-all" id="clearAllBtn" onclick="showClearAllModal()">
+                        <i class="fas fa-trash-alt me-2"></i>Clear
+                    </button>
+                    <a href="set_venue.php" class="btn btn-set-venue">
+                        <i class="fas fa-map-marker-alt me-2"></i>Set Venue
+                    </a>
+                </div>
                 <p class="clear-all-warning mt-2">
                     <i class="fas fa-exclamation-triangle me-1"></i>
-                    <strong>Warning:</strong> This will permanently delete ALL applications from the database!
+                    <strong>Warning:</strong> Clear will permanently delete ALL applications from the database!
                 </p>
             </div>
             

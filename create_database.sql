@@ -26,3 +26,17 @@ CREATE TABLE IF NOT EXISTS signup_status (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updated_by VARCHAR(100) DEFAULT NULL
 )
+
+
+CREATE TABLE IF NOT EXISTS `venuInfo`(
+    `venue_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `venue_name` VARCHAR(255) NOT NULL,
+    `venue_location` VARCHAR(255) NOT NULL,
+    `venue_dateTime` DATETIME NOT NULL,
+    `venue_startingTime` VARCHAR(10) NOT NULL,
+    `venue_endingTime` VARCHAR(10) NOT NULL
+)
+
+ALTER TABLE `venuInfo` ADD COLUMN `venu_ampm` VARCHAR(2) NOT NULL DEFAULT 'PM';
+
+`venu_ampm` VARCHAR(2) NOT NULL DEFAULT 'PM'
