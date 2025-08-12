@@ -1443,42 +1443,12 @@ class="container d-flex justify-content-center align-items-center">
             <h2 class="text-white mb-4">BRAC University
                 Cultural Club</h2>
 
-            <p class="text-white"><strong>Publish
-                    Date:</strong> March 19th, 2016</p>
+            <p class="text-white">BRAC University Cultural Club (BUCuC), established in 2002, is the university’s oldest, largest, and most celebrated cultural club with 380+ active members. Dedicated to preserving Bengali heritage while embracing global artistic expressions, BUCuC provides a vibrant platform for students to showcase talents in music, dance, and cultural storytelling. BUCuC hosts grand events like Rhythm Revive, Jolsha, Symphonic Reminiscence, Boishakh, uniting current students, alumni, and the wider university community. The club uniquely blends tradition with modernity—featuring everything from classical and folk performances to classical, pop, rock, fusion, and Qawali. Beyond performances, BUCuC nurtures confidence, leadership, and creative growth in its members. As the only cultural club at BRAC University, BUCuC is not just a platform—it’s a legacy, a family, and the cultural heartbeat of the university.</p>
 
-            <p class="text-white">BRAC University Cultural
-                Club organized an event to welcome new
-                members who have signed up for the club on
-                18 March 2016. The program started with the
-                introduction of the existing club members.
-                Video presentations were shown to give the
-                students a brief synopsis about the
-                activities of the Club. Students were also
-                introduced with the Assistant Executive
-                Panel. The event covered few dance
-                performances, songs, and fun sessions.</p>
+            <h6 class="text-warning mt-4">BUCuC Mentors</h6>
 
-            <h6 class="text-warning mt-4">Talent
-                Showcase</h6>
+            <p class="text-white">BUCuC has nurtured many who went on to become accomplished leaders. Notable mentors include Rudan Al Amin, former Secretary of PR and Editorial (2017–2018), celebrated for his stage presence and humor; Yash Rohan, ex-Secretary of Marketing, IT, and Archive (2016–2017), now a prominent Bangladeshi actor; and Sadat Kabir Rudro, senior performer (2014–2015) and co-founder of Dhaka Guys Studios, known for his music and guitar skills. Former Performance Secretary Miftah Zaman transformed BUCuC’s performing arts scene with magnetic stage presence, while Ankan Kumar, a former member, is now an acclaimed singer. Nafisa Tasnuva Hossain, ex-Secretary of PR and Editorial, captivated audiences with her voice and guitar, and now serves as General Manager at Pathao. BUCuC and BRAC University continue to honor their lasting legacies.</p>
 
-            <p class="text-white">Afterward, the new members
-                were asked to come up on the stage and
-                introduce themselves and show what they were
-                capable of. This is where all the fun began.
-                All the performers came on stage and gave
-                their best shot trying to impress the judges
-                with their unique skills set. Some baffled
-                the judges with their voice and some blew
-                the judges with amazement with their dance
-                skills.</p>
-
-            <h6 class="text-warning mt-4">Recruitment of New
-                Faces</h6>
-
-            <p class="text-white">At the end of the event,
-                the club found some brilliant faces to
-                recruit for the next generation of BRAC
-                University Cultural Club.</p>
 
             <h6 class="text-warning mt-4">Future Plans</h6>
 
@@ -1495,8 +1465,7 @@ class="container d-flex justify-content-center align-items-center">
                     onclick="window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'}); return false;">Contact
                     Us</a>
                 <a href="#section_5"
-                    class="btn btn-warning ms-2">View
-                    Schedule</a>
+                    class="btn btn-warning ms-2">Past Events</a>
             </div>
         </div>
     </div>
@@ -1518,10 +1487,9 @@ class="container d-flex justify-content-center align-items-center">
                                     style="height:36px; width:36px; object-fit:contain; display:block; margin:0;">
                             </div>
                             <div class="ms-4">
-                                <h6>A Happy Moment</h6>
-                                <p class="mb-0">Our Amazing
-                                    Festival Experience with
-                                    BRACU</p>
+                                <h6>Wild Escape</h6>
+                                <p class="mb-0">Our Amazing Experience with
+                                    BUAC</p>
                             </div>
                         </div>
                     </div>
@@ -1539,9 +1507,8 @@ class="container d-flex justify-content-center align-items-center">
                                     style="height:36px; width:36px; object-fit:contain; display:block; margin:0;">
                             </div>
                             <div class="ms-4">
-                                <h6>Festival Fun</h6>
-                                <p class="mb-0">Dancing and
-                                    Singing with Friends</p>
+                                <h6>Rhythm Revive 25.0</h6>
+                                <p class="mb-0">Our signature recruitment show.</p>
                             </div>
                         </div>
                     </div>
@@ -1559,9 +1526,8 @@ class="container d-flex justify-content-center align-items-center">
                                     style="height:36px; width:36px; object-fit:contain; display:block; margin:0;">
                             </div>
                             <div class="ms-4">
-                                <h6>Memorable Night</h6>
-                                <p class="mb-0">A Night to
-                                    Remember</p>
+                                <h6>Power Panel</h6>
+                                <p class="mb-0">The power house of the club</p>
                             </div>
                         </div>
                     </div>
@@ -1579,9 +1545,8 @@ class="container d-flex justify-content-center align-items-center">
                                     style="height:36px; width:36px; object-fit:contain; display:block; margin:0;">
                             </div>
                             <div class="ms-4">
-                                <h6>Team Spirit</h6>
-                                <p class="mb-0">Working
-                                    Together for Success</p>
+                                <h6>Iftar Mahfil</h6>
+                                <p class="mb-0">Where tradition meets togetherness.</p>
                             </div>
                         </div>
                     </div>
@@ -1599,9 +1564,8 @@ class="container d-flex justify-content-center align-items-center">
                                     style="height:36px; width:36px; object-fit:contain; display:block; margin:0;">
                             </div>
                             <div class="ms-4">
-                                <h6>Grand Finale</h6>
-                                <p class="mb-0">Ending on a
-                                    High Note</p>
+                                <h6>বৈশাখ উৎসব</h6>
+                                <p class="mb-0">রঙে, গানে, আর ঐতিহ্যে রাঙানো বৈশাখ ১৪৩২!</p>
                             </div>
                         </div>
                     </div>
@@ -2077,7 +2041,7 @@ class="container d-flex justify-content-center align-items-center">
                 <div class="member-name">
                     <span class="name">Tamejul Habib</span>
                     <span class="position">Secretary of
-                        Finance</span>
+                        Admin</span>
                 </div>
             </div>
             <div class="swiper-slide">
@@ -2379,8 +2343,7 @@ class="container d-flex justify-content-center align-items-center">
     <div class="col-12 text-center">
 
         <div class="event-schedule-container">
-            <div class="event-schedule-header">Event
-                Schedule</div>
+            <div class="event-schedule-header">Past Events</div>
             <div class="event-cards-grid">
                 <!-- Card 1 -->
                 <div class="event-card" onclick="window.location.href='past_events.html#pop-night'" style="cursor: pointer;">
@@ -2389,8 +2352,7 @@ class="container d-flex justify-content-center align-items-center">
                     <div class="event-card-content">
                         <span class="event-icon"><i
                                 class="fa-solid fa-music"></i></span>
-                        <div class="event-title">Pop
-                            Night</div>
+                        <div class="event-title">Rhythm Revive 25.0</div>
                         <div class="event-time">Wed, 5:00 -
                             7:00 PM</div>
                         <div class="event-by">By Adele</div>

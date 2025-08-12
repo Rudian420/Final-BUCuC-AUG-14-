@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Test - Panel 2023-24</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .test-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 2px solid #ccc;
+            margin: 10px;
+            border-radius: 8px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .image-path {
+            font-family: monospace;
+            background: #f8f8f8;
+            padding: 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Loading Test - Panel 2023-24</h1>
+    
+    <div class="test-container">
+        <h2>Panel Members Test</h2>
+        <p><span class="image-path">images/Panel_23_24/Panels/Nashib Siam (President).jpg</span></p>
+        <img src="images/Panel_23_24/Panels/Nashib Siam (President).jpg" alt="Nashib Siam" class="test-image" onload="this.nextElementSibling.innerHTML='✅ LOADED'" onerror="this.nextElementSibling.innerHTML='❌ FAILED'">
+        <span class="status"></span>
+        
+        <p><span class="image-path">images/Panel_23_24/Panels/Nawshaba Maniza Riddhi (VP).jpg</span></p>
+        <img src="images/Panel_23_24/Panels/Nawshaba Maniza Riddhi (VP).jpg" alt="Nawshaba Maniza Riddhi" class="test-image" onload="this.nextElementSibling.innerHTML='✅ LOADED'" onerror="this.nextElementSibling.innerHTML='❌ FAILED'">
+        <span class="status"></span>
+    </div>
+
+    <div class="test-container">
+        <h2>Secretary Members Test</h2>
+        <p><span class="image-path">images/Panel_23_24/Secretary/Admin/Affan Adid (Admin).jpg</span></p>
+        <img src="images/Panel_23_24/Secretary/Admin/Affan Adid (Admin).jpg" alt="Affan Adid" class="test-image" onload="this.nextElementSibling.innerHTML='✅ LOADED'" onerror="this.nextElementSibling.innerHTML='❌ FAILED'">
+        <span class="status"></span>
+        
+        <p><span class="image-path">images/Panel_23_24/Secretary/Creative/Humayra (Creative).jpg</span></p>
+        <img src="images/Panel_23_24/Secretary/Creative/Humayra (Creative).jpg" alt="Humayra" class="test-image" onload="this.nextElementSibling.innerHTML='✅ LOADED'" onerror="this.nextElementSibling.innerHTML='❌ FAILED'">
+        <span class="status"></span>
+        
+        <p><span class="image-path">images/Panel_23_24/Secretary/RD/Sadid ( Rd).jpg</span></p>
+        <img src="images/Panel_23_24/Secretary/RD/Sadid ( Rd).jpg" alt="Sadid" class="test-image" onload="this.nextElementSibling.innerHTML='✅ LOADED'" onerror="this.nextElementSibling.innerHTML='❌ FAILED'">
+        <span class="status"></span>
+    </div>
+
+    <div class="test-container">
+        <h2>Alternative Paths Test</h2>
+        <p>Testing with encoded spaces:</p>
+        <p><span class="image-path">images/Panel_23_24/Secretary/RD/Sadid%20(%20Rd).jpg</span></p>
+        <img src="images/Panel_23_24/Secretary/RD/Sadid%20(%20Rd).jpg" alt="Sadid Encoded" class="test-image" onload="this.nextElementSibling.innerHTML='✅ LOADED'" onerror="this.nextElementSibling.innerHTML='❌ FAILED'">
+        <span class="status"></span>
+    </div>
+
+    <script>
+        // Log any image loading errors to console
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                img.addEventListener('error', function() {
+                    console.error('Failed to load:', this.src);
+                });
+                img.addEventListener('load', function() {
+                    console.log('Successfully loaded:', this.src);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
