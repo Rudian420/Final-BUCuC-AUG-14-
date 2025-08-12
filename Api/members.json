@@ -764,7 +764,64 @@
           "department": "Panel"
         }
       ],
-      "secretaries": []
+      "secretaries": [
+        {
+          "id": "admin_2020",
+          "name": "Admin Secretary",
+          "position": "Admin Secretary",
+          "image": "images/Panel_20_21/Secreteries/admin/476231235_1669345223653372_3407867370287020034_n.jpg",
+          "facebook": "#",
+          "department": "Admin"
+        },
+        {
+          "id": "creative_1_2020",
+          "name": "Creative Secretary 1",
+          "position": "Creative Secretary",
+          "image": "images/Panel_20_21/Secreteries/creative/123926406_3095940650510775_7926925358628684138_n.jpg",
+          "facebook": "#",
+          "department": "Creative"
+        },
+        {
+          "id": "creative_2_2020",
+          "name": "Creative Secretary 2",
+          "position": "Creative Secretary",
+          "image": "images/Panel_20_21/Secreteries/creative/170745495_1691963967642284_8994484908450075508_n.jpg",
+          "facebook": "#",
+          "department": "Creative"
+        },
+        {
+          "id": "creative_3_2020",
+          "name": "Creative Secretary 3",
+          "position": "Creative Secretary",
+          "image": "images/Panel_20_21/Secreteries/creative/471644167_1812589182479411_6622247673044813939_n.jpg",
+          "facebook": "#",
+          "department": "Creative"
+        },
+        {
+          "id": "creative_4_2020",
+          "name": "Creative Secretary 4",
+          "position": "Creative Secretary",
+          "image": "images/Panel_20_21/Secreteries/creative/474080428_2696073080564696_2146795879080295010_n.jpg",
+          "facebook": "#",
+          "department": "Creative"
+        },
+        {
+          "id": "events_1_2020",
+          "name": "Events Secretary 1",
+          "position": "Events Secretary",
+          "image": "images/Panel_20_21/Secreteries/event/464713040_2792921144222449_472237782771168408_n.jpg",
+          "facebook": "#",
+          "department": "Events"
+        },
+        {
+          "id": "events_2_2020",
+          "name": "Events Secretary 2",
+          "position": "Events Secretary",
+          "image": "images/Panel_20_21/Secreteries/event/487048639_3105546046276958_9148728155394135784_n.jpg",
+          "facebook": "#",
+          "department": "Events"
+        }
+      ]
     },
     {
       "year": 2020,
@@ -791,7 +848,136 @@
           "department": "Panel"
         }
       ],
-      "secretaries": []
+      "secretaries": [
+        {
+          "id": "shahriar_2019",
+          "name": "Shahriar Nasif",
+          "position": "Admin Secretary",
+          "image": "images/Panel_19_20/Secretaries/admin/Shahriar Nasif.jpg",
+          "facebook": "#",
+          "department": "Admin"
+        },
+        {
+          "id": "iffat_2019",
+          "name": "Iffat Binte Hakim",
+          "position": "Creative Secretary",
+          "image": "images/Panel_19_20/Secretaries/creative/Iffat Binte Hakim.jpg",
+          "facebook": "#",
+          "department": "Creative"
+        },
+        {
+          "id": "sadia_2019",
+          "name": "Sadia Ishtiaque",
+          "position": "Creative Secretary",
+          "image": "images/Panel_19_20/Secretaries/creative/Sadia Ishtiaque.jpg",
+          "facebook": "#",
+          "department": "Creative"
+        },
+        {
+          "id": "lamia_2019",
+          "name": "Sayeda Lamia Tabassum",
+          "position": "Creative Secretary",
+          "image": "images/Panel_19_20/Secretaries/creative/Sayeda Lamia Tabassum.jpg",
+          "facebook": "#",
+          "department": "Creative"
+        },
+        {
+          "id": "nafiz_2019",
+          "name": "Nafiz Noor",
+          "position": "Events Secretary",
+          "image": "images/Panel_19_20/Secretaries/event/Nafiz Noor.jpg",
+          "facebook": "#",
+          "department": "Events"
+        },
+        {
+          "id": "ishraq_2019",
+          "name": "Ishraq Avi",
+          "position": "Finance Secretary",
+          "image": "images/Panel_19_20/Secretaries/fin/Ishraq Avi.jpg",
+          "facebook": "#",
+          "department": "Finance"
+        },
+        {
+          "id": "zuairya_2019",
+          "name": "Zuairya Ashger Khan Nuha",
+          "position": "HR Secretary",
+          "image": "images/Panel_19_20/Secretaries/hr/Zuairya Ashger Khan Nuha.jpg",
+          "facebook": "#",
+          "department": "HR"
+        },
+        {
+          "id": "sadman_miap_2019",
+          "name": "Sadman Sakib Ayon",
+          "position": "MIAP Secretary",
+          "image": "images/Panel_19_20/Secretaries/miap/Sadman Sakib Ayon.jpg",
+          "facebook": "#",
+          "department": "MIAP"
+        },
+        {
+          "id": "aninda_2019",
+          "name": "Aninda Nahiyan",
+          "position": "Performance Secretary",
+          "image": "images/Panel_19_20/Secretaries/perfromance/Aninda Nahiyan.jpg",
+          "facebook": "#",
+          "department": "Performance"
+        },
+        {
+          "id": "deepita_2019",
+          "name": "Deepita Chakrabortty",
+          "position": "Performance Secretary",
+          "image": "images/Panel_19_20/Secretaries/perfromance/Deepita Chakrabortty.jpg",
+          "facebook": "#",
+          "department": "Performance"
+        },
+        {
+          "id": "george_2019",
+          "name": "George Gourab",
+          "position": "Performance Secretary",
+          "image": "images/Panel_19_20/Secretaries/perfromance/George Gourab .jpg",
+          "facebook": "#",
+          "department": "Performance"
+        },
+        {
+          "id": "munirul_2019",
+          "name": "Munirul Azam Zayed",
+          "position": "Performance Secretary",
+          "image": "images/Panel_19_20/Secretaries/perfromance/Munirul Azam Zayed.jpg",
+          "facebook": "#",
+          "department": "Performance"
+        },
+        {
+          "id": "saib_2019",
+          "name": "Saib Sizan",
+          "position": "Performance Secretary",
+          "image": "images/Panel_19_20/Secretaries/perfromance/Saib Sizan.jpg",
+          "facebook": "#",
+          "department": "Performance"
+        },
+        {
+          "id": "sumit_2019",
+          "name": "Sumit Dutta",
+          "position": "Performance Secretary",
+          "image": "images/Panel_19_20/Secretaries/perfromance/Sumit Dutta.jpg",
+          "facebook": "#",
+          "department": "Performance"
+        },
+        {
+          "id": "modhumonty_2019",
+          "name": "Modhumonty Das",
+          "position": "PR Secretary",
+          "image": "images/Panel_19_20/Secretaries/pr/Modhumonty Das.jpg",
+          "facebook": "#",
+          "department": "PR"
+        },
+        {
+          "id": "pritam_2019",
+          "name": "Pritam Chakraborty",
+          "position": "PR Secretary",
+          "image": "images/Panel_19_20/Secretaries/pr/Pritam Chakraborty.jpg",
+          "facebook": "#",
+          "department": "PR"
+        }
+      ]
     }
   ],
   "metadata": {

@@ -2580,7 +2580,8 @@ class="container d-flex justify-content-center align-items-center">
                                         name="signup-gsuite-email"
                                         id="signup-gsuite-email"
                                         class="form-control"
-                                        placeholder="GSuite Email (if available)">
+                                        placeholder="GSuite Email (if available)"
+                                        required>
                                 </div>
                             </div>
                 
@@ -2670,7 +2671,8 @@ class="container d-flex justify-content-center align-items-center">
                                         name="signup-facebook"
                                         id="signup-facebook"
                                         class="form-control"
-                                        placeholder="Facebook Profile URL">
+                                        placeholder="Facebook Profile URL"
+                                        required>
                                 </div>
                             </div>
                             <div class="row mt-3">
