@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Dropdown Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-select {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            border: 2px solid #e76f2c;
+            border-radius: 5px;
+        }
+        .debug-log {
+            background: #1e1e2e;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 20px 0;
+            height: 400px;
+            overflow-y: auto;
+        }
+        .debug-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .error { color: #dc3545; }
+        .success { color: #28a745; }
+        .warning { color: #ffc107; }
+        .info { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>Panel Dropdown Debug Test</h1>
+        <p>This page tests the panel dropdown functionality that manages SB members display.</p>
+        
+        <div class="debug-section">
+            <h3>Panel Year Selector</h3>
+            <select id="panelYearSelect" class="form-select">
+                <option value="current">Current Panel (2024-2025)</option>
+                <option value="panel_23_24">2023–2024</option>
+                <option value="panel_22_23">2022–2023</option>
+                <option value="panel_21_22">2021–2022</option>
+                <option value="panel_20_21">2020–2021</option>
+                <option value="panel_19_20">2019–2020</option>
+            </select>
+        </div>
+        
+        <div class="debug-section">
+            <h3>Debug Log</h3>
+            <div id="debugLog" class="debug-log">
+                Loading debug interface...
+            </div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>JSON Data Summary</h3>
+            <div id="jsonSummary">Loading...</div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>Current Test Results</h3>
+            <div id="testResults">Select a year from the dropdown to test...</div>
+        </div>
+    </div>
+
+    <script>
+        // Debug logging function
+        function debugLog(message, type = 'info') {
+            const debugDiv = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const colorClass = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+            debugDiv.innerHTML += `<div class="${colorClass}">[${timestamp}] ${message}</div>`;
+            debugDiv.scrollTop = debugDiv.scrollHeight;
+        }
+        
+        // Map dropdown values to panel data keys (same as Index.php)
+        const panelDataKeys = {
+            'current': '2024',
+            'panel_23_24': '2023',
+            'panel_22_23': '2022',
+            'panel_21_22': '2021',
+            'panel_20_21': '2020',
+            'panel_19_20': '2019'
+        };
+        
+        // Same year mapping as Index.php loadSBMembersForYear function
+        const yearMapping = {
+            '2024': 2025, // Current year data
+            '2023': 2024,
+            '2022': 2023,
+            '2021': 2022,
+            '2020': 2021,
+            '2019': 2020
+        };
+
+        // Load and test SB members for year (same logic as Index.php)
+        async function loadSBMembersForYear(yearKey) {
+            try {
+                debugLog(`Loading SB members for yearKey: ${yearKey}`, 'info');
+                const response = await fetch("Api/members.json");
+                const jsonData = await response.json();
+                debugLog('JSON data loaded successfully', 'success');
+
+                const targetYear = yearMapping[yearKey];
+                debugLog(`Target year mapping: ${yearKey} -> ${targetYear}`, 'info');
+                const yearData = jsonData.years.find(y => y.year === targetYear);
+                debugLog(`Year data found: ${yearData ? 'YES' : 'NO'}`, yearData ? 'success' : 'error');
+
+                if (yearData && yearData.secretaries !== undefined) {
+                    debugLog(`Found ${yearData.secretaries.length} secretaries for ${targetYear}`, 'success');
+                    if (yearData.secretaries.length === 0) {
+                        debugLog('Secretaries array is empty for year ' + targetYear, 'warning');
+                    }
+                    return yearData.secretaries;
+                } else {
+                    debugLog(`No JSON data found for year ${targetYear}, would use hardcoded data`, 'warning');
+                    return null;
+                }
+            } catch (error) {
+                debugLog('Error loading JSON data: ' + error.message, 'error');
+                return null;
+            }
+        }
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            debugLog('Debug page loaded', 'success');
+            
+            // Load JSON summary
+            try {
+                const response = await fetch("Api/members.json");
+                const jsonData = await response.json();
+                
+                let summaryHTML = '<h4>Available Years in JSON:</h4><ul>';
+                jsonData.years.forEach(yearData => {
+                    const secretaryCount = yearData.secretaries ? yearData.secretaries.length : 0;
+                    const statusColor = secretaryCount > 0 ? 'success' : 'error';
+                    summaryHTML += `<li class="${statusColor}">Year ${yearData.year}: ${secretaryCount} secretaries</li>`;
+                });
+                summaryHTML += '</ul>';
+                
+                document.getElementById('jsonSummary').innerHTML = summaryHTML;
+                debugLog('JSON summary loaded', 'success');
+            } catch (error) {
+                document.getElementById('jsonSummary').innerHTML = '<p class="error">Failed to load JSON summary: ' + error.message + '</p>';
+                debugLog('Failed to load JSON summary: ' + error.message, 'error');
+            }
+            
+            // Set up dropdown handler
+            const dropdown = document.getElementById('panelYearSelect');
+            if (!dropdown) {
+                debugLog('Panel year dropdown not found!', 'error');
+                return;
+            }
+            debugLog('Panel year dropdown found', 'success');
+            
+            // Handle dropdown change event
+            dropdown.addEventListener('change', async function() {
+                const dropdownValue = this.value;
+                debugLog(`Dropdown changed to: ${dropdownValue}`, 'info');
+                
+                const selectedYearKey = panelDataKeys[dropdownValue];
+                if (!selectedYearKey) {
+                    debugLog('No data found for year: ' + dropdownValue, 'error');
+                    document.getElementById('testResults').innerHTML = `<p class="error">No mapping found for dropdown value: ${dropdownValue}</p>`;
+                    return;
+                }
+                debugLog(`Mapped to yearKey: ${selectedYearKey}`, 'success');
+                
+                // Test the SB members loading
+                const sbMembers = await loadSBMembersForYear(selectedYearKey);
+                
+                let resultsHTML = `<h4>Test Results for ${dropdownValue} (${selectedYearKey})</h4>`;
+                
+                if (sbMembers && sbMembers.length > 0) {
+                    resultsHTML += `<p class="success">✓ Successfully loaded ${sbMembers.length} SB members from JSON</p>`;
+                    resultsHTML += `<h5>First 5 Members:</h5><ul>`;
+                    sbMembers.slice(0, 5).forEach(member => {
+                        resultsHTML += `<li><strong>${member.name}</strong> - ${member.position} (${member.department})</li>`;
+                    });
+                    if (sbMembers.length > 5) {
+                        resultsHTML += `<li><em>... and ${sbMembers.length - 5} more</em></li>`;
+                    }
+                    resultsHTML += `</ul>`;
+                    debugLog(`SUCCESS: Loaded ${sbMembers.length} SB members for ${dropdownValue}`, 'success');
+                } else if (sbMembers && sbMembers.length === 0) {
+                    resultsHTML += `<p class="warning">⚠ Found year data but secretaries array is empty</p>`;
+                    debugLog(`WARNING: Empty secretaries array for ${dropdownValue}`, 'warning');
+                } else {
+                    resultsHTML += `<p class="error">✗ No SB members found - would fall back to hardcoded data</p>`;
+                    debugLog(`ERROR: No SB members found for ${dropdownValue}`, 'error');
+                }
+                
+                document.getElementById('testResults').innerHTML = resultsHTML;
+            });
+            
+            debugLog('Setup complete. Try selecting different years from the dropdown.', 'info');
+        });
+    </script>
+</body>
+</html>

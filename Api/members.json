@@ -218,7 +218,6 @@
           "image": "images/Panel_24_25/Secreteries/reshad.jpg",
           "department": "General"
         }
-        
       ]
     },
     {
@@ -258,7 +257,7 @@
           "id": "affan_2023",
           "name": "Affan Adid",
           "position": "Admin Secretary",
-          "image": "images/Panel_23_24/Secreteries/Admin/Affan Adid (Admin).jpg",
+          "image": "images/Panel_23_24/Secreteries/Admin/Affan_Adid.jpg",
           "department": "Admin"
         },
         {
