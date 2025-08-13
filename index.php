@@ -11,12 +11,12 @@ unset($_SESSION['signup_success'], $_SESSION['signup_error']);
 $adminSuccess = "";
 $adminError = "";
 
-if($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST['adminLogin'])){
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['adminLogin'])) {
     require_once 'Database/db.php';
-    
+
     $database = new Database();
     $conn = $database->createConnection();
-    
+
     $adminEmail = htmlspecialchars($_POST["adminEmail"]);
     $adminPassword = $_POST["adminPassword"];
 
@@ -26,7 +26,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST['adminLogin'])){
     $stmt->execute();
     $admin = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if($admin && password_verify($adminPassword, $admin[0]['password'])){
+    if ($admin && password_verify($adminPassword, $admin[0]['password'])) {
         $adminSuccess = "Login successful! Redirecting to dashboard...";
         $_SESSION['username'] = $admin[0]['username'];
         $_SESSION['admin_id'] = $admin[0]['id'];
@@ -1167,7 +1167,7 @@ $signupEnabled = getSignupStatus();
             overflow: hidden;
             position: relative;
             max-width: 850px;
-        
+
             margin: 0 auto;
             padding: 60px 50px;
         }
@@ -1207,8 +1207,15 @@ $signupEnabled = getSignupStatus();
         }
 
         @keyframes adminFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
         }
 
         .admin-login-title {
@@ -1529,7 +1536,7 @@ https://templatemo.com/tm-583-festava-live
             <li><a href="#section_4"><i class="fa fa-star"></i> Sb
                     Members</a></li>
             <li><a href="#section_5"><i class="fa fa-calendar"></i>
-            Past Events</a></li>
+                    Past Events</a></li>
             <li><a href="#footer"><i class="fa fa-user-plus"></i> Sign
                     Up</a></li>
         </ul>
@@ -1596,7 +1603,7 @@ https://templatemo.com/tm-583-festava-live
                             </li>
                             <li class="nav-item">
                                 <a class="btn custom-btn ms-4"
-                                    href="<?php echo $signupEnabled ? '#footer' : '#nav-LoginForm'; ?>"
+                                    href="#footer"
                                     style="background: #e76f2c; color: #fff; font-weight: bold; border-radius: 2em; padding: 8px 24px; font-size: 1em;"><?php echo $signupEnabled ? 'Apply Now' : 'Login'; ?></a>
                             </li>
                         </ul>
@@ -1614,7 +1621,7 @@ https://templatemo.com/tm-583-festava-live
                     BUCuC
                 </a>
 
-                <a href="<?php echo $signupEnabled ? 'ticket.html' : '#nav-LoginForm'; ?>"
+                <a href="#footer"
                     class="btn custom-btn d-lg-none ms-auto me-4"
                     style="background: #e76f2c; color: #fff; font-weight: bold; border-radius: 2em; padding: 8px 24px; font-size: 1em;"><?php echo $signupEnabled ? 'Apply Now' : 'Login'; ?></a>
 
@@ -1659,7 +1666,7 @@ https://templatemo.com/tm-583-festava-live
                         </li>
                     </ul>
 
-                    <a href="<?php echo $signupEnabled ? '#footer' : '#nav-LoginForm'; ?>"
+                    <a href="#footer"
                         class="btn custom-btn d-lg-block d-none"
                         style="background: #e76f2c; color: #fff; font-weight: bold; border-radius: 2em; padding: 8px 24px; font-size: 1em;"><?php echo $signupEnabled ? 'Apply Now' : 'Login'; ?></a>
                 </div>
@@ -1731,12 +1738,12 @@ https://templatemo.com/tm-583-festava-live
                 </div>
             </div>
 
-<div class="video-wrap">
-    <video autoplay loop muted playsinline preload="metadata" class="custom-video" poster="images/preview.jpg">
-        <source src="video/bucuc1.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</div>
+            <div class="video-wrap">
+                <video autoplay loop muted playsinline preload="metadata" class="custom-video" poster="images/preview.jpg">
+                    <source src="video/bucuc1.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
 
         </section>
 
@@ -3388,7 +3395,7 @@ https://templatemo.com/tm-583-festava-live
                                             <i class="fas fa-user-shield"></i>
                                         </div>
                                         <h2 class="admin-login-title">Login</h2>
-                                       
+                                        <p class="admin-login-subtitle">Enter your credentials to access the dashboard</p>
 
                                         <?php if (!empty($adminError)): ?>
                                             <div class="admin-error-message" style="display: block; margin-bottom: 20px; background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); border-radius: 10px; padding: 15px; color: #dc3545;">
@@ -3420,7 +3427,7 @@ https://templatemo.com/tm-583-festava-live
                                             </div>
                                             <button type="submit" name="adminLogin" class="admin-login-btn">
                                                 <i class="fas fa-sign-in-alt"></i>
-                                                LOGIN 
+                                                LOGIN TO DASHBOARD
                                             </button>
                                         </form>
 
@@ -3587,8 +3594,7 @@ https://templatemo.com/tm-583-festava-live
                 <div class="row">
 
                     <div class="col-lg-3 col-12 mt-5">
-                        <p class="copyright-text">Copyright © 2036 BUCuC
-                            Company</p>
+                        <p class="copyright-text">Copyright © 2025 BUCuC</p>
                     </div>
 
                     <div class="col-lg-8 col-12 mt-lg-5">
@@ -3631,19 +3637,6 @@ https://templatemo.com/tm-583-festava-live
     <script>
         // Initialize Swiper after DOM is fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
             // Function to determine if loop should be enabled
             function shouldEnableLoop() {
                 const slides = document.querySelectorAll('.sb-swiper .swiper-slide');
@@ -3736,7 +3729,7 @@ https://templatemo.com/tm-583-festava-live
         function togglePassword() {
             const passwordInput = document.querySelector('.admin-input[name="adminPassword"]');
             const toggleIcon = document.querySelector('.password-toggle');
-            
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 toggleIcon.classList.remove('fa-eye');
@@ -3778,10 +3771,8 @@ https://templatemo.com/tm-583-festava-live
         // Admin Check Function
         function checkAdminStatus(isAdmin) {
             if (isAdmin) {
-                // Navigate to admin login container
-                document.querySelector('#nav-LoginForm-tab').click();
-                // Scroll to the login section
-                document.querySelector('#footer').scrollIntoView({ behavior: 'smooth' });
+                // Redirect to admin login page
+                window.location.href = 'admin-login.php';
             } else {
                 // Show notification and redirect to header
                 showCustomNotification('Sorry, you are not an admin', 'warning');
@@ -5019,13 +5010,13 @@ ${message}
             }
 
             // Enhanced updateMembers function to work with both hardcoded and JSON data
-async function loadSBMembersForYear(yearKey) {
-try {
-console.log('Loading SB members for yearKey:', yearKey);
-// Add cache-busting parameter to force fresh data load
-const cacheBuster = Date.now();
-const response = await fetch(`Api/members.json?cb=${cacheBuster}`);
-const jsonData = await response.json();
+            async function loadSBMembersForYear(yearKey) {
+                try {
+                    console.log('Loading SB members for yearKey:', yearKey);
+                    // Add cache-busting parameter to force fresh data load
+                    const cacheBuster = Date.now();
+                    const response = await fetch(`Api/members.json?cb=${cacheBuster}`);
+                    const jsonData = await response.json();
                     console.log('JSON data loaded successfully');
 
                     // Map yearKey to actual year number
