@@ -1270,7 +1270,6 @@ $signupEnabled = getSignupStatus();
         .admin-input {
             background: transparent;
             border: none;
-            color: white;
             font-size: 0.95rem;
             padding: 12px 0;
             width: 100%;
@@ -3393,7 +3392,6 @@ https://templatemo.com/tm-583-festava-live
                                             <i class="fas fa-user-shield"></i>
                                         </div>
                                         <h2 class="admin-login-title">Login</h2>
-                                        <p class="admin-login-subtitle">Enter your credentials to access the dashboard</p>
 
                                         <?php if (!empty($adminError)): ?>
                                             <div class="admin-error-message" style="display: block; margin-bottom: 20px; background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); border-radius: 10px; padding: 15px; color: #dc3545;">
