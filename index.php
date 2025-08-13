@@ -1276,7 +1276,7 @@ $signupEnabled = getSignupStatus();
             width: 100%;
             outline: none;
         }
-        
+
         /* Override browser default styling for filled inputs */
         .admin-input:-webkit-autofill,
         .admin-input:-webkit-autofill:hover,
@@ -1291,7 +1291,7 @@ $signupEnabled = getSignupStatus();
         .admin-input::placeholder {
             color: rgba(255, 255, 255, 0.6);
         }
-        
+
         /* Make placeholder transparent when input has value */
         .admin-input:not(:placeholder-shown)::placeholder {
             color: transparent;
@@ -4522,21 +4522,18 @@ ${message}
                 },
                 '2021': {
                     panelMembers: [{
-                            name: 'Jabir Al Ahad',
-                            image: 'images/Panel_21_22/Panel/487048639_3105546046276958_9148728155394135784_n.jpg',
-                            panel: 'President'
-                        }
-                        ,{
-                            name: 'ABD Quaiyum',
-                            image: 'images/Panel_21_22/Panel/476383228_3256767717796347_285371354205090761_n.jpg',
-                            panel: 'Vice President'
-                        }
-                        ,{
-                            name: 'Fahim Anjum Efty',
-                            image: 'images/Panel_21_22/Panel/183667601_2775574012753527_371707836928886195_n.jpg',
-                            panel: 'General Secretary'
-                        }   
-                    ],
+                        name: 'Jabir Al Ahad',
+                        image: 'images/Panel_21_22/Panel/487048639_3105546046276958_9148728155394135784_n.jpg',
+                        panel: 'President'
+                    }, {
+                        name: 'ABD Quaiyum',
+                        image: 'images/Panel_21_22/Panel/476383228_3256767717796347_285371354205090761_n.jpg',
+                        panel: 'Vice President'
+                    }, {
+                        name: 'Fahim Anjum Efty',
+                        image: 'images/Panel_21_22/Panel/183667601_2775574012753527_371707836928886195_n.jpg',
+                        panel: 'General Secretary'
+                    }],
                     sbMembers: [{
                             name: 'Jawad Zarif',
                             image: 'images/Panel_21_22/Secreteries/admin/476856981_4123432817892541_1624224823209103418_n.jpg'
