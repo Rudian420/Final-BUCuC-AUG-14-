@@ -1596,7 +1596,7 @@ https://templatemo.com/tm-583-festava-live
                             </li>
                             <li class="nav-item">
                                 <a class="btn custom-btn ms-4"
-                                    href="<?php echo $signupEnabled ? '#footer' : 'admin-login.php'; ?>"
+                                    href="<?php echo $signupEnabled ? '#footer' : '#nav-LoginForm'; ?>"
                                     style="background: #e76f2c; color: #fff; font-weight: bold; border-radius: 2em; padding: 8px 24px; font-size: 1em;"><?php echo $signupEnabled ? 'Apply Now' : 'Login'; ?></a>
                             </li>
                         </ul>
@@ -1614,7 +1614,7 @@ https://templatemo.com/tm-583-festava-live
                     BUCuC
                 </a>
 
-                <a href="<?php echo $signupEnabled ? 'ticket.html' : 'admin-login.php'; ?>"
+                <a href="<?php echo $signupEnabled ? 'ticket.html' : '#nav-LoginForm'; ?>"
                     class="btn custom-btn d-lg-none ms-auto me-4"
                     style="background: #e76f2c; color: #fff; font-weight: bold; border-radius: 2em; padding: 8px 24px; font-size: 1em;"><?php echo $signupEnabled ? 'Apply Now' : 'Login'; ?></a>
 
@@ -1659,7 +1659,7 @@ https://templatemo.com/tm-583-festava-live
                         </li>
                     </ul>
 
-                    <a href="<?php echo $signupEnabled ? '#footer' : 'admin-login.php'; ?>"
+                    <a href="<?php echo $signupEnabled ? '#footer' : '#nav-LoginForm'; ?>"
                         class="btn custom-btn d-lg-block d-none"
                         style="background: #e76f2c; color: #fff; font-weight: bold; border-radius: 2em; padding: 8px 24px; font-size: 1em;"><?php echo $signupEnabled ? 'Apply Now' : 'Login'; ?></a>
                 </div>
@@ -3388,7 +3388,7 @@ https://templatemo.com/tm-583-festava-live
                                             <i class="fas fa-user-shield"></i>
                                         </div>
                                         <h2 class="admin-login-title">Login</h2>
-                                        <p class="admin-login-subtitle">Enter your credentials to access the dashboard</p>
+                                       
 
                                         <?php if (!empty($adminError)): ?>
                                             <div class="admin-error-message" style="display: block; margin-bottom: 20px; background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); border-radius: 10px; padding: 15px; color: #dc3545;">
@@ -3420,14 +3420,11 @@ https://templatemo.com/tm-583-festava-live
                                             </div>
                                             <button type="submit" name="adminLogin" class="admin-login-btn">
                                                 <i class="fas fa-sign-in-alt"></i>
-                                                LOGIN TO DASHBOARD
+                                                LOGIN 
                                             </button>
                                         </form>
 
-                                        <a href="#" class="back-to-site">
-                                            <i class="fas fa-arrow-left"></i>
-                                            Back to Main Site
-                                        </a>
+
                                     </div>
                                 </div>
                             </div>
@@ -3634,6 +3631,19 @@ https://templatemo.com/tm-583-festava-live
     <script>
         // Initialize Swiper after DOM is fully loaded
         document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
             // Function to determine if loop should be enabled
             function shouldEnableLoop() {
                 const slides = document.querySelectorAll('.sb-swiper .swiper-slide');
@@ -3768,8 +3778,10 @@ https://templatemo.com/tm-583-festava-live
         // Admin Check Function
         function checkAdminStatus(isAdmin) {
             if (isAdmin) {
-                // Redirect to admin login page
-                window.location.href = 'admin-login.php';
+                // Navigate to admin login container
+                document.querySelector('#nav-LoginForm-tab').click();
+                // Scroll to the login section
+                document.querySelector('#footer').scrollIntoView({ behavior: 'smooth' });
             } else {
                 // Show notification and redirect to header
                 showCustomNotification('Sorry, you are not an admin', 'warning');
