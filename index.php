@@ -1681,14 +1681,12 @@ https://templatemo.com/tm-583-festava-live
                 <div class="row">
 
                     <div class="col-12 mt-auto mb-5 text-center">
-                        <h1 class="text-white mb-5">BRAC University Cultural
-                            Club (BUCuC)</h1>
-                        <a class="btn custom-btn smoothscroll"
-                            href="#section_2">Let's begin</a>
+                        <h1 class="text-white mb-5"></h1>
+
                     </div>
 
                     <div
-                        class="col-lg-12 col-12 mt-auto d-flex flex-column flex-lg-row text-center">
+                        class="col-lg-12 col-12 mt-auto d-flex flex-column flex-lg-row text-center" style="gap: 10rem;">
                         <div class="date-wrap">
                             <h5 class="text-white">
                                 <i class="custom-icon bi-geo-alt me-2"></i>
