@@ -1122,101 +1122,194 @@ $signupEnabled = getSignupStatus();
             margin: 0 auto;
         }
 
-        /* New Admin Access Interface Styles */
-        .admin-access-wrapper {
-            padding: 0;
+        /* Modern Admin Login Interface Styles */
+        .admin-login-container {
+            background: linear-gradient(135deg, rgba(20, 60, 80, 0.95) 0%, rgba(80, 40, 100, 0.95) 100%);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            position: relative;
+            max-width: 400px;
+            width: 90%;
+            margin: 0 auto;
+            padding: 35px 30px;
         }
 
-        .admin-icon-container {
-            margin-bottom: 30px;
+        .admin-login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+            z-index: 1;
+            pointer-events: none;
         }
 
-        .admin-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #e76f2c, #f3d35c);
+        .admin-login-wrapper {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .admin-login-icon {
+            width: 70px;
+            height: 70px;
+            background: #e76f2c;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: white;
-            box-shadow: 0 10px 30px rgba(231, 111, 44, 0.3);
+            box-shadow: 0 12px 35px rgba(231, 111, 44, 0.5);
+            margin-bottom: 20px;
             animation: adminFloat 3s ease-in-out infinite;
         }
 
         @keyframes adminFloat {
-
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-8px);
-            }
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
         }
 
-        .admin-access-title {
-            font-size: 2rem;
+        .admin-login-title {
+            font-size: 1.9rem;
             font-weight: 700;
-            color: #333;
-            margin-bottom: 15px;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
-        .admin-access-subtitle {
-            color: #666;
-            font-size: 1.1rem;
-            margin-bottom: 40px;
+        .admin-login-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 28px;
+            line-height: 1.4;
         }
 
-        .admin-buttons-container {
+        .admin-login-form {
+            margin-bottom: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .input-wrapper {
+            position: relative;
             display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 300px;
-            margin: 0 auto;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 4px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
-        .admin-btn {
-            padding: 15px 25px;
+        .input-wrapper:focus-within {
+            border-color: #f3d35c;
+            box-shadow: 0 0 25px rgba(243, 211, 92, 0.4);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .input-icon {
+            color: #f3d35c;
+            font-size: 1.1rem;
+            margin-right: 12px;
+            min-width: 20px;
+        }
+
+        .admin-input {
+            background: transparent;
             border: none;
-            border-radius: 30px;
+            color: white;
+            font-size: 0.95rem;
+            padding: 12px 0;
+            width: 100%;
+            outline: none;
+        }
+
+        .admin-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .password-toggle {
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: #f3d35c;
+        }
+
+        .admin-login-btn {
+            background: linear-gradient(90deg, #e76f2c, #f3d35c);
+            border: none;
+            border-radius: 12px;
+            padding: 16px 25px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.3s ease;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(231, 111, 44, 0.5);
+            position: relative;
+            overflow: hidden;
         }
 
-        .admin-yes-btn {
-            background: linear-gradient(135deg, #28a745, #20c997);
+        .admin-login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .admin-login-btn:hover::before {
+            left: 100%;
+        }
+
+        .admin-login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(231, 111, 44, 0.7);
+            background: linear-gradient(90deg, #f3d35c, #e76f2c);
+        }
+
+        .back-to-site {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .back-to-site:hover {
             color: white;
-        }
-
-        .admin-yes-btn:hover {
-            background: linear-gradient(135deg, #20c997, #28a745);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
-        }
-
-        .admin-no-btn {
-            background: linear-gradient(135deg, #6c757d, #495057);
-            color: white;
-        }
-
-        .admin-no-btn:hover {
-            background: linear-gradient(135deg, #495057, #6c757d);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(108, 117, 125, 0.3);
-        }
-
-        .admin-check-icon {
-            animation: pulse 2s infinite;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-5px);
         }
 
         @keyframes pulse {
@@ -1379,7 +1472,7 @@ https://templatemo.com/tm-583-festava-live
             <li><a href="#section_4"><i class="fa fa-star"></i> Sb
                     Members</a></li>
             <li><a href="#section_5"><i class="fa fa-calendar"></i>
-                    Schedule</a></li>
+            Past Events</a></li>
             <li><a href="#footer"><i class="fa fa-user-plus"></i> Sign
                     Up</a></li>
         </ul>
@@ -1442,7 +1535,7 @@ https://templatemo.com/tm-583-festava-live
                             <li class="nav-item">
                                 <a class="nav-link click-scroll"
                                     href="#section_5"
-                                    style="color: #222; font-weight: bold; font-size: 1em;">Schedule</a>
+                                    style="color: #222; font-weight: bold; font-size: 1em;">Past Events</a>
                             </li>
                             <li class="nav-item">
                                 <a class="btn custom-btn ms-4"
@@ -1500,7 +1593,7 @@ https://templatemo.com/tm-583-festava-live
 
                         <li class="nav-item">
                             <a class="nav-link click-scroll"
-                                href="#section_5">Schedule</a>
+                                href="#section_5">Past Events</a>
                         </li>
 
                         <li class="nav-item">
@@ -1548,7 +1641,7 @@ https://templatemo.com/tm-583-festava-live
                         <div class="social-share">
                             <ul
                                 class="social-icon d-flex align-items-center justify-content-center">
-                                <span class="text-white me-3">Share:</span>
+                                <span class="text-white me-3">Follows Us:</span>
 
                                 <li class="social-icon-item">
                                     <a href="https://www.facebook.com/bucuc"
@@ -2912,7 +3005,7 @@ https://templatemo.com/tm-583-festava-live
                                         <div class="event-title">Rhythm Revive 25.0</div>
                                         <div class="event-time">Wed, 5:00 -
                                             7:00 PM</div>
-                                        <div class="event-by">By Adele</div>
+                                        <div class="event-by">By BUCuC</div>
                                     </div>
                                 </div>
                                 <!-- Card 2 -->
@@ -2922,12 +3015,10 @@ https://templatemo.com/tm-583-festava-live
                                     <div class="event-card-content">
                                         <span class="event-icon"><i
                                                 class="fa-solid fa-guitar"></i></span>
-                                        <div class="event-title">Rock &
-                                            Roll</div>
+                                        <div class="event-title">Panel Handover</div>
                                         <div class="event-time">Fri, 7:00 -
                                             11:00 PM</div>
-                                        <div class="event-by">By
-                                            Rihana</div>
+                                        <div class="event-by">By BUCuC</div>
                                     </div>
                                 </div>
                                 <!-- Card 3 -->
@@ -2937,12 +3028,10 @@ https://templatemo.com/tm-583-festava-live
                                     <div class="event-card-content">
                                         <span class="event-icon"><i
                                                 class="fa-solid fa-headphones"></i></span>
-                                        <div class="event-title">DJ
-                                            Night</div>
+                                        <div class="event-title">BUCuC Iftar Night</div>
                                         <div class="event-time">Thu, 6:30 -
                                             9:30 PM</div>
-                                        <div class="event-by">By
-                                            Rihana</div>
+                                        <div class="event-by">By BUCuC</div>
                                     </div>
                                 </div>
                                 <!-- Card 4 -->
@@ -2952,27 +3041,23 @@ https://templatemo.com/tm-583-festava-live
                                     <div class="event-card-content">
                                         <span class="event-icon"><i
                                                 class="fa-solid fa-microphone"></i></span>
-                                        <div class="event-title">Country
-                                            Music</div>
+                                        <div class="event-title">Boishakhi Utshob</div>
                                         <div class="event-time">Sat, 4:30 -
                                             7:30 PM</div>
-                                        <div class="event-by">By
-                                            Rihana</div>
+                                        <div class="event-by">By BUCuC</div>
                                     </div>
                                 </div>
                                 <!-- Card 5 -->
                                 <div class="event-card" onclick="window.location.href='past_events.html#free-styles'" style="cursor: pointer;">
                                     <div class="event-card-bg"
-                                        style="background-image: url('images/slide1.jpg');"></div>
+                                        style="background-image: url('images/slide1.png');"></div>
                                     <div class="event-card-content">
                                         <span class="event-icon"><i
                                                 class="fa-solid fa-star"></i></span>
-                                        <div class="event-title">Free
-                                            Styles</div>
+                                        <div class="event-title">Cage Champions</div>
                                         <div class="event-time">Sat, 6:00 -
                                             10:00 PM</div>
-                                        <div class="event-by">By
-                                            Members</div>
+                                        <div class="event-by">By SB Members</div>
                                     </div>
                                 </div>
                             </div>
@@ -3239,25 +3324,39 @@ https://templatemo.com/tm-583-festava-live
                             <div class="tab-pane fade" id="nav-LoginForm"
                                 role="tabpanel"
                                 aria-labelledby="nav-LoginForm-tab">
-                                <div class="admin-check-container">
-                                    <!-- Admin Access Interface -->
-                                    <div class="admin-access-wrapper">
-                                        <div class="admin-icon-container">
-                                            <span class="admin-icon">
-                                                <i class="fas fa-user-shield"></i>
-                                            </span>
+                                <div class="admin-login-container">
+                                    <!-- Modern Admin Login Interface -->
+                                    <div class="admin-login-wrapper">
+                                        <div class="admin-login-icon">
+                                            <i class="fas fa-user-shield"></i>
                                         </div>
-                                        <h2 class="admin-access-title">Admin Access</h2>
-                                        <p class="admin-access-subtitle">Are you an administrator of the Cultural Club?</p>
+                                        <h2 class="admin-login-title">Login</h2>
+                                        <p class="admin-login-subtitle">Enter your credentials to access the dashboard</p>
 
-                                        <div class="admin-buttons-container">
-                                            <button class="admin-btn admin-yes-btn" onclick="checkAdminStatus(true)">
-                                                <i class="fas fa-check"></i> Yes, I am an Admin
+                                        <form class="admin-login-form">
+                                            <div class="form-group">
+                                                <div class="input-wrapper">
+                                                    <i class="fas fa-envelope input-icon"></i>
+                                                    <input type="email" class="admin-input" placeholder="Email" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-wrapper">
+                                                    <i class="fas fa-lock input-icon"></i>
+                                                    <input type="password" class="admin-input" placeholder="Password" required>
+                                                    <i class="fas fa-eye password-toggle" onclick="togglePassword()"></i>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="admin-login-btn">
+                                                <i class="fas fa-sign-in-alt"></i>
+                                                LOGIN TO DASHBOARD
                                             </button>
-                                            <button class="admin-btn admin-no-btn" onclick="checkAdminStatus(false)">
-                                                <i class="fas fa-times"></i> No, I'm not
-                                            </button>
-                                        </div>
+                                        </form>
+
+                                        <a href="#" class="back-to-site">
+                                            <i class="fas fa-arrow-left"></i>
+                                            Back to Main Site
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -3352,7 +3451,7 @@ https://templatemo.com/tm-583-festava-live
 
                         <li class="site-footer-link-item">
                             <a href="#section_5"
-                                class="site-footer-link click-scroll">Schedule</a>
+                                class="site-footer-link click-scroll">Past Events</a>
                         </li>
 
                         <li class="site-footer-link-item">
@@ -3372,9 +3471,9 @@ https://templatemo.com/tm-583-festava-live
                     <h5 class="site-footer-title mb-3">Have a question?</h5>
 
                     <p class="text-white d-flex mb-1">
-                        <a href="tel:+8801601946311"
+                        <a href="mailto:club.bucuc@g.bracu.ac.bd"
                             class="site-footer-link">
-                            01601946311
+                            club.bucuc@g.bracu.ac.bd
                         </a>
                     </p>
 
@@ -3549,6 +3648,24 @@ https://templatemo.com/tm-583-festava-live
                 observer.observe(sbSection);
             }
         });
+    </script>
+
+    <!-- Password Toggle Function -->
+    <script>
+        function togglePassword() {
+            const passwordInput = document.querySelector('.admin-input[type="password"]');
+            const toggleIcon = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
     </script>
 
     <script>
