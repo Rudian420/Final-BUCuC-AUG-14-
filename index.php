@@ -7,6 +7,40 @@ $signupError = isset($_SESSION['signup_error']) ? $_SESSION['signup_error'] : nu
 
 unset($_SESSION['signup_success'], $_SESSION['signup_error']);
 
+// Admin login functionality
+$adminSuccess = "";
+$adminError = "";
+
+if($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST['adminLogin'])){
+    require_once 'Database/db.php';
+    
+    $database = new Database();
+    $conn = $database->createConnection();
+    
+    $adminEmail = htmlspecialchars($_POST["adminEmail"]);
+    $adminPassword = $_POST["adminPassword"];
+
+    $sql = "SELECT * FROM adminpanel WHERE email=:adminemail AND status='active'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(":adminemail", $adminEmail);
+    $stmt->execute();
+    $admin = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if($admin && password_verify($adminPassword, $admin[0]['password'])){
+        $adminSuccess = "Login successful! Redirecting to dashboard...";
+        $_SESSION['username'] = $admin[0]['username'];
+        $_SESSION['admin_id'] = $admin[0]['id'];
+        $_SESSION['admin_email'] = $admin[0]['email'];
+        $_SESSION['admin_role'] = $admin[0]['role'];
+        $_SESSION['admin'] = true;
+        $_SESSION['admin_logged_in'] = true;
+        $_SESSION['admin_name'] = $admin[0]['username'];
+        header("refresh:1;url=admin_dashboard.php");
+    } else {
+        $adminError = "Invalid admin credentials. Contact: hr.bucuc@gmail.com";
+    }
+}
+
 // Check signup status
 function getSignupStatus()
 {
@@ -1132,10 +1166,10 @@ $signupEnabled = getSignupStatus();
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
             overflow: hidden;
             position: relative;
-            max-width: 400px;
-            width: 90%;
+            max-width: 850px;
+        
             margin: 0 auto;
-            padding: 35px 30px;
+            padding: 60px 50px;
         }
 
         .admin-login-container::before {
@@ -1310,6 +1344,29 @@ $signupEnabled = getSignupStatus();
             color: white;
             background: rgba(255, 255, 255, 0.1);
             transform: translateX(-5px);
+        }
+
+        /* Admin Login Message Styles */
+        .admin-error-message {
+            background: rgba(220, 53, 69, 0.1) !important;
+            border: 1px solid rgba(220, 53, 69, 0.3) !important;
+            border-radius: 10px;
+            padding: 15px;
+            color: #dc3545;
+            margin-bottom: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .admin-success-message {
+            background: rgba(40, 167, 69, 0.1) !important;
+            border: 1px solid rgba(40, 167, 69, 0.3) !important;
+            border-radius: 10px;
+            padding: 15px;
+            color: #28a745;
+            margin-bottom: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
         }
 
         @keyframes pulse {
@@ -3333,21 +3390,35 @@ https://templatemo.com/tm-583-festava-live
                                         <h2 class="admin-login-title">Login</h2>
                                         <p class="admin-login-subtitle">Enter your credentials to access the dashboard</p>
 
-                                        <form class="admin-login-form">
+                                        <?php if (!empty($adminError)): ?>
+                                            <div class="admin-error-message" style="display: block; margin-bottom: 20px; background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); border-radius: 10px; padding: 15px; color: #dc3545;">
+                                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                                <span><?= htmlspecialchars($adminError) ?></span>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($adminSuccess)): ?>
+                                            <div class="admin-success-message" style="display: block; margin-bottom: 20px; background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.3); border-radius: 10px; padding: 15px; color: #28a745;">
+                                                <i class="fas fa-check-circle me-2"></i>
+                                                <span><?= htmlspecialchars($adminSuccess) ?></span>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <form class="admin-login-form" method="POST" action="">
                                             <div class="form-group">
                                                 <div class="input-wrapper">
                                                     <i class="fas fa-envelope input-icon"></i>
-                                                    <input type="email" class="admin-input" placeholder="Email" required>
+                                                    <input type="email" class="admin-input" name="adminEmail" placeholder="Email" required>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-wrapper">
                                                     <i class="fas fa-lock input-icon"></i>
-                                                    <input type="password" class="admin-input" placeholder="Password" required>
+                                                    <input type="password" class="admin-input" name="adminPassword" placeholder="Password" required>
                                                     <i class="fas fa-eye password-toggle" onclick="togglePassword()"></i>
                                                 </div>
                                             </div>
-                                            <button type="submit" class="admin-login-btn">
+                                            <button type="submit" name="adminLogin" class="admin-login-btn">
                                                 <i class="fas fa-sign-in-alt"></i>
                                                 LOGIN TO DASHBOARD
                                             </button>
@@ -3653,7 +3724,7 @@ https://templatemo.com/tm-583-festava-live
     <!-- Password Toggle Function -->
     <script>
         function togglePassword() {
-            const passwordInput = document.querySelector('.admin-input[type="password"]');
+            const passwordInput = document.querySelector('.admin-input[name="adminPassword"]');
             const toggleIcon = document.querySelector('.password-toggle');
             
             if (passwordInput.type === 'password') {
