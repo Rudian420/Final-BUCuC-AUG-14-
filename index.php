@@ -1270,6 +1270,7 @@ $signupEnabled = getSignupStatus();
         .admin-input {
             background: transparent;
             border: none;
+            color: white;
             font-size: 0.95rem;
             padding: 12px 0;
             width: 100%;
