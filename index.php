@@ -4522,27 +4522,27 @@ ${message}
                 },
                 '2021': {
                     panelMembers: [{
-                            name: 'Panel Member 1',
-                            image: 'images/Panel_21_22/Panel/183667601_2775574012753527_371707836928886195_n.jpg',
+                            name: 'Jabir Al Ahad',
+                            image: 'images/Panel_21_22/Panel/487048639_3105546046276958_9148728155394135784_n.jpg',
                             panel: 'President'
-                        },
-                        {
-                            name: 'Panel Member 2',
+                        }
+                        ,{
+                            name: 'ABD Quaiyum',
                             image: 'images/Panel_21_22/Panel/476383228_3256767717796347_285371354205090761_n.jpg',
                             panel: 'Vice President'
-                        },
-                        {
-                            name: 'Panel Member 3',
-                            image: 'images/Panel_21_22/Panel/487048639_3105546046276958_9148728155394135784_n.jpg',
-                            panel: 'General Secretary'
                         }
+                        ,{
+                            name: 'Fahim Anjum Efty',
+                            image: 'images/Panel_21_22/Panel/183667601_2775574012753527_371707836928886195_n.jpg',
+                            panel: 'General Secretary'
+                        }   
                     ],
                     sbMembers: [{
-                            name: 'Marcus Wright (Admin)',
+                            name: 'Jawad Zarif',
                             image: 'images/Panel_21_22/Secreteries/admin/476856981_4123432817892541_1624224823209103418_n.jpg'
                         },
                         {
-                            name: 'Kate Brewster (Admin)',
+                            name: 'Muhib Hasan',
                             image: 'images/Panel_21_22/Secreteries/admin/480205108_1673069036614324_5079654607934815247_n.jpg'
                         },
                         {
