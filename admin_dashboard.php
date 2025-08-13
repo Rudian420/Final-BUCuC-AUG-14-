@@ -160,24 +160,22 @@ $dashboardData = getDashboardStats();
                 <a href="#" class="nav-item" data-section="dashboard-update">
                     <i class="fas fa-cogs"></i> Dashboard Updates
                 </a>
-             
-              
             </div>
             
             <div class="nav-section">
                 <div class="nav-section-title">Settings</div>
-               
                 <a href="admin-signup-control.php" class="nav-item">
                     <i class="fas fa-user-cog"></i>
                     Signup Control
                 </a>
-            
+                
                 <?php if ($_SESSION['admin_role'] === 'main_admin'): ?>
                 <a href="#" class="nav-item" data-section="admin-management">
                     <i class="fas fa-users-cog"></i>
                     Admin Management
                 </a>
                 <?php endif; ?>
+                
                 <a href="logout.php" class="nav-item" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
                     Logout
@@ -1148,15 +1146,17 @@ $dashboardData = getDashboardStats();
                     </td>
                     <td>${new Date(admin.created_at).toLocaleDateString()}</td>
                     <td>
-                        <button class="btn btn-sm btn-warning me-1" onclick="editAdmin(${admin.id}, '${admin.username}', '${admin.email}')">
-                            <i class="fas fa-key"></i>
-                        </button>
-                        ${admin.id != <?php echo $_SESSION['admin_id']; ?> ? 
-                            `<button class="btn btn-sm btn-danger" onclick="deleteAdminPrompt(${admin.id}, '${admin.username}', '${admin.email}')">
-                                <i class="fas fa-trash"></i>
-                            </button>` : 
-                            '<span class="text-muted">Current User</span>'
-                        }
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm btn-warning me-1" onclick="editAdmin(${admin.id}, '${admin.username}', '${admin.email}')">
+                                <i class="fas fa-key"></i>
+                            </button>
+                            ${admin.id != <?php echo $_SESSION['admin_id']; ?> ? 
+                                `<button class="btn btn-sm btn-danger" onclick="deleteAdminPrompt(${admin.id}, '${admin.username}', '${admin.email}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>` : 
+                                '<span class="text-muted">Current User</span>'
+                            }
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(row);
