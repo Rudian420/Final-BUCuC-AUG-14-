@@ -4523,15 +4523,15 @@ ${message}
                 '2021': {
                     panelMembers: [{
                         name: 'Jabir Al Ahad',
-                        image: 'images/Panel_21_22/Panel/487048639_3105546046276958_9148728155394135784_n.jpg',
+                        image: 'images/Panel_21_22/Panel/Jabir_Al_Ahad.jpg',
                         panel: 'President'
                     }, {
                         name: 'ABD Quaiyum',
-                        image: 'images/Panel_21_22/Panel/476383228_3256767717796347_285371354205090761_n.jpg',
+                        image: 'images/Panel_21_22/Panel/ABD_Quaiyum.jpg',
                         panel: 'Vice President'
                     }, {
                         name: 'Fahim Anjum Efty',
-                        image: 'images/Panel_21_22/Panel/183667601_2775574012753527_371707836928886195_n.jpg',
+                        image: 'images/Panel_21_22/Panel/Fahim_Anjum_Efty.jpg',
                         panel: 'General Secretary'
                     }],
                     sbMembers: [{
@@ -4610,20 +4610,20 @@ ${message}
                 },
                 '2020': {
                     panelMembers: [{
-                            name: 'Panel Member 1',
-                            image: 'images/Panel_20_21/Panel/36678546_2204235406270192_6483776573861265408_n.jpg',
+                            name: 'Toriqul Islam Dipro',
+                            image: 'images/Panel_20_21/Panel/Toriqul_Islam_Dipro.jpg',
                             panel: 'President'
-                        },
-                        {
-                            name: 'Panel Member 2',
-                            image: 'images/Panel_20_21/Panel/475290115_1167819264687603_7003520522544381593_n.jpg',
+                        }, {
+                            name: 'Amal Chowdhury',
+                            image: 'images/Panel_20_21/Panel/Amal_Chowdhury.jpg',
                             panel: 'Vice President'
                         },
                         {
-                            name: 'Panel Member 3',
-                            image: 'images/Panel_20_21/Panel/e592a15e-74a5-4ddf-b8f5-1b59aaf9a1c2.jpg',
+                            name: 'Injamul Islam Fahim',
+                            image: 'images/Panel_20_21/Panel/Injamul_Islam_Fahim.jpg',
                             panel: 'General Secretary'
                         }
+
                     ],
                     sbMembers: [{
                             name: 'Emily Davis (Admin)',
@@ -4725,100 +4725,102 @@ ${message}
                 },
                 '2019': {
                     panelMembers: [{
-                            name: 'Murtafa Mridha',
-                            image: 'images/Panel_19_20/Panel/Murtafa Mridha.jpg',
+                            name: 'Shoaib Kamal',
+                            image: 'images/Panel_19_20/Panel/Shoaib_Kamal.jpg',
                             panel: 'President'
                         },
                         {
                             name: 'Samara Mehruz',
-                            image: 'images/Panel_19_20/Panel/Samara Mehruz.jpg',
+                            image: 'images/Panel_19_20/Panel/Samara_Mehruz.jpg',
                             panel: 'Vice President'
                         },
                         {
-                            name: 'Shoaib Kamal',
-                            image: 'images/Panel_19_20/Panel/Shoaib Kamal.jpg',
+                            name: 'Murtafa Mridha',
+                            image: 'images/Panel_19_20/Panel/Murtafa_Mridha.jpg',
                             panel: 'General Secretary'
                         }
+
+
                     ],
                     sbMembers: [{
                             name: 'Shahriar Nasif',
-                            image: 'images/Panel_19_20/Secretaries/admin/Shahriar Nasif.jpg'
+                            image: 'images/Panel_19_20/Secretaries/admin/Shahriar_Nasif.jpg'
                         },
                         {
                             name: 'Sadia Ishtiaque',
-                            image: 'images/Panel_19_20/Secretaries/creative/Sadia Ishtiaque.jpg'
+                            image: 'images/Panel_19_20/Secretaries/creative/Sadia_Ishtiaque.jpg'
                         },
                         {
                             name: 'Sayeda Lamia Tabassum',
-                            image: 'images/Panel_19_20/Secretaries/creative/Sayeda Lamia Tabassum.jpg'
+                            image: 'images/Panel_19_20/Secretaries/creative/Sayeda_Lamia_Tabassum.jpg'
                         },
                         {
                             name: 'Iffat Binte Hakim',
-                            image: 'images/Panel_19_20/Secretaries/creative/Iffat Binte Hakim.jpg'
+                            image: 'images/Panel_19_20/Secretaries/creative/Iffat_Binte_Hakim.jpg'
                         },
                         {
                             name: 'Nafiz Noor',
-                            image: 'images/Panel_19_20/Secretaries/event/Nafiz Noor.jpg'
+                            image: 'images/Panel_19_20/Secretaries/event/Nafiz_Noor.jpg'
                         },
                         {
                             name: 'Ishraq Avi',
-                            image: 'images/Panel_19_20/Secretaries/fin/Ishraq Avi.jpg'
+                            image: 'images/Panel_19_20/Secretaries/fin/Ishraq_Avi.jpg'
                         },
                         {
                             name: 'Zuairya Ashger Khan Nuha',
-                            image: 'images/Panel_19_20/Secretaries/hr/Zuairya Ashger Khan Nuha.jpg'
+                            image: 'images/Panel_19_20/Secretaries/hr/Zuairya_Ashger_Khan_Nuha.jpg'
                         },
                         {
                             name: 'Sadman Sakib Ayon',
-                            image: 'images/Panel_19_20/Secretaries/miap/Sadman Sakib Ayon.jpg'
+                            image: 'images/Panel_19_20/Secretaries/miap/Sadman_Sakib_Ayon.jpg'
                         },
                         {
                             name: 'Aninda Nahiyan',
-                            image: 'images/Panel_19_20/Secretaries/perfromance/Aninda Nahiyan.jpg'
+                            image: 'images/Panel_19_20/Secretaries/perfromance/Aninda_Nahiyan.jpg'
                         },
                         {
                             name: 'Munirul Azam Zayed',
-                            image: 'images/Panel_19_20/Secretaries/perfromance/Munirul Azam Zayed.jpg'
+                            image: 'images/Panel_19_20/Secretaries/perfromance/Munirul_Azam_Zayed.jpg'
                         },
                         {
                             name: 'Saib Sizan',
-                            image: 'images/Panel_19_20/Secretaries/perfromance/Saib Sizan.jpg'
+                            image: 'images/Panel_19_20/Secretaries/perfromance/Saib_Sizan.jpg'
                         },
                         {
                             name: 'George Gourab',
-                            image: 'images/Panel_19_20/Secretaries/perfromance/George Gourab .jpg'
+                            image: 'images/Panel_19_20/Secretaries/perfromance/George_Gourab.jpg'
                         },
                         {
                             name: 'Sumit Dutta',
-                            image: 'images/Panel_19_20/Secretaries/perfromance/Sumit Dutta.jpg'
+                            image: 'images/Panel_19_20/Secretaries/perfromance/Sumit_Dutta.jpg'
                         },
                         {
                             name: 'Deepita Chakrabortty',
-                            image: 'images/Panel_19_20/Secretaries/perfromance/Deepita Chakrabortty.jpg'
+                            image: 'images/Panel_19_20/Secretaries/perfromance/Deepita_Chakrabortty.jpg'
                         },
                         {
                             name: 'Pritam Chakraborty',
-                            image: 'images/Panel_19_20/Secretaries/pr/Pritam Chakraborty.jpg'
+                            image: 'images/Panel_19_20/Secretaries/pr/Pritam_Chakraborty.jpg'
                         },
                         {
                             name: 'Modhumonty Das',
-                            image: 'images/Panel_19_20/Secretaries/pr/Modhumonty Das.jpg'
+                            image: 'images/Panel_19_20/Secretaries/pr/Modhumonty_Das.jpg'
                         },
                         {
                             name: 'Afeed Nur',
-                            image: 'images/Panel_19_20/Secretaries/rd/Afeed Nur.jpg'
+                            image: 'images/Panel_19_20/Secretaries/rd/Afeed_Nur.jpg'
                         },
                         {
                             name: 'Tanzim Ahmed Ornob',
-                            image: 'images/Panel_19_20/Secretaries/rd/Tanzim Ahmed Ornob.jpg'
+                            image: 'images/Panel_19_20/Secretaries/rd/Tanzim_Ahmed_Ornob.jpg'
                         },
                         {
                             name: 'Kanika Saha',
-                            image: 'images/Panel_19_20/Secretaries/rd/Kanika Saha.jpg'
+                            image: 'images/Panel_19_20/Secretaries/rd/Kanika_Saha.jpg'
                         },
                         {
                             name: 'Anika Anjum Sadia',
-                            image: 'images/Panel_19_20/Secretaries/rd/Anika Anjum Sadia.jpg'
+                            image: 'images/Panel_19_20/Secretaries/rd/Anika_Anjum_Sadia.jpg'
                         }
                     ]
                 }
@@ -4904,7 +4906,7 @@ ${message}
                 const sbTitle = document.getElementById('sbSectionTitle');
                 if (sbTitle) {
                     if (yearKey === '2020' || yearKey === '2019') {
-                        sbTitle.textContent = `Meet Our SB Members (${parseInt(yearKey) + 1}-${parseInt(yearKey) + 2})`;
+                        sbTitle.textContent = `Meet Our SB Members`;
                         console.log(`Updated SB title for years ${yearKey}:`, sbTitle.textContent);
                     } else {
                         sbTitle.textContent = 'Meet Our SB Members';
@@ -4944,7 +4946,7 @@ ${message}
                         const memberPosition = member.position || 'Secretary';
 
                         slide.innerHTML = `
-<img src="${encodeURI(member.image)}" alt="${memberName}" onerror="this.src='images/placeholder.png'; console.error('Failed to load SB image:', '${member.image}');" />
+<img src="${member.image}" alt="${memberName}" onerror="this.src='images/placeholder.png'; console.error('Failed to load SB image:', '${member.image}');" />
 <div class="overlay">
     <a href="${facebookLink}" target="_blank">
         <ion-icon name="logo-facebook" style="color: #1877f2"></ion-icon>
