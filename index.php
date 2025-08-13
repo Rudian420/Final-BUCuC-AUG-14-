@@ -1268,17 +1268,33 @@ $signupEnabled = getSignupStatus();
         }
 
         .admin-input {
-            background: transparent;
+            background: transparent !important;
             border: none;
-            color: white;
+            color: white !important;
             font-size: 0.95rem;
             padding: 12px 0;
             width: 100%;
             outline: none;
         }
+        
+        /* Override browser default styling for filled inputs */
+        .admin-input:-webkit-autofill,
+        .admin-input:-webkit-autofill:hover,
+        .admin-input:-webkit-autofill:focus,
+        .admin-input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+            -webkit-text-fill-color: white !important;
+            background: transparent !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
 
         .admin-input::placeholder {
             color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Make placeholder transparent when input has value */
+        .admin-input:not(:placeholder-shown)::placeholder {
+            color: transparent;
         }
 
         .password-toggle {
