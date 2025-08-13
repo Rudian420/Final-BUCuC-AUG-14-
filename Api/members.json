@@ -56,7 +56,7 @@
         {
           "id": "kazi_tawsiat_2024",
           "name": "Kazi Tawsiat Binte Ehsan",
-          "position": "Secretary",
+          "position": "Secretary of Admin",
           "image": "images/Panel_24_25/Secreteries/Kazi_Tawsiat_Binte_Ehsan.jpg",
           "department": "General"
         },
@@ -103,7 +103,7 @@
         {
           "id": "diana_2024",
           "name": "Diana Halder Momo",
-          "position": "Secretary",
+          "position": "Secretary of Performance (Dance)",
           "image": "images/Panel_24_25/Secreteries/Diana_Halder_Momo.jpg",
           "department": "General"
         },
@@ -117,28 +117,28 @@
         {
           "id": "jubair_2024",
           "name": "Jubair Rahman",
-          "position": "Secretary",
+          "position": "Secretary of Performance (Dance)",
           "image": "images/Panel_24_25/Secreteries/Jubair_Rahman.jpg",
           "department": "General"
         },
         {
           "id": "fabiha_2024",
           "name": "Fabiha Bushra Ali",
-          "position": "Secretary",
+          "position": "Secretary of Public Relations",
           "image": "images/Panel_24_25/Secreteries/Fabiha_Bushra_Ali.jpg",
           "department": "General"
         },
         {
           "id": "khaled_2024",
           "name": "Khaled Bin Taher",
-          "position": "Secretary",
+          "position": "Secretary of Public Relations",
           "image": "images/Panel_24_25/Secreteries/Khaled_Bin_Taher.jpg",
           "department": "General"
         },
         {
           "id": "ahnaf_2024",
           "name": "Md Ahnaf Farhan",
-          "position": "Secretary",
+          "position": "Secretary of Public Relations",
           "image": "images/Panel_24_25/Secreteries/Md_Ahnaf_Farhan.jpg",
           "department": "General"
         },
@@ -193,28 +193,28 @@
         {
           "id": "jareen_2024",
           "name": "Jareen Tasnim Bushra",
-          "position": "Secretary",
+          "position": "Secretary of R&D",
           "image": "images/Panel_24_25/Secreteries/Jareen_Tasnim_Bushra.jpg",
           "department": "General"
         },
         {
           "id": "tasnimul_2024",
           "name": "Tasnimul Hasan",
-          "position": "Secretary",
+          "position": "Secretary of R&D",
           "image": "images/Panel_24_25/Secreteries/Tasnimul_Hasan.jpg",
           "department": "General"
         },
         {
           "id": "habib_2024",
           "name": "Habib Hasan",
-          "position": "Secretary",
+          "position": "Secretary of MIAP",
           "image": "images/Panel_24_25/Secreteries/Habib_Hasan.jpg",
           "department": "General"
         },
         {
           "id": "reshad_2024",
-          "name": "Reshad",
-          "position": "Secretary",
+          "name": "Reshad Ul Karim",
+          "position": "Secretary of MIAP",
           "image": "images/Panel_24_25/Secreteries/reshad.jpg",
           "department": "General"
         }
