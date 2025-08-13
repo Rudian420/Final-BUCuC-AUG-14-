@@ -268,66 +268,66 @@
           "department": "Admin"
         },
         {
-          "id": "creative_1_2023",
-          "name": "Creative Secretary",
+          "id": "khandoker_2023",
+          "name": "Khandoker Nabila Humayra",
           "position": "Creative Secretary",
-          "image": "images/Panel_23_24/Secretary/Creative/4395462e-d871-4a7f-9f3f-89f8e94b34b7.jpg",
+          "image": "images/Panel_23_24/Secretary/Creative/Khandoker_Nabila_Humayra.jpg",
           "department": "Creative"
         },
         {
-          "id": "humayra_2023",
-          "name": "Humayra",
+          "id": "musfura_2023",
+          "name": "Musfura Rahman",
           "position": "Creative Secretary",
-          "image": "images/Panel_23_24/Secretary/Creative/Humayra (Creative).jpg",
+          "image": "images/Panel_23_24/Secretary/Creative/Musfura_Rahman.jpg",
           "department": "Creative"
         },
         {
-          "id": "events_1_2023",
-          "name": "Events Secretary",
+          "id": "tahreen_2023",
+          "name": "Tahreen Nubaha Rabbi",
           "position": "Events Secretary",
-          "image": "images/Panel_23_24/Secretary/Events/dac0edcf-0586-4919-8c22-7a87e1a92030.jpg",
+          "image": "images/Panel_23_24/Secretary/Events/Tahreen_Nubaha_Rabbi.jpg",
           "department": "Events"
         },
         {
           "id": "mamun_events_2023",
           "name": "Mamun Abdullah",
           "position": "Events Secretary",
-          "image": "images/Panel_23_24/Secretary/Events/Mamun Abdullah ( Events).jpg",
+          "image": "images/Panel_23_24/Secretary/Events/Mamun_Abdullah.jpg",
           "department": "Events"
         },
         {
           "id": "towkeer_events_2023",
-          "name": "Towkeer Zia",
+          "name": "Towkeer Mohammad Zia",
           "position": "Events Secretary",
-          "image": "images/Panel_23_24/Secretary/Events/Towkeer Zia ( Events).jpg",
+          "image": "images/Panel_23_24/Secretary/Events/Towkeer_Mohammad_Zia.jpg",
           "department": "Events"
         },
         {
-          "id": "finance_2023",
-          "name": "Finance Secretary",
+          "id": "kaushik_2023",
+          "name": "Kaushik Datta",
           "position": "Finance Secretary",
-          "image": "images/Panel_23_24/Secretary/Finance/5874f814-dd73-4448-b09f-d6ef2b6e1686.jpg",
+          "image": "images/Panel_23_24/Secretary/Finance/Kaushik_Datta.jpg",
           "department": "Finance"
         },
         {
-          "id": "marketing_1_2023",
-          "name": "Marketing Secretary",
-          "position": "Marketing Secretary",
-          "image": "images/Panel_23_24/Secretary/Marketing/1e8229c5-7857-48d3-a808-50cf92f442ca (1).jpg",
-          "department": "Marketing"
-        },
-        {
-          "id": "marketing_2_2023",
-          "name": "Marketing Secretary",
-          "position": "Marketing Secretary",
-          "image": "images/Panel_23_24/Secretary/Marketing/42ad3eee-370d-4b85-b04c-f149107b014e.jpg",
-          "department": "Marketing"
-        },
-        {
           "id": "ayam_2023",
-          "name": "Ayam",
+          "name": "Ayam Dhar",
           "position": "Marketing Secretary",
-          "image": "images/Panel_23_24/Secretary/Marketing/Ayam (Marketing).jpg",
+          "image": "images/Panel_23_24/Secretary/Marketing/Ayam_Dhar.jpg",
+          "department": "Marketing"
+        },
+        {
+          "id": "imam_2023",
+          "name": "Imam Ur Rashid",
+          "position": "Marketing Secretary",
+          "image": "images/Panel_23_24/Secretary/Marketing/Imam_Ur_Rashid.jpg",
+          "department": "Marketing"
+        },
+        {
+          "id": "qurratul_2023",
+          "name": "Qurratul Ayen Elma",
+          "position": "Marketing Secretary",
+          "image": "images/Panel_23_24/Secretary/Marketing/Qurratul_Ayen_Elma.jpg",
           "department": "Marketing"
         },
         {
@@ -345,10 +345,10 @@
           "department": "Performance"
         },
         {
-          "id": "performance_3_2023",
-          "name": "Performance Secretary",
+          "id": "mitisha_2023",
+          "name": "Mitisha Tasnim Rahman",
           "position": "Performance Secretary",
-          "image": "images/Panel_23_24/Secretary/Performance/e5f566ce-830a-48e0-92e9-fd097f3ea3c6.jpeg",
+          "image": "images/Panel_23_24/Secretary/Performance/Mitisha_Tasnim_Rahman.jpeg",
           "department": "Performance"
         },
         {
@@ -356,13 +356,6 @@
           "name": "Performance Secretary",
           "position": "Performance Secretary",
           "image": "images/Panel_23_24/Secretary/Performance/e46329e0-5f2e-4921-8f9b-94326e0a79e3.jpeg",
-          "department": "Performance"
-        },
-        {
-          "id": "performance_5_2023",
-          "name": "Performance Secretary",
-          "position": "Performance Secretary",
-          "image": "images/Panel_23_24/Secretary/Performance/55e82bf0-d43f-4014-874a-ba5e84824334 (1).jpeg",
           "department": "Performance"
         },
         {
@@ -374,9 +367,9 @@
         },
         {
           "id": "priyata_2023",
-          "name": "Priyata",
+          "name": "Priyata Mondal",
           "position": "Performance Secretary",
-          "image": "images/Panel_23_24/Secretary/Performance/Priyata (Performance).jpg",
+          "image": "images/Panel_23_24/Secretary/Performance/Priyata_Mondal.jpg",
           "department": "Performance"
         },
         {
@@ -391,6 +384,13 @@
           "name": "Nafisa Noor",
           "position": "Performance Secretary",
           "image": "images/Panel_23_24/Secretary/Performance/Nafisa Noor (Performance).jpg",
+          "department": "Performance"
+        },
+        {
+          "id": "yeashfa_2023",
+          "name": "Yeashfa Haque",
+          "position": "Performance Secretary",
+          "image": "images/Panel_23_24/Secretary/Performance/Yeashfa_Haque.jpeg",
           "department": "Performance"
         },
         {
@@ -427,47 +427,47 @@
       "year": 2023,
       "panel_members": [
         {
-          "id": "panel_1_2022",
-          "name": "Panel Member",
-          "position": "Panel Member",
-          "image": "images/Panel_22_23/Panel/Copy of 487208029_4090148864590979_892055582219564636_n.jpg",
+          "id": "merazul_2022",
+          "name": "Merazul Dihan",
+          "position": "President",
+          "image": "images/Panel_22_23/Panel/Merazul_Dihan.jpg",
           "department": "Panel"
         },
         {
-          "id": "panel_2_2022",
-          "name": "Panel Member",
-          "position": "Panel Member",
-          "image": "images/Panel_22_23/Panel/515437567_1952489408489387_1315940866281760937_n.jpg",
+          "id": "towsif_2022",
+          "name": "Towsif Tazwar Zia",
+          "position": "Vice President",
+          "image": "images/Panel_22_23/Panel/Towsif_Tazwar_Zia.jpg",
           "department": "Panel"
         },
         {
-          "id": "panel_3_2022",
-          "name": "Panel Member",
-          "position": "Panel Member",
-          "image": "images/Panel_22_23/Panel/489790186_122124644834718672_952791625051701298_n.jpg",
+          "id": "tawhid_2022",
+          "name": "Tawhid Mollah Orpon",
+          "position": "General Secretary",
+          "image": "images/Panel_22_23/Panel/Tawhid_Mollah_Orpon.jpg",
           "department": "Panel"
         },
         {
-          "id": "panel_4_2022",
-          "name": "Panel Member",
-          "position": "Panel Member",
-          "image": "images/Panel_22_23/Panel/454317040_10225148019343878_7594567972609169834_n.jpg",
+          "id": "shakira_2022",
+          "name": "Shakira Mustahid",
+          "position": "Joint Secretary",
+          "image": "images/Panel_22_23/Panel/Shakira_Mustahid.jpg",
           "department": "Panel"
         }
       ],
       "secretaries": [
         {
-          "id": "creative_1_2022",
-          "name": "Creative Secretary",
+          "id": "muhaiminul_2022",
+          "name": "Muhaiminul Shuvo",
           "position": "Creative Secretary",
-          "image": "images/Panel_22_23/Secreteries/Creative/510740052_2819515388251792_6735446540811213763_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Creative/Muhaiminul_Shuvo.jpg",
           "department": "Creative"
         },
         {
-          "id": "creative_2_2022",
-          "name": "Creative Secretary",
+          "id": "nisa_2022",
+          "name": "Nisa Hai",
           "position": "Creative Secretary",
-          "image": "images/Panel_22_23/Secreteries/Creative/490736541_1977798036086773_3000833491529229081_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Creative/Nisa_Hai.jpg",
           "department": "Creative"
         },
         {
@@ -478,52 +478,52 @@
           "department": "Events"
         },
         {
-          "id": "events_2_2022",
-          "name": "Events Secretary",
+          "id": "nashib_2022",
+          "name": "Mohammad Nashib",
           "position": "Events Secretary",
-          "image": "images/Panel_22_23/Secreteries/Events/480995672_2660218930991191_8235151262219661059_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Events/Mohammad_Nashib .jpg",
           "department": "Events"
         },
         {
-          "id": "hr_1_2022",
-          "name": "HR Secretary",
+          "id": "musharrat_hr_2022",
+          "name": "Musharrat Quazi",
           "position": "HR Secretary",
-          "image": "images/Panel_22_23/Secreteries/Hr/472370182_1149915786477951_6056069315363886104_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Hr/Musharrat_Quazi.jpg",
           "department": "HR"
         },
         {
-          "id": "hr_2_2022",
-          "name": "HR Secretary",
+          "id": "naziat_2022",
+          "name": "Naziat Podmo",
           "position": "HR Secretary",
-          "image": "images/Panel_22_23/Secreteries/Hr/501121457_1886902955416097_5984553724984653614_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Hr/Naziat_Podmo.jpg",
           "department": "HR"
         },
         {
-          "id": "miap_1_2022",
-          "name": "MIAP Secretary",
+          "id": "mehjabeen_2022",
+          "name": "Mehjabeen Meem",
           "position": "MIAP Secretary",
-          "image": "images/Panel_22_23/Secreteries/Miap/471131890_2674590862712918_1095176438308251710_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Miap/Mehjabeen_Meem.jpg",
           "department": "MIAP"
         },
         {
-          "id": "miap_2_2022",
-          "name": "MIAP Secretary",
+          "id": "omar_2022",
+          "name": "Omar Ibtesum",
           "position": "MIAP Secretary",
-          "image": "images/Panel_22_23/Secreteries/Miap/476928218_4138321956397849_5349156780703278381_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Miap/Omar_Ibtesum.jpg",
           "department": "MIAP"
         },
         {
-          "id": "miap_3_2022",
-          "name": "MIAP Secretary",
+          "id": "saadman_2022",
+          "name": "Saadman Alvi",
           "position": "MIAP Secretary",
-          "image": "images/Panel_22_23/Secreteries/Miap/125222830_1519850231543985_6741215565114242602_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Miap/Saadman_Alvi.jpg",
           "department": "MIAP"
         },
         {
-          "id": "performance_1_2022",
-          "name": "Performance Secretary",
+          "id": "kabery_2022",
+          "name": "Kabery Moniza Riddhi",
           "position": "Performance Secretary",
-          "image": "images/Panel_22_23/Secreteries/Performance/494677560_3567139276915951_500501141503205430_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Performance/Kabery_Moniza_Riddhi .jpg",
           "department": "Performance"
         },
         {
@@ -534,17 +534,17 @@
           "department": "Performance"
         },
         {
-          "id": "performance_3_2022",
-          "name": "Performance Secretary",
+          "id": "rifah_2022",
+          "name": "Rifah Tasnia",
           "position": "Performance Secretary",
-          "image": "images/Panel_22_23/Secreteries/Performance/493336238_3882899925356160_2734435013679817532_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Performance/Rifah_Tasnia.jpg",
           "department": "Performance"
         },
         {
-          "id": "performance_4_2022",
-          "name": "Performance Secretary",
+          "id": "tahiatun_2022",
+          "name": "Tahiatun Nazi",
           "position": "Performance Secretary",
-          "image": "images/Panel_22_23/Secreteries/Performance/473764764_1254931698931721_8299944785147251773_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Performance/Tahiatun_Nazi.jpg",
           "department": "Performance"
         },
         {
@@ -555,38 +555,38 @@
           "department": "Performance"
         },
         {
-          "id": "performance_6_2022",
-          "name": "Performance Secretary",
+          "id": "tamima_performance_2022",
+          "name": "Tamima Hossain Diba",
           "position": "Performance Secretary",
-          "image": "images/Panel_22_23/Secreteries/Performance/497848042_3934565303471734_3886354026328395083_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Performance/Tamima_Hossain_Diba.jpg",
           "department": "Performance"
         },
         {
-          "id": "pr_1_2022",
-          "name": "PR Secretary",
+          "id": "upama_2022",
+          "name": "Upama Adhikary",
           "position": "PR Secretary",
-          "image": "images/Panel_22_23/Secreteries/pr/444153012_3785493371736142_462752584676454365_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/pr/Upama_Adhikary.jpg",
           "department": "PR"
         },
         {
-          "id": "pr_2_2022",
-          "name": "PR Secretary",
+          "id": "swagata_2022",
+          "name": "Swagata Oishi",
           "position": "PR Secretary",
-          "image": "images/Panel_22_23/Secreteries/pr/480423169_3848521462027733_2531340458933374732_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/pr/Swagata_oishi.jpg",
           "department": "PR"
         },
         {
-          "id": "pr_3_2022",
-          "name": "PR Secretary",
+          "id": "minoor_2022",
+          "name": "Minoor Karim",
           "position": "PR Secretary",
-          "image": "images/Panel_22_23/Secreteries/pr/477762506_1629168234369158_7049362160222121335_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/pr/Minoor_karim.jpg",
           "department": "PR"
         },
         {
-          "id": "rd_2022",
-          "name": "RD Secretary",
+          "id": "gm_apurbo_2022",
+          "name": "GM Apurbo",
           "position": "RD Secretary",
-          "image": "images/Panel_22_23/Secreteries/Rd/476365485_1667974633790431_7689234733040607911_n.jpg",
+          "image": "images/Panel_22_23/Secreteries/Rd/GM_Apurbo.jpg",
           "department": "RD"
         }
       ]
