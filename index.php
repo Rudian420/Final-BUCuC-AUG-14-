@@ -3427,7 +3427,7 @@ https://templatemo.com/tm-583-festava-live
                                             </div>
                                             <button type="submit" name="adminLogin" class="admin-login-btn">
                                                 <i class="fas fa-sign-in-alt"></i>
-                                                LOGIN TO DASHBOARD
+                                                LOGIN
                                             </button>
                                         </form>
 
