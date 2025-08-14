@@ -11,7 +11,7 @@ class Database {
         $this->host = DB_HOST;
         $this->dbname = DB_NAME;
         $this->user = DB_USER;
-        $this->pass = "";
+        $this->pass = DB_PASS;
 
         $dsn = "mysql:host={$this->host};dbname={$this->dbname};charset=utf8mb4";
 
