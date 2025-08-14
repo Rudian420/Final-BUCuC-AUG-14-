@@ -3176,7 +3176,7 @@ https://templatemo.com/tm-583-festava-live
                                 <!-- Card 5 -->
                                 <div class="event-card" onclick="window.location.href='past_events.html#free-styles'" style="cursor: pointer;">
                                     <div class="event-card-bg"
-                                        style="background-image: url('images/slide1.png');"></div>
+                                        style="background-image: url('images/slide1.jpg');"></div>
                                     <div class="event-card-content">
                                         <span class="event-icon"><i
                                                 class="fa-solid fa-star"></i></span>
