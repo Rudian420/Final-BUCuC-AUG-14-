@@ -1921,7 +1921,7 @@ https://templatemo.com/tm-583-festava-live
                                                     style="height:36px; width:36px; object-fit:contain; display:block; margin:0;">
                                             </div>
                                             <div class="ms-4">
-                                                <h6>Iftar Mahfil</h6>
+                                                <h6>BUCuC Iftar</h6>
                                                 <p class="mb-0">Where tradition meets togetherness.</p>
                                             </div>
                                         </div>
