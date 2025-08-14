@@ -3154,7 +3154,7 @@ https://templatemo.com/tm-583-festava-live
                                     <div class="event-card-content">
                                         <span class="event-icon"><i
                                                 class="fa-solid fa-headphones"></i></span>
-                                        <div class="event-title">BUCuC Iftar Night</div>
+                                        <div class="event-title">BUCuC Iftar</div>
                                         <div class="event-time">Thu, 6:30 -
                                             9:30 PM</div>
                                         <div class="event-by">By BUCuC</div>
