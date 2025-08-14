@@ -88,6 +88,7 @@ try {
     <!-- Bootstrap CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="images/logopng.png">
     
     <style>
         body {
