@@ -884,6 +884,8 @@ $signupEnabled = getSignupStatus();
         }
 
         .hero-section h1 {
+            /* Hello */
+
             font-size: 2.1rem;
             font-weight: 900;
             letter-spacing: 2px;
