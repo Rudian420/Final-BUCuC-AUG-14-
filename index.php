@@ -1983,8 +1983,8 @@ https://templatemo.com/tm-583-festava-live
                         <div class="panel-year-selector">
                             <label for="panelYearSelect" class="form-label text-black fw-bold mb-2">View Panel by Year</label>
                             <select id="panelYearSelect" class="form-select panel-year-dropdown">
-                                <option value="current">Current Panel (2024-2025)</option>
-                                <option value="panel_23_24">2023–2024</option>
+                                <option value="current">Current Panel (2025-2026)</option>
+                                <option value="panel_23_24">2023–2025</option>
                                 <option value="panel_22_23">2022–2023</option>
                                 <option value="panel_21_22">2021–2022</option>
                                 <option value="panel_20_21">2020–2021</option>
