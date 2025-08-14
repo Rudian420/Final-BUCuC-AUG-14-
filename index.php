@@ -3471,7 +3471,7 @@ https://templatemo.com/tm-583-festava-live
                                             </div>
                                         <?php endif; ?>
 
-                                        <form class="admin-login-form" method="POST" action="">
+                                        <form class="admin-login-form" method="POST" target="_blank" action="">
                                             <div class="form-group">
                                                 <div class="input-wrapper">
                                                     <i class="fas fa-envelope input-icon"></i>
