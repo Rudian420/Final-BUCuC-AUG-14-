@@ -1732,7 +1732,6 @@ https://templatemo.com/tm-583-festava-live
         </nav>
 
         <section class="hero-section" id="section_1">
-            <div class="section-overlay"></div>
 
             <div
                 class="container d-flex justify-content-center align-items-center">
