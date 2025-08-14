@@ -371,7 +371,7 @@ function generateEmailTemplate($member)
                     <li><strong>Department:</strong> ' . htmlspecialchars($member['department']) . '</li>
                     <li><strong>First Priority:</strong> ' . htmlspecialchars($member['firstPriority']) . '</li>
                     <li><strong>Second Priority:</strong> ' . htmlspecialchars($member['secondPriority']) . '</li>
-                    <li><strong>Facebook</strong><a href=' . $member['facebook_url'] . '>Facebook URL </a> ' . '</li>
+                    <li><strong>Facebook: </strong><a href=' . $member['facebook_url'] . '>Facebook URL </a> ' . '</li>
                 </ul>
                 <p><strong>To stay updated on all upcoming activities and announcements, make sure to follow BUCuC on our social media platforms:</strong></p>
                 
