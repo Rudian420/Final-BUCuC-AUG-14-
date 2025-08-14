@@ -985,6 +985,48 @@ $signupEnabled = getSignupStatus();
             }
         }
 
+        /* Audio Toggle Button Styles */
+        .audio-toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .audio-toggle-btn:hover {
+            background: rgba(231, 111, 44, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 111, 44, 0.4);
+        }
+
+        .audio-toggle-btn:active {
+            transform: translateY(0);
+        }
+
+        .audio-toggle-btn i {
+            margin-right: 8px;
+        }
+
+        /* Responsive adjustments for mobile */
+        @media (max-width: 768px) {
+            .audio-toggle-btn {
+                top: 15px;
+                right: 15px;
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+        }
+
         img {
             max-width: 100%;
             height: auto;
@@ -1702,7 +1744,7 @@ https://templatemo.com/tm-583-festava-live
                     </div>
 
                     <div
-                        class="col-lg-12 col-12 mt-auto d-flex flex-column flex-lg-row text-center" style="gap: 10rem;">
+                        class="col-lg-12 col-12 mt-auto d-flex flex-column flex-lg-row text-center" style="gap: 15rem;">
                         <div class="date-wrap">
                             <h5 class="text-white">
                                 <i class="custom-icon bi-geo-alt me-2"></i>
@@ -1753,10 +1795,14 @@ https://templatemo.com/tm-583-festava-live
             </div>
 
             <div class="video-wrap">
-                <video autoplay loop muted playsinline preload="metadata" class="custom-video" poster="images/preview.jpg">
+                <video autoplay loop muted playsinline preload="metadata" class="custom-video" poster="images/preview.jpg" id="heroVideo">
                     <source src="video/bucuc1.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
+
+                <button id="audioToggle" class="audio-toggle-btn">
+                    <i class="fas fa-volume-mute"></i>
+                </button>
             </div>
 
         </section>
@@ -5072,6 +5118,30 @@ ${message}
 
             // Call the initialization function
             initializeSBMembers();
+        });
+
+        // Audio Toggle Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const audioToggle = document.getElementById('audioToggle');
+            const heroVideo = document.getElementById('heroVideo');
+
+            if (audioToggle && heroVideo) {
+                audioToggle.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+
+                    if (heroVideo.muted) {
+                        heroVideo.muted = false;
+                        icon.className = 'fas fa-volume-up';
+                        this.innerHTML = '<i class="fas fa-volume-up"></i>';
+                        this.style.background = 'rgba(0, 0, 0, 0.9)'; // Green when unmuted
+                    } else {
+                        heroVideo.muted = true;
+                        icon.className = 'fas fa-volume-mute';
+                        this.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                        this.style.background = 'rgba(0, 0, 0, 0.9)'; // Orange when muted
+                    }
+                });
+            }
         });
     </script>
 </body>
