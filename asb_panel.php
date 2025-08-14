@@ -123,7 +123,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'gas_proxy') {
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
+    <link rel="icon" type="image/png" href="images/logopng.png">
     <style>
         /* Main Container Styling */
         .applications-container {

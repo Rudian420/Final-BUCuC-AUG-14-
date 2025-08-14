@@ -84,7 +84,8 @@ $dashboardData = getDashboardStats();
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <link rel="stylesheet" href="AdminCss/Dashboard.css">
+    <link rel="stylesheet" href="AdminCss/Dashboard.css"> 
+    <link rel="icon" type="image/png" href="images/logopng.png">
     <style>
         .signup-toggle-container {
             background: rgba(255, 255, 255, 0.1);

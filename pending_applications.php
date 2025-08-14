@@ -107,6 +107,7 @@ function getTimeAgo($date) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     
     <link rel="stylesheet" href="AdminCss/Dashboard.css">
+    <link rel="icon" type="image/png" href="images/logopng.png">
     
     <style>
         .applications-container {
