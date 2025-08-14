@@ -144,71 +144,223 @@ function generateEmailTemplate($member)
         <title>Welcome to BUCUC</title>
         <style>
             body {
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                color: #333;
-                max-width: 600px;
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.7;
+                color: #2c3e50;
+                max-width: 650px;
                 margin: 0 auto;
-                padding: 20px;
-                background-color: #f4f4f4;
+                padding: 25px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
             }
             .container {
-                background-color: #ffffff;
-                padding: 30px;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+                padding: 40px;
+                border-radius: 20px;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.06);
+                border: 1px solid rgba(255,255,255,0.2);
+                backdrop-filter: blur(10px);
+                position: relative;
+                overflow: hidden;
+            }
+            .container::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+                border-radius: 20px 20px 0 0;
             }
             .header {
                 text-align: center;
-                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
                 color: white;
-                padding: 20px;
-                border-radius: 10px;
-                margin-bottom: 20px;
+                padding: 35px 25px;
+                border-radius: 16px;
+                margin-bottom: 30px;
+                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+                position: relative;
+                overflow: hidden;
+            }
+            .header::before {
+                content:"";
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                animation: shimmer 3s ease-in-out infinite;
+            }
+            @keyframes shimmer {
+                0%, 100% { transform: rotate(0deg); }
+                50% { transform: rotate(180deg); }
             }
             .header h1 {
                 margin: 0;
-                font-size: 24px;
+                font-size: 28px;
+                font-weight: 700;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                position: relative;
+                z-index: 1;
+            }
+            .header p {
+                margin: 10px 0 0 0;
+                font-size: 16px;
+                opacity: 0.95;
+                position: relative;
+                z-index: 1;
             }
             .content {
-                padding: 20px 0;
+                padding: 25px 0;
+                position: relative;
+                z-index: 1;
+            }
+            .content p {
+                margin-bottom: 20px;
+                font-size: 15px;
+            }
+            .content h3 {
+                color: #2c3e50;
+                font-size: 20px;
+                margin: 30px 0 15px 0;
+                font-weight: 600;
+                border-bottom: 2px solid #e9ecef;
+                padding-bottom: 8px;
+            }
+            .content ul {
+                margin: 20px 0;
+                padding-left: 25px;
+            }
+            .content li {
+                margin-bottom: 12px;
+                line-height: 1.6;
             }
             .highlight {
-                background-color: #e8f5e8;
-                padding: 15px;
-                border-left: 4px solid #28a745;
-                margin: 20px 0;
+                background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%);
+                padding: 25px;
+                border-left: 5px solid #28a745;
+                margin: 25px 0;
+                border-radius: 0 12px 12px 0;
+                box-shadow: 0 5px 15px rgba(40, 167, 69, 0.1);
+                position: relative;
+            }
+            .highlight::before {
+                content: "✨";
+                position: absolute;
+                top: -10px;
+                right: 20px;
+                font-size: 20px;
+                background: white;
+                padding: 5px;
+                border-radius: 50%;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            .highlight p {
+                margin: 0;
+                font-weight: 500;
             }
             .footer {
                 text-align: center;
-                padding: 20px 0;
-                color: #666;
-                border-top: 1px solid #eee;
-                margin-top: 20px;
+                padding: 30px 0 20px 0;
+                color: #6c757d;
+                border-top: 2px solid #e9ecef;
+                margin-top: 30px;
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border-radius: 0 0 20px 20px;
+                margin: 30px -40px -40px -40px;
+                padding: 30px 40px 20px 40px;
             }
-            .btn {
-                display: inline-block;
-                padding: 12px 24px;
-                background-color: #28a745;
-                color: white;
-                text-decoration: none;
-                border-radius: 5px;
-                margin: 10px 0;
+      .btn {
+        display: inline-block;
+        padding: 14px 28px;
+        background: #ffffff;
+        color: #2c3e50;
+        text-decoration: none;
+        border-radius: 25px;
+        margin: 12px 8px 12px 0;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(44, 62, 80, 0.15);
+        border: 2px solid #e9ecef;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(44, 62, 80, 0.1),
+          transparent
+        );
+        transition: left 0.6s ease;
+      }
+      .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(44, 62, 80, 0.25);
+        background: #2c3e50;
+        color: #ffffff;
+        border-color: #2c3e50;
+      }
+      .btn:hover::before {
+        left: 100%;
+      }
+      .btn:active {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(44, 62, 80, 0.2);
+      }
+            .social-links {
+                margin: 25px 0;
+            }
+            .social-links a {
+                display: block;
+                margin-bottom: 10px;
+            }
+            .venue-highlight {
+                background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+                border-left: 5px solid #ffc107;
+                border-radius: 0 12px 12px 0;
+                box-shadow: 0 5px 15px rgba(255, 193, 7, 0.1);
+            }
+            .venue-highlight h3 {
+                color: #856404;
+                margin-top: 0;
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+            .venue-highlight ul {
+                margin-bottom: 0;
+            }
+            .venue-highlight li {
+                margin-bottom: 8px;
+            }
+            .strong-text {
+                font-weight: 600;
+                color: #2c3e50;
+            }
+            .emoji {
+                font-size: 18px;
+                margin-right: 8px;
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <h1>🎉 Congratulations!</h1>
-                <p>Welcome to BRAC University Cultural Club</p>
-            </div>
             
             <div class="content">
                 <p>Dear <strong>' . htmlspecialchars($member['full_name']) . '</strong>,</p>
                 
                 <div class="highlight">
-                    <p><strong>Congratulations!</strong> You’ve successfully completed all recruitment steps and are now<strong>an official member of the BRAC University Cultural Club (BUCuC</strong>We’re thrilled to have you on board and can’t wait to see the dedication and creativity you bring to the club!</p>
+                    <p><strong>Congratulations!</strong> You\'ve successfully completed all recruitment steps and are now <strong>an official member of the BRAC University Cultural Club (BUCuC)</strong>. We\'re thrilled to have you on board and can\'t wait to see the dedication and creativity you bring to the club!</p>
                 </div>
                 
                 
@@ -219,25 +371,25 @@ function generateEmailTemplate($member)
                     <li><strong>Department:</strong> ' . htmlspecialchars($member['department']) . '</li>
                     <li><strong>First Priority:</strong> ' . htmlspecialchars($member['firstPriority']) . '</li>
                     <li><strong>Second Priority:</strong> ' . htmlspecialchars($member['secondPriority']) . '</li>
+                    <li><strong>Facebook</strong><a href=' . $member['facebook_url'] . '>Facebook URL </a> ' . '</li>
                 </ul>
-                <strong>To stay updated on all upcoming activities and announcements, make sure to follow BUCuC on our social media platforms:</strong>
+                <p><strong>To stay updated on all upcoming activities and announcements, make sure to follow BUCuC on our social media platforms:</strong></p>
                 
-                <ul>
-                    <li><a href="https://www.facebook.com/bucuc" class="btn">BUCuC Official Page</a></li>
-                    <li><a href="https://www.facebook.com/groups/86555568937" class="btn">BUCuC Official Group</a></li>
-                    <li><a href="https://www.instagram.com/bucuclive/" class="btn">BUCuC Official Instagram</a></li>
-                    <li><a href="https://www.youtube.com/@bracuniversityculturalclub717" class="btn">BUCuC Official Youtube</a></li>
-                </ul>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/bucuc" class="btn">BUCuC Official Page</a>
+                    <a href="https://www.facebook.com/groups/86555568937" class="btn">BUCuC Official Group</a>
+                    <a href="https://www.instagram.com/bucuclive/" class="btn">BUCuC Official Instagram</a>
+                    <a href="https://www.youtube.com/@bracuniversityculturalclub717" class="btn">BUCuC Official Youtube</a>
+                </div>
+                <p>Now, it\'s time for your Orientation — a must-attend event where you\'ll meet your fellow members, learn more about BUCuC, and kickstart your journey with us!</p>';
 
-                <p>Now, it’s time for your Orientation — a must-attend event where you’ll meet your fellow members, learn more about BUCuC, and kickstart your journey with us! </p>
-                ';
 
     // Add venue information if available
     if ($venueInfo) {
         $template .= '
-                <div class="highlight" style="background-color: #fff3cd; border-left: 4px solid #ffc107; margin: 20px 0;">
-                    <h3 style="color: #856404; margin-top: 0;">📍 Upcoming Event/Meeting</h3>
-                    <ul style="margin-bottom: 0;">
+                <div class="highlight venue-highlight">
+                    <h3>📍 Upcoming Event/Meeting</h3>
+                    <ul>
                         <li><strong>Venue:</strong> ' . htmlspecialchars($venueInfo['venue_name']) . '</li>
                         <li><strong>Location:</strong> ' . htmlspecialchars($venueInfo['venue_location']) . '</li>
                         <li><strong>Date:</strong> ' . date('F j, Y', strtotime($venueInfo['venue_dateTime'])) . '</li>
@@ -247,15 +399,12 @@ function generateEmailTemplate($member)
                 ';
     }
 
-    $template .= '
-                <strong>Your presence is MANDATORY, and we promise it’ll be worth it! Looking forward to seeing you there.!</strong>
-                <br>
-                <strong>You will be added to a Messenger group after the orientation for smooth communication. If you are not added within the next few days after that , please reach out to the HR team directly.</strong>
-                <br>
+    $template .= '<p><strong>Your presence is MANDATORY, and we promise it\'ll be worth it! Looking forward to seeing you there!</strong></p>
+                <p><strong>You will be added to a Messenger group after the orientation for smooth communication. If you are not added within the next few days after that, please reach out to the HR team directly.</strong></p>
+                
                 <p>Welcome to the BUCuC family!</p>
-                <br>
 
-                <b>Work • Bond • Glow</b>
+                <p><strong>Work • Bond • Glow</strong></p>
 
                 
                 <p>Best regards,<br>
