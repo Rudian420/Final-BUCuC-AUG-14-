@@ -4316,6 +4316,7 @@ ${message}
                             image: 'images/Panel_24_25/Panel/nafisa.jpg',
                             panel: "General Secretary"
                         },
+                        
                         {
                             name: 'Towkeer Mohammad Zia',
                             image: 'images/Panel_24_25/Panel/zia.jpg',
