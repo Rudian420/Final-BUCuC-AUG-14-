@@ -1798,7 +1798,7 @@ https://templatemo.com/tm-583-festava-live
 
             <div class="video-wrap">
                 <video autoplay loop muted playsinline preload="metadata" class="custom-video" poster="images/preview.jpg" id="heroVideo">
-                    <source src="video/bucuc1.mp4" type="video/mp4">
+                    <source src="video/bucuc1.webm" type="video/webm">
                     Your browser does not support the video tag.
                 </video>
 
@@ -4316,7 +4316,7 @@ ${message}
                             image: 'images/Panel_24_25/Panel/nafisa.jpg',
                             panel: "General Secretary"
                         },
-                        
+
                         {
                             name: 'Towkeer Mohammad Zia',
                             image: 'images/Panel_24_25/Panel/zia.jpg',
