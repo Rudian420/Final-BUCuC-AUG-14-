@@ -3083,7 +3083,7 @@ https://templatemo.com/tm-583-festava-live
                                         style="background-image: url('images/slide2.jpg');"></div>
                                     <div class="event-card-content">
                                         <div class="event-title">Rhythm Revive 25.0</div>
-                                        <br class="event-time">17 April, 2025<br>Thursday</div>
+                                        <div class="event-time">17 April, 2025</div>
                                         
                                     </div>
                                 </div>
