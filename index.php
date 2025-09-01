@@ -3084,7 +3084,7 @@ https://templatemo.com/tm-583-festava-live
                                     <div class="event-card-content">
                                         <div class="event-title">Rhythm Revive 25.0</div>
                                         <div class="event-time">17 April, 2025</div>
-                                        
+                                        <div class="event-by">Thursday</div>
                                     </div>
                                 </div>
                                 <!-- Card 2 -->
