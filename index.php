@@ -3092,12 +3092,9 @@ https://templatemo.com/tm-583-festava-live
                                     <div class="event-card-bg"
                                         style="background-image: url('images/slide3.jpg');"></div>
                                     <div class="event-card-content">
-                                        <span class="event-icon"><i
-                                                class="fa-solid fa-guitar"></i></span>
                                         <div class="event-title">Panel Handover</div>
-                                        <div class="event-time">Fri, 7:00 -
-                                            11:00 PM</div>
-                                        <div class="event-by">By BUCuC</div>
+                                        <div class="event-time">11 February, 2025</div>
+                                        <div class="event-by">Tuesday</div>
                                     </div>
                                 </div>
                                 <!-- Card 3 -->
@@ -3105,12 +3102,9 @@ https://templatemo.com/tm-583-festava-live
                                     <div class="event-card-bg"
                                         style="background-image: url('images/slide4.jpg');"></div>
                                     <div class="event-card-content">
-                                        <span class="event-icon"><i
-                                                class="fa-solid fa-headphones"></i></span>
                                         <div class="event-title">BUCuC Iftar</div>
-                                        <div class="event-time">Thu, 6:30 -
-                                            9:30 PM</div>
-                                        <div class="event-by">By BUCuC</div>
+                                        <div class="event-time">10 March, 2025</div>
+                                        <div class="event-by">Monday</div>
                                     </div>
                                 </div>
                                 <!-- Card 4 -->
@@ -3118,12 +3112,9 @@ https://templatemo.com/tm-583-festava-live
                                     <div class="event-card-bg"
                                         style="background-image: url('images/slide5.jpg');"></div>
                                     <div class="event-card-content">
-                                        <span class="event-icon"><i
-                                                class="fa-solid fa-microphone"></i></span>
-                                        <div class="event-title">Boishakhi Utshob</div>
-                                        <div class="event-time">Sat, 4:30 -
-                                            7:30 PM</div>
-                                        <div class="event-by">By BUCuC</div>
+                                        <div class="event-title">Boishakhi Utshob 1432</div>
+                                        <div class="event-time">22 April, 2025</div>
+                                        <div class="event-by">Tuesday</div>
                                     </div>
                                 </div>
                                 <!-- Card 5 -->
@@ -3131,12 +3122,9 @@ https://templatemo.com/tm-583-festava-live
                                     <div class="event-card-bg"
                                         style="background-image: url('images/slide1.jpg');"></div>
                                     <div class="event-card-content">
-                                        <span class="event-icon"><i
-                                                class="fa-solid fa-star"></i></span>
-                                        <div class="event-title">Cage Champions</div>
-                                        <div class="event-time">Sat, 6:00 -
-                                            10:00 PM</div>
-                                        <div class="event-by">By SB Members</div>
+                                        <div class="event-title">উচ্ছ্বাসে স্পন্দন</div>
+                                        <div class="event-time">9 February, 2025</div>
+                                        <div class="event-by">Sunday</div>
                                     </div>
                                 </div>
                             </div>
