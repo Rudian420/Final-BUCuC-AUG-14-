@@ -2100,11 +2100,7 @@ https://templatemo.com/tm-583-festava-live
                                                         <div class="name">MD Sadman Safin Oasif</div>
                                                     </div>
                                                 </div>
-                                                <div class="col-6 col-md-3 text-center">
-                                                    <div class="panel-card"><img src="images/Panel_24_25/Secreteries/Mahamudul_Hossain_Jisun.jpg" class="img-fluid" alt="Mahamudul_Hossain_Jisun.jpg">
-                                                        <div class="name">Mahamudul Hossain Jisun</div>
-                                                    </div>
-                                                </div>
+                                  
                                                 <div class="col-6 col-md-3 text-center">
                                                     <div class="panel-card"><img src="images/Panel_24_25/Secreteries/Maria_Kamal_Katha.jpg" class="img-fluid" alt="Maria_Kamal_Katha.jpg">
                                                         <div class="name">Maria Kamal Katha</div>
@@ -2120,11 +2116,7 @@ https://templatemo.com/tm-583-festava-live
                                                         <div class="name">Nafisa Islam</div>
                                                     </div>
                                                 </div>
-                                                <div class="col-6 col-md-3 text-center">
-                                                    <div class="panel-card"><img src="images/Panel_24_25/Secreteries/Nilonjana_Mojumder.jpg" class="img-fluid" alt="Nilonjana_Mojumder.jpg">
-                                                        <div class="name">Nilonjana Mojumder</div>
-                                                    </div>
-                                                </div>
+                                           
                                                 <div class="col-6 col-md-3 text-center">
                                                     <div class="panel-card"><img src="images/Panel_24_25/Secreteries/Rubaba_Khijir_Nusheen.jpg" class="img-fluid" alt="Rubaba_Khijir_Nusheen.jpg">
                                                         <div class="name">Rubaba Khijir Nusheen</div>
@@ -2748,43 +2740,7 @@ https://templatemo.com/tm-583-festava-live
                                             Human Resource</span>
                                     </div>
                                 </div>
-                                <div class="swiper-slide">
-                                    <img
-                                        src="images/Panel_24_25/Secreteries/Mahamudul_Hossain_Jisun.jpg"
-                                        onerror="this.src='images/placeholder.png'" />
-                                    <div class="overlay">
-                                        <a
-                                            href="https://www.facebook.com/foggy.winter.007"
-                                            target="_blank">
-                                            <ion-icon name="logo-facebook"
-                                                style="color: #1877f2"></ion-icon>
-                                        </a>
-                                    </div>
-                                    <div class="member-name">
-                                        <span class="name">Mahamudul Hossain
-                                            Jisun</span>
-                                        <span class="position">Secretary of
-                                            Event Management & Logistics</span>
-                                    </div>
-                                </div>
-                                <div class="swiper-slide">
-                                    <img src="images/Panel_24_25/Secreteries/Nilonjana_Mojumder.jpg"
-                                        onerror="this.src='images/placeholder.png'" />
-                                    <div class="overlay">
-                                        <a
-                                            href="https://www.facebook.com/arushi.lien"
-                                            target="_blank">
-                                            <ion-icon name="logo-facebook"
-                                                style="color: #1877f2"></ion-icon>
-                                        </a>
-                                    </div>
-                                    <div class="member-name">
-                                        <span class="name">Nilonjana
-                                            Mojumder</span>
-                                        <span class="position">Secretary of
-                                            Event Management & Logistics</span>
-                                    </div>
-                                </div>
+          
                                 <div class="swiper-slide">
                                     <img src="images/Panel_24_25/Secreteries/Showmik_Safi.jpg"
                                         onerror="this.src='images/placeholder.png'" />
