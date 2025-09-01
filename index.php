@@ -3112,7 +3112,7 @@ https://templatemo.com/tm-583-festava-live
                                     <div class="event-card-bg"
                                         style="background-image: url('images/slide5.jpg');"></div>
                                     <div class="event-card-content">
-                                        <div class="event-title">Boishakhi Utshob 1432</div>
+                                        <div class="event-title">বৈশাখী উৎসব ১৪৩২</div>
                                         <div class="event-time">22 April, 2025</div>
                                         <div class="event-by">Tuesday</div>
                                     </div>
