@@ -4346,7 +4346,8 @@ ${message}
                         },
                         {
                             name: 'Mamun Abdullah',
-                            image: 'images/Panel_23_24/Secretary/Events/Mamun_Abdullah.jpg'
+                            image: 'images/Panel_23_24/Secretary/Events/Mamun_Abdullah.jpg',
+                            facebook:"www.youtube.com"
                         },
                         {
                             name: 'Towkeer Mohammad Zia',
