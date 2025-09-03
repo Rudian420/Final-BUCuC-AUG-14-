@@ -4250,7 +4250,7 @@ ${message}
                         {
                             name: 'Mamun Abdullah 12',
                             image: 'images/Panel_24_25/Panel/mamun.jpg',
-                            panel: "Vice President",
+                            panel: "Vice Chutmrani",
                             facebook:"https://www.facebook.com/aam099"
                         },
 
