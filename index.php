@@ -2024,17 +2024,17 @@ https://templatemo.com/tm-583-festava-live
                                             <div class="row g-3 mb-4">
                                                 <div class="col-6 col-md-3 text-center">
                                                     <div class="panel-card"><img src="images/Panel_24_25/Panel/aparup.jpg" class="img-fluid" alt="aparup.jpg">
-                                                        <div class="name">aparup</div>
+                                                        <div class="name">Aparup</div>
                                                     </div>
                                                 </div>
                                                 <div class="col-6 col-md-3 text-center">
                                                     <div class="panel-card"><img src="images/Panel_24_25/Panel/mamun.jpg" class="img-fluid" alt="mamun.jpg">
-                                                        <div class="name">mamun</div>
+                                                        <div class="name">Mamun</div>
                                                     </div>
                                                 </div>
                                                 <div class="col-6 col-md-3 text-center">
                                                     <div class="panel-card"><img src="images/Panel_24_25/Panel/nafisa.jpg" class="img-fluid" alt="nafisa.jpg">
-                                                        <div class="name">nafisa</div>
+                                                        <div class="name">Nafisa</div>
                                                     </div>
                                                 </div>
                                                 <div class="col-6 col-md-3 text-center">
@@ -2154,12 +2154,12 @@ https://templatemo.com/tm-583-festava-live
                                                 </div>
                                                 <div class="col-6 col-md-3 text-center">
                                                     <div class="panel-card"><img src="images/Panel_24_25/Secreteries/reshad.jpg" class="img-fluid" alt="reshad.jpg">
-                                                        <div class="name">reshad</div>
+                                                        <div class="name">Reshad</div>
                                                     </div>
                                                 </div>
                                                 <div class="col-6 col-md-3 text-center">
                                                     <div class="panel-card"><img src="images/Panel_24_25/Secreteries/rudian.jpg" class="img-fluid" alt="rudian.jpg">
-                                                        <div class="name">rudian</div>
+                                                        <div class="name">Rudian Ahmed</div>
                                                     </div>
                                                 </div>
                                             </div>
