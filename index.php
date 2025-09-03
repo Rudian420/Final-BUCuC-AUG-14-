@@ -4885,7 +4885,7 @@ ${message}
     <p style="color:white"><strong>Name:</strong> ${member.name}</p>
     <p style="color:white"><strong>Position:</strong> ${member.panel}</p>
     <hr>
-    <p class="mb-0"><strong>Facebook:</strong> <a href="#">${member.name}</a></p>
+    <p class="mb-0"><strong>Facebook:</strong> <a href="${member.facebook}">${member.name}</a></p>
 </div>
 </div>
 `;
