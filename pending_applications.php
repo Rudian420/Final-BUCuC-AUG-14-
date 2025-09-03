@@ -819,8 +819,8 @@ function getTimeAgo($date) {
             button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sending...';
             button.disabled = true;
 
-            // Make AJAX request - temporarily using minimal test
-            fetch('test_accept_minimal.php', {
+            // Make AJAX request
+            fetch('handle_application.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
