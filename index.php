@@ -4241,17 +4241,17 @@ ${message}
             const panelData = {
                 '2024': {
                     panelMembers: [{
-                            name: 'Aparup Chowdhury 12',
+                            name: 'Aparup Chowdhury',
                             image: 'images/Panel_24_25/Panel/aparup.jpg',
                             panel: "President",
                             facebook:"https://www.facebook.com/aparup.chy.77"
                         },
 
                         {
-                            name: 'Mamun Abdullah 12',
+                            name: 'Mamun Abdullah',
                             image: 'images/Panel_24_25/Panel/mamun.jpg',
                             panel: "Vice President",
-                            facebook:"https://www.facebook.com/aam099"
+                            facebook:"https://www.facebook.com/aparup.chy.77"
                         },
 
                         {
