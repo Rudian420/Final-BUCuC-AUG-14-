@@ -4241,7 +4241,7 @@ ${message}
             const panelData = {
                 '2024': {
                     panelMembers: [{
-                            name: 'Aparup Chowdhury',
+                            name: 'Aparup Chowdhury 12',
                             image: 'images/Panel_24_25/Panel/aparup.jpg',
                             panel: "President",
                             facebook:"https://www.facebook.com/aparup.chy.77"
