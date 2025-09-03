@@ -7,7 +7,7 @@ define('SMTP_HOST', 'smtp.gmail.com');
 define('SMTP_PORT', 587);
 define('SMTP_SECURITY', 'tls');
 define('SMTP_USERNAME', 'hr.bucuc@gmail.com'); // Your existing Gmail address
-define('SMTP_PASSWORD', 'khqhirokxbkojzih'); // Your existing Gmail App Password
+define('SMTP_PASSWORD', 'kvwghrfavcxaflbs'); // Your new Gmail App Password
 define('FROM_EMAIL', 'hr.bucuc@gmail.com'); // Your existing Gmail address
 define('FROM_NAME', 'BRAC University Cultural Club');
 
