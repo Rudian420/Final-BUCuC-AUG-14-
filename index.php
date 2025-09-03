@@ -4250,19 +4250,22 @@ ${message}
                         {
                             name: 'Mamun Abdullah',
                             image: 'images/Panel_24_25/Panel/mamun.jpg',
-                            panel: "Vice President"
+                            panel: "Vice President",
+                            facebook:"https://www.facebook.com/aam099"
                         },
 
                         {
                             name: 'Nafisa Noor',
                             image: 'images/Panel_24_25/Panel/nafisa.jpg',
-                            panel: "General Secretary"
+                            panel: "General Secretary",
+                            facebook:"https://www.facebook.com/nafisa.noor.57685"
                         },
 
                         {
                             name: 'Towkeer Mohammad Zia',
                             image: 'images/Panel_24_25/Panel/zia.jpg',
-                            panel: "Joint Secretary"
+                            panel: "Joint Secretary",
+                            facebook:"https://www.facebook.com/towkeer.mohammad.zia.2024"
                         },
                     ],
                     sbMembers: [{
