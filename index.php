@@ -4243,7 +4243,8 @@ ${message}
                     panelMembers: [{
                             name: 'Aparup Chowdhury',
                             image: 'images/Panel_24_25/Panel/aparup.jpg',
-                            panel: "President"
+                            panel: "President",
+                            facebook:"https://www.facebook.com/aparup.chy.77"
                         },
 
                         {
@@ -4885,7 +4886,7 @@ ${message}
     <p style="color:white"><strong>Name:</strong> ${member.name}</p>
     <p style="color:white"><strong>Position:</strong> ${member.panel}</p>
     <hr>
-    <p class="mb-0"><strong>Facebook:</strong> <a href="">${member.name}</a></p>
+    <p class="mb-0"><strong>Facebook:</strong> <a href="${member.facebook}">${member.name}</a></p>
 </div>
 </div>
 `;
