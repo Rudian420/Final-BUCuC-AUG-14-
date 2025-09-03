@@ -1,20 +1,38 @@
 <?php
 session_start();
 if (!isset($_SESSION["admin"])) {
-    header("Location: admin-login.php");
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Unauthorized access']);
     exit();
 }
 
 // Check if request is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: pending_applications.php?error=" . urlencode('Invalid request method'));
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
     exit();
 }
+
+// Set content type for JSON response
+header('Content-Type: application/json');
 
 require_once 'Database/db.php';
 require_once 'config/email_config.php';
 require_once 'vendor/autoload.php';
-require_once 'Action/google_sheets_integration.php';
+
+// Try to include Google Sheets integration, but don't fail if it's missing
+if (file_exists('Action/google_sheets_integration.php')) {
+    require_once 'Action/google_sheets_integration.php';
+} else {
+    // Define fallback functions if Google Sheets integration is missing
+    function sendToGoogleSheets($member) {
+        return ['success' => false, 'message' => 'Google Sheets integration not available'];
+    }
+    
+    function logGoogleSheetsOperation($action, $data, $result) {
+        // Do nothing if Google Sheets integration is not available
+    }
+}
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -25,7 +43,7 @@ $action = $_POST['action'] ?? '';
 $memberId = $_POST['member_id'] ?? 0;
 
 if (empty($action) || empty($memberId)) {
-    header("Location: pending_applications.php?error=" . urlencode('Missing required parameters'));
+    echo json_encode(['success' => false, 'message' => 'Missing required parameters']);
     exit();
 }
 
@@ -39,9 +57,9 @@ try {
         $result = $stmt->execute([$memberId]);
 
         if ($result) {
-            header("Location: pending_applications.php?success=" . urlencode('Member application rejected and removed successfully'));
+            echo json_encode(['success' => true, 'message' => 'Member application rejected and removed successfully']);
         } else {
-            header("Location: pending_applications.php?error=" . urlencode('Failed to remove member from database'));
+            echo json_encode(['success' => false, 'message' => 'Failed to remove member from database']);
         }
     } elseif ($action === 'accept') {
         // First, get member details
@@ -50,7 +68,7 @@ try {
         $member = $stmt->fetch();
 
         if (!$member) {
-            header("Location: pending_applications.php?error=" . urlencode('Member not found or already processed'));
+            echo json_encode(['success' => false, 'message' => 'Member not found or already processed']);
             exit();
         }
 
@@ -60,26 +78,44 @@ try {
 
         if ($updateResult) {
             // Send congratulations email
-            $emailResult = sendCongratulationsEmail($member);
+            $emailResult = ['success' => false, 'error' => 'Email function not called'];
+            try {
+                $emailResult = sendCongratulationsEmail($member);
+            } catch (Exception $e) {
+                $emailResult = ['success' => false, 'error' => 'Email error: ' . $e->getMessage()];
+            }
 
-            // Send data to Google Sheets
-            $sheetsResult = sendToGoogleSheets($member);
+            // Send data to Google Sheets (optional)
+            $sheetsResult = ['success' => false, 'message' => 'Google Sheets not attempted'];
+            try {
+                if (function_exists('sendToGoogleSheets')) {
+                    $sheetsResult = sendToGoogleSheets($member);
+                }
+            } catch (Exception $e) {
+                $sheetsResult = ['success' => false, 'message' => 'Google Sheets error: ' . $e->getMessage()];
+            }
 
-            // Log the Google Sheets operation for debugging
-            logGoogleSheetsOperation('accept_member', $member, $sheetsResult);
+            // Log the Google Sheets operation for debugging (if function exists)
+            if (function_exists('logGoogleSheetsOperation')) {
+                try {
+                    logGoogleSheetsOperation('accept_member', $member, $sheetsResult);
+                } catch (Exception $e) {
+                    // Ignore logging errors
+                }
+            }
 
             // Determine response message based on both email and sheets results
             $messages = [];
             if ($emailResult['success']) {
                 $messages[] = 'congratulations email sent';
             } else {
-                $messages[] = 'email failed: ' . $emailResult['error'];
+                $messages[] = 'email failed: ' . ($emailResult['error'] ?? 'unknown error');
             }
 
             if ($sheetsResult['success']) {
                 $messages[] = 'data added to Google Sheets';
             } else {
-                $messages[] = 'Google Sheets error: ' . $sheetsResult['message'];
+                $messages[] = 'Google Sheets: ' . ($sheetsResult['message'] ?? 'not available');
             }
 
             $finalMessage = 'Member accepted successfully';
@@ -87,22 +123,27 @@ try {
                 $finalMessage .= ' (' . implode(', ', $messages) . ')';
             }
 
-            header("Location: pending_applications.php?success=" . urlencode($finalMessage));
+            echo json_encode([
+                'success' => true, 
+                'message' => $finalMessage,
+                'email_success' => $emailResult['success'],
+                'sheets_success' => $sheetsResult['success']
+            ]);
         } else {
-            header("Location: pending_applications.php?error=" . urlencode('Failed to update member status in database'));
+            echo json_encode(['success' => false, 'message' => 'Failed to update member status in database']);
         }
     } else {
-        header("Location: pending_applications.php?error=" . urlencode('Invalid action specified'));
+        echo json_encode(['success' => false, 'message' => 'Invalid action specified']);
     }
 } catch (Exception $e) {
-    header("Location: pending_applications.php?error=" . urlencode('Server error: ' . $e->getMessage()));
+    echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
 }
 
 function sendCongratulationsEmail($member)
 {
-    $mail = new PHPMailer(true);
-
     try {
+        $mail = new PHPMailer(true);
+
         // Server settings
         $mail->isSMTP();
         $mail->Host       = SMTP_HOST;
@@ -126,7 +167,7 @@ function sendCongratulationsEmail($member)
         $mail->send();
         return ['success' => true];
     } catch (Exception $e) {
-        return ['success' => false, 'error' => $mail->ErrorInfo];
+        return ['success' => false, 'error' => $e->getMessage()];
     }
 }
 

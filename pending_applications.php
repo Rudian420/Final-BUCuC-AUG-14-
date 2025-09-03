@@ -567,14 +567,10 @@ function getTimeAgo($date) {
                                     <td>
                                         <?php if ($member['membership_status'] == 'New_member'): ?>
                                         <div class="d-flex gap-2">
-                                            <form method="POST" action="handle_application.php" style="display:inline;" 
-                                                  onsubmit="return confirm('Are you sure you want to accept <?php echo addslashes($member['full_name']); ?>\'s application?\\n\\nThis will:\\n- Update their status to \\'Accepted\\'\\n- Send a congratulations email to their G-Suite address')">
-                                                <input type="hidden" name="action" value="accept">
-                                                <input type="hidden" name="member_id" value="<?php echo $member['id']; ?>">
-                                                <button type="submit" class="btn btn-accept btn-sm">
-                                                    <i class="fas fa-check me-1"></i>Accept
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn btn-accept btn-sm" 
+                                                    onclick="acceptApplication(<?php echo $member['id']; ?>, '<?php echo addslashes($member['full_name']); ?>')">
+                                                <i class="fas fa-check me-1"></i>Accept
+                                            </button>
                                             <form method="POST" action="handle_application.php" style="display:inline;" 
                                                   onsubmit="return confirm('Are you sure you want to reject <?php echo addslashes($member['full_name']); ?>\'s application?\\n\\nWARNING: This will permanently delete their record from the database!\\n\\nThis action cannot be undone.')">
                                                 <input type="hidden" name="action" value="reject">
@@ -811,6 +807,65 @@ function getTimeAgo($date) {
             }
         });
         
+        // Accept Application Function
+        function acceptApplication(memberId, memberName) {
+            if (!confirm('Are you sure you want to accept ' + memberName + '\'s application?\\n\\nThis will:\\n- Send a congratulations email to their G-Suite address\\n- Update their status to \'Accepted\'')) {
+                return;
+            }
+
+            // Show loading state
+            const button = event.target;
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sending...';
+            button.disabled = true;
+
+            // Make AJAX request
+            fetch('handle_application.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=accept&member_id=' + memberId
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Show success notification
+                    let message = 'Email sent successfully to ' + memberName + '!';
+                    if (data.email_success === false) {
+                        message = 'Member accepted but email failed to send to ' + memberName;
+                    }
+                    showNotification(message, data.email_success ? 'success' : 'warning');
+                    
+                    // Update the row to show as accepted
+                    const row = button.closest('tr');
+                    const statusCell = row.querySelector('.status-badge');
+                    statusCell.innerHTML = '<i class="fas fa-check-circle me-1"></i>Accepted';
+                    statusCell.className = 'status-badge status-accepted';
+                    
+                    // Hide the action buttons
+                    const actionCell = row.querySelector('td:last-child');
+                    actionCell.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Processed</span>';
+                } else {
+                    showNotification('Failed to accept ' + memberName + ': ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error sending email to ' + memberName + '. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Restore button
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            });
+        }
+
         // Handle Clear All Confirmation
         document.getElementById('confirmClearAllBtn').addEventListener('click', function() {
             const confirmationText = document.getElementById('confirmationInput').value.trim();
