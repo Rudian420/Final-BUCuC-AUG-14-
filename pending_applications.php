@@ -819,8 +819,8 @@ function getTimeAgo($date) {
             button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sending...';
             button.disabled = true;
 
-            // Make AJAX request
-            fetch('handle_application.php', {
+            // Make AJAX request - temporarily using minimal test
+            fetch('test_accept_minimal.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -828,10 +828,24 @@ function getTimeAgo($date) {
                 body: 'action=accept&member_id=' + memberId
             })
             .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
-                return response.json();
+                
+                // Get response as text first to debug
+                return response.text().then(text => {
+                    console.log('Raw response:', text);
+                    try {
+                        return JSON.parse(text);
+                    } catch (parseError) {
+                        console.error('JSON parse error:', parseError);
+                        console.log('Response that failed to parse:', text);
+                        throw new Error('Invalid JSON response from server');
+                    }
+                });
             })
             .then(data => {
                 if (data.success) {
@@ -857,7 +871,8 @@ function getTimeAgo($date) {
             })
             .catch(error => {
                 console.error('Error:', error);
-                showNotification('Error sending email to ' + memberName + '. Please try again.', 'error');
+                console.log('Full error details:', error);
+                showNotification('Error sending email to ' + memberName + '. Please try again. Error: ' + error.message, 'error');
             })
             .finally(() => {
                 // Restore button

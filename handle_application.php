@@ -1,4 +1,9 @@
 <?php
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // Don't display errors in output
+ini_set('log_errors', 1);
+
 session_start();
 if (!isset($_SESSION["admin"])) {
     http_response_code(401);
@@ -81,8 +86,10 @@ try {
             $emailResult = ['success' => false, 'error' => 'Email function not called'];
             try {
                 $emailResult = sendCongratulationsEmail($member);
+                error_log("Email result: " . json_encode($emailResult));
             } catch (Exception $e) {
                 $emailResult = ['success' => false, 'error' => 'Email error: ' . $e->getMessage()];
+                error_log("Email exception: " . $e->getMessage());
             }
 
             // Send data to Google Sheets (optional)
@@ -123,12 +130,14 @@ try {
                 $finalMessage .= ' (' . implode(', ', $messages) . ')';
             }
 
-            echo json_encode([
+            $response = [
                 'success' => true, 
                 'message' => $finalMessage,
                 'email_success' => $emailResult['success'],
                 'sheets_success' => $sheetsResult['success']
-            ]);
+            ];
+            error_log("Sending response: " . json_encode($response));
+            echo json_encode($response);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to update member status in database']);
         }
