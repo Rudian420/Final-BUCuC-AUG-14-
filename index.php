@@ -2577,7 +2577,7 @@ https://templatemo.com/tm-583-festava-live
                                         <div class="artists-hover">
                                             <p>
                                                 <strong>Name:</strong>
-                                                Aparup Chowdhury
+                                                Aparup Chowdhury 12
                                             </p>
 
                                             <p>
