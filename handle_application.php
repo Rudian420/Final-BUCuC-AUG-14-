@@ -501,6 +501,12 @@ function getLatestVenueInfo()
         $database = new Database();
         $pdo = $database->createConnection();
 
+        // Check if the table exists first
+        $stmt = $pdo->query("SHOW TABLES LIKE 'venuInfo'");
+        if ($stmt->rowCount() == 0) {
+            return null; // Table doesn't exist
+        }
+
         // Get the latest venue information
         $stmt = $pdo->query("SELECT * FROM venuInfo ORDER BY venue_id DESC LIMIT 1");
         $venue = $stmt->fetch();
@@ -508,6 +514,7 @@ function getLatestVenueInfo()
         return $venue ? $venue : null;
     } catch (Exception $e) {
         // Return null if there's an error or no venue info
+        error_log("Venue info error: " . $e->getMessage());
         return null;
     }
 }
