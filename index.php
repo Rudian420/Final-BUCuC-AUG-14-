@@ -4855,6 +4855,7 @@ ${message}
 
                 // Add new panel members with full structure
                 data.panelMembers.forEach((member, index) => {
+                    console.log(member,"Panel Members JSON")
                     const memberDiv = document.createElement('div');
 
                     // Adjust grid layout based on number of members
@@ -4884,7 +4885,7 @@ ${message}
     <p style="color:white"><strong>Name:</strong> ${member.name}</p>
     <p style="color:white"><strong>Position:</strong> ${member.panel}</p>
     <hr>
-    <p class="mb-0"><strong>Facebook:</strong> <a href="#">${member.name}12</a></p>
+    <p class="mb-0"><strong>Facebook:</strong> <a href="#">${member.name}</a></p>
 </div>
 </div>
 `;
