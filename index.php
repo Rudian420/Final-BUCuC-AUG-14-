@@ -2717,7 +2717,7 @@ https://templatemo.com/tm-583-festava-live
                                         </a>
                                     </div>
                                     <div class="member-name">
-                                        <span class="name">Rudian Borneel</span>
+                                        <span class="name">Rudian Ahmed</span>
                                         <span class="position">Secretary of
                                             Human Resource</span>
                                     </div>
