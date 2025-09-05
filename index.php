@@ -2278,7 +2278,7 @@ https://templatemo.com/tm-583-festava-live
                                                 </div>
                                                 <div class="col-6 col-md-3 text-center">
                                                     <div class="panel-card"><img src="images/Panel_23_24/Secretary/Performance/Aparup Chy (Performance).jpg" class="img-fluid" alt="Aparup Chy (Performance).jpg">
-                                                        <div class="name">Aparup Chy</div>
+                                                        <div class="name">Aparup Chowdhury</div>
                                                     </div>
                                                 </div>
                                                 <div class="col-6 col-md-3 text-center">
