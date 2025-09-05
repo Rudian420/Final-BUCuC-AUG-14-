@@ -4251,7 +4251,7 @@ ${message}
                             name: 'Mamun Abdullah',
                             image: 'images/Panel_24_25/Panel/mamun.jpg',
                             panel: "Vice President",
-                            facebook:"https://www.youtube.com"
+                            facebook:"https://www.facebook.com/aam099"
                         },
 
                         {
@@ -4307,25 +4307,25 @@ ${message}
                             name: 'Nashib Siam',
                             image: 'images/Panel_23_24/Panels/Nashib Siam (President).jpg',
                             panel: 'President',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/mohmed.nashib.5"
                         },
                         {
                             name: 'Nawshaba Maniza Riddhi',
                             image: 'images/Panel_23_24/Panels/Nawshaba Maniza Riddhi (VP).jpg',
                             panel: 'Vice President',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/nawshaba.maniza.riddhi"
                         },
                         {
                             name: 'Musharrat Quazi',
                             image: 'images/Panel_23_24/Panels/Musharrat Quazi (GS).jpg',
                             panel: 'General Secretary',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/musharrat.quazi"
                         },
                         {
                             name: 'Tamima Diba',
                             image: 'images/Panel_23_24/Panels/Tamima Diba (Financial Secretary).jpg',
                             panel: 'Financial Secretary',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/tamima.diba.2024"
                         }
                     ],
                     sbMembers: [{
@@ -4432,25 +4432,25 @@ ${message}
                             name: 'Merazul Dihan',
                             image: 'images/Panel_22_23/Panel/Merazul_Dihan.jpg',
                             panel: 'President',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/merazul.dihan.7"
                         },
                         {
                             name: 'Towsif Tazwar Zia',
                             image: 'images/Panel_22_23/Panel/Towsif_Tazwar_Zia.jpg',
                             panel: 'Vice President',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/towsif"
                         },
                         {
                             name: 'Tawhid Mollah Orpon',
                             image: 'images/Panel_22_23/Panel/Tawhid_Mollah_Orpon.jpg',
                             panel: 'General Secretary',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/tawhid.m.orpon"
                         },
                         {
                             name: 'Shakira Mustahid',
                             image: 'images/Panel_22_23/Panel/Shakira_Mustahid.jpg',
                             panel: 'Joint Secretary',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/groups/86555568937/user/100011850409007"
                         }
                     ],
                     sbMembers: [{
@@ -4528,17 +4528,17 @@ ${message}
                         name: 'Jabir Al Ahad',
                         image: 'images/Panel_21_22/Panel/Jabir_Al_Ahad.jpg',
                         panel: 'President',
-                        facebook:"https://www.facebook.com/aparup.chy.77"
+                        facebook:"https://www.facebook.com/jabir.rafi.33"
                     }, {
                         name: 'ABD Quaiyum',
                         image: 'images/Panel_21_22/Panel/ABD_Quaiyum.jpg',
                         panel: 'Vice President',
-                        facebook:"https://www.facebook.com/aparup.chy.77"
+                        facebook:"https://www.facebook.com/abdul.quaiyum.732"
                     }, {
                         name: 'Fahim Anjum Efty',
                         image: 'images/Panel_21_22/Panel/Fahim_Anjum_Efty.jpg',
                         panel: 'General Secretary',
-                        facebook:"https://www.facebook.com/aparup.chy.77"
+                        facebook:"https://www.facebook.com/fahim.efty.5"
                     }],
                     sbMembers: [{
                             name: 'Jawad Zarif',
@@ -4619,18 +4619,18 @@ ${message}
                             name: 'Toriqul Islam Dipro',
                             image: 'images/Panel_20_21/Panel/Toriqul_Islam_Dipro.jpg',
                             panel: 'President',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/toriqul.islam.dipro"
                         }, {
                             name: 'Amal Chowdhury',
                             image: 'images/Panel_20_21/Panel/Amal_Chowdhury.jpg',
                             panel: 'Vice President',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/amal.chowdhury.79"
                         },
                         {
                             name: 'Injamul Islam Fahim',
                             image: 'images/Panel_20_21/Panel/Injamul_Islam_Fahim.jpg',
                             panel: 'General Secretary',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/injamul.fahim"
                         }
 
                     ],
@@ -4737,19 +4737,19 @@ ${message}
                             name: 'Shoaib Kamal',
                             image: 'images/Panel_19_20/Panel/Shoaib_Kamal.jpg',
                             panel: 'President',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/shoaib.sculpture"
                         },
                         {
                             name: 'Samara Mehruz',
                             image: 'images/Panel_19_20/Panel/Samara_Mehruz.jpg',
                             panel: 'Vice President',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/meheruz.samara/"
                         },
                         {
                             name: 'Murtafa Mridha',
                             image: 'images/Panel_19_20/Panel/Murtafa_Mridha.jpg',
                             panel: 'General Secretary',
-                            facebook:"https://www.facebook.com/aparup.chy.77"
+                            facebook:"https://www.facebook.com/murtafa.mridha"
                         }
 
 
