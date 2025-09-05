@@ -135,6 +135,20 @@ $signupEnabled = getSignupStatus();
         <link rel="icon" type="image/png" href="images/logopng.png">
 
     <style>
+        /* Custom Scrollbar (match past_events.html) */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #e76f2c, #f3d35c);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #f3d35c, #e76f2c);
+        }
         /* SB Members Slideshow Styles */
         @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600&display=swap");
 
