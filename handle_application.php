@@ -1,4 +1,9 @@
 <?php
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // Don't display errors in output
+ini_set('log_errors', 1);
+
 session_start();
 if (!isset($_SESSION["admin"])) {
     header("Location: admin-login.php");
@@ -14,7 +19,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_once 'Database/db.php';
 require_once 'config/email_config.php';
 require_once 'vendor/autoload.php';
-require_once 'Action/google_sheets_integration.php';
+
+// Try to include Google Sheets integration, but don't fail if it's missing
+if (file_exists('Action/google_sheets_integration.php')) {
+    require_once 'Action/google_sheets_integration.php';
+} else {
+    // Define fallback functions if Google Sheets integration is missing
+    function sendToGoogleSheets($member) {
+        return ['success' => false, 'message' => 'Google Sheets integration not available'];
+    }
+    
+    function logGoogleSheetsOperation($action, $data, $result) {
+        // Do nothing if Google Sheets integration is not available
+    }
+}
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -54,42 +72,61 @@ try {
             exit();
         }
 
-        // Update member status to Accepted
-        $updateStmt = $pdo->prepare("UPDATE members SET membership_status = 'Accepted', updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-        $updateResult = $updateStmt->execute([$memberId]);
-
-        if ($updateResult) {
-            // Send congratulations email
+        // FIRST: Try to send congratulations email
+        $emailResult = ['success' => false, 'error' => 'Email function not called'];
+        try {
             $emailResult = sendCongratulationsEmail($member);
+            error_log("Email result: " . json_encode($emailResult));
+        } catch (Exception $e) {
+            $emailResult = ['success' => false, 'error' => 'Email error: ' . $e->getMessage()];
+            error_log("Email exception: " . $e->getMessage());
+        }
 
-            // Send data to Google Sheets
-            $sheetsResult = sendToGoogleSheets($member);
+        // ONLY update database status if email was sent successfully
+        if ($emailResult['success']) {
+            // Update member status to Accepted
+            $updateStmt = $pdo->prepare("UPDATE members SET membership_status = 'Accepted', updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+            $updateResult = $updateStmt->execute([$memberId]);
 
-            // Log the Google Sheets operation for debugging
-            logGoogleSheetsOperation('accept_member', $member, $sheetsResult);
+            if ($updateResult) {
+                // Send data to Google Sheets (optional)
+                $sheetsResult = ['success' => false, 'message' => 'Google Sheets not attempted'];
+                try {
+                    if (function_exists('sendToGoogleSheets')) {
+                        $sheetsResult = sendToGoogleSheets($member);
+                    }
+                } catch (Exception $e) {
+                    $sheetsResult = ['success' => false, 'message' => 'Google Sheets error: ' . $e->getMessage()];
+                }
 
-            // Determine response message based on both email and sheets results
-            $messages = [];
-            if ($emailResult['success']) {
-                $messages[] = 'congratulations email sent';
+                // Log the Google Sheets operation for debugging (if function exists)
+                if (function_exists('logGoogleSheetsOperation')) {
+                    try {
+                        logGoogleSheetsOperation('accept_member', $member, $sheetsResult);
+                    } catch (Exception $e) {
+                        // Ignore logging errors
+                    }
+                }
+
+                // Success response
+                $messages = ['congratulations email sent'];
+                if ($sheetsResult['success']) {
+                    $messages[] = 'data added to Google Sheets';
+                } else {
+                    $messages[] = 'Google Sheets: ' . ($sheetsResult['message'] ?? 'not available');
+                }
+
+                $finalMessage = 'Member accepted successfully (' . implode(', ', $messages) . ')';
+
+                error_log("Sending response: " . $finalMessage);
+                header("Location: pending_applications.php?success=" . urlencode($finalMessage));
             } else {
-                $messages[] = 'email failed: ' . $emailResult['error'];
+                header("Location: pending_applications.php?error=" . urlencode('Failed to update member status in database'));
             }
-
-            if ($sheetsResult['success']) {
-                $messages[] = 'data added to Google Sheets';
-            } else {
-                $messages[] = 'Google Sheets error: ' . $sheetsResult['message'];
-            }
-
-            $finalMessage = 'Member accepted successfully';
-            if (!empty($messages)) {
-                $finalMessage .= ' (' . implode(', ', $messages) . ')';
-            }
-
-            header("Location: pending_applications.php?success=" . urlencode($finalMessage));
         } else {
-            header("Location: pending_applications.php?error=" . urlencode('Failed to update member status in database'));
+            // Email failed - do NOT accept the member
+            $errorMessage = 'Failed to send email to ' . $member['full_name'] . '. Application not accepted. Error: ' . ($emailResult['error'] ?? 'unknown error');
+            header("Location: pending_applications.php?error=" . urlencode($errorMessage));
         }
     } else {
         header("Location: pending_applications.php?error=" . urlencode('Invalid action specified'));
@@ -100,9 +137,9 @@ try {
 
 function sendCongratulationsEmail($member)
 {
-    $mail = new PHPMailer(true);
-
     try {
+        $mail = new PHPMailer(true);
+
         // Server settings
         $mail->isSMTP();
         $mail->Host       = SMTP_HOST;
@@ -126,7 +163,7 @@ function sendCongratulationsEmail($member)
         $mail->send();
         return ['success' => true];
     } catch (Exception $e) {
-        return ['success' => false, 'error' => $mail->ErrorInfo];
+        return ['success' => false, 'error' => $e->getMessage()];
     }
 }
 
@@ -464,6 +501,12 @@ function getLatestVenueInfo()
         $database = new Database();
         $pdo = $database->createConnection();
 
+        // Check if the table exists first
+        $stmt = $pdo->query("SHOW TABLES LIKE 'venuInfo'");
+        if ($stmt->rowCount() == 0) {
+            return null; // Table doesn't exist
+        }
+
         // Get the latest venue information
         $stmt = $pdo->query("SELECT * FROM venuInfo ORDER BY venue_id DESC LIMIT 1");
         $venue = $stmt->fetch();
@@ -471,6 +514,7 @@ function getLatestVenueInfo()
         return $venue ? $venue : null;
     } catch (Exception $e) {
         // Return null if there's an error or no venue info
+        error_log("Venue info error: " . $e->getMessage());
         return null;
     }
 }

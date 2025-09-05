@@ -24,7 +24,12 @@ class Database {
         try {
             $this->pdo = new PDO($dsn, $this->user, $this->pass, $options);
         } catch (PDOException $e) {
-            die("Database connection failed: " . $e->getMessage());
+            // Check if it's a driver issue
+            if (strpos($e->getMessage(), 'could not find driver') !== false) {
+                die("Database Error: PDO MySQL driver not available. Please contact Hostinger support to enable PDO MySQL extension in your PHP configuration.");
+            } else {
+                die("Database connection failed: " . $e->getMessage());
+            }
         }
     }
 

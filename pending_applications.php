@@ -567,14 +567,14 @@ function getTimeAgo($date) {
                                     <td>
                                         <?php if ($member['membership_status'] == 'New_member'): ?>
                                         <div class="d-flex gap-2">
-                                            <form method="POST" action="handle_application.php" style="display:inline;" 
-                                                  onsubmit="return confirm('Are you sure you want to accept <?php echo addslashes($member['full_name']); ?>\'s application?\\n\\nThis will:\\n- Update their status to \\'Accepted\\'\\n- Send a congratulations email to their G-Suite address')">
-                                                <input type="hidden" name="action" value="accept">
-                                                <input type="hidden" name="member_id" value="<?php echo $member['id']; ?>">
-                                                <button type="submit" class="btn btn-accept btn-sm">
-                                                    <i class="fas fa-check me-1"></i>Accept
-                                                </button>
-                                            </form>
+                                                                                                                                     <form method="POST" action="handle_application.php" style="display:inline;" 
+                                                  onsubmit="return confirm('Are you sure you want to accept <?php echo addslashes($member['full_name']); ?>\'s application?\\n\\nThis will:\\n- Send a congratulations email to their G-Suite address\\n- Update their status to \'Accepted\'\\n\\nNote: Application will only be accepted if email sends successfully.')">
+                                                 <input type="hidden" name="action" value="accept">
+                                                 <input type="hidden" name="member_id" value="<?php echo $member['id']; ?>">
+                                                 <button type="submit" class="btn btn-accept btn-sm">
+                                                     <i class="fas fa-check me-1"></i>Accept
+                                                 </button>
+                                             </form>
                                             <form method="POST" action="handle_application.php" style="display:inline;" 
                                                   onsubmit="return confirm('Are you sure you want to reject <?php echo addslashes($member['full_name']); ?>\'s application?\\n\\nWARNING: This will permanently delete their record from the database!\\n\\nThis action cannot be undone.')">
                                                 <input type="hidden" name="action" value="reject">
@@ -811,6 +811,9 @@ function getTimeAgo($date) {
             }
         });
         
+                 // Form submission will handle the accept action
+         // No JavaScript needed for form submission
+
         // Handle Clear All Confirmation
         document.getElementById('confirmClearAllBtn').addEventListener('click', function() {
             const confirmationText = document.getElementById('confirmationInput').value.trim();
