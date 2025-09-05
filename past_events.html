@@ -234,8 +234,15 @@
             object-fit: contain;
             display: block;
             margin: 0 auto;
-            /* Match var(--primary-yellow) #f3d35c */
-            filter: brightness(0) saturate(100%) invert(86%) sepia(24%) saturate(1044%) hue-rotate(339deg) brightness(101%) contrast(93%);
+        }
+        .event-icon-large .logo-mask-yellow {
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-yellow);
+            -webkit-mask: url('images/logo.png') center/contain no-repeat;
+            mask: url('images/logo.png') center/contain no-repeat;
+            display: block;
+            margin: 0 auto;
         }
         
         .event-title-large {
@@ -731,7 +738,7 @@ More than just a day, this Boishakh was a heartfelt celebration of culture, heri
         <div id="free-styles" class="event-detail-card" data-aos="fade-up" data-aos-duration="1200" data-aos-delay="600">
             <div class="event-header">
                 <div class="event-icon-large">
-                    <img src="images/logo.png" alt="BUCuC Logo">
+                    <span class="logo-mask-yellow" role="img" aria-label="BUCuC Logo"></span>
                 </div>
                 <div>
                     <h2 class="event-title-large">উচ্ছ্বাসে স্পন্দন</h2>
